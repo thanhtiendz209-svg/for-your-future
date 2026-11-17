@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="vi" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>For Your Future — Trắc nghiệm tính cách & Hướng nghiệp</title>
+  <meta name="description" content="Khám phá tính cách, hiểu bản thân và chọn đúng hướng đi cùng For Your Future qua MBTI, RIASEC và Big Five.">
+  <link rel="icon" type="image/jpeg" href="/logo.jpg">
+
+  <!-- Google Fonts: Plus Jakarta Sans & Be Vietnam Pro with Vietnamese subsets -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:ital,wght@0,500;0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
+
+  <!-- Immediate theme check to prevent flash of unstyled content (FOUC) -->
+  <script>
+    if (localStorage.getItem('fyf_theme') === 'dark' || (!('fyf_theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  </script>
+
+  <!-- Base Design System Stylesheet -->
+  <link rel="stylesheet" href="/styles.css?v=2.11.0">
+
+  <!-- Prebuilt utilities: no CSS compiler or DOM observer in the browser. -->
+  <link rel="stylesheet" href="/utilities.css?v=1.0.0">
+  <script defer src="/vendor/lucide.min.js?v=1.73.0"></script>
+  <script defer src="/vendor/marked.min.js?v=15.0.12"></script>
+</head>
+<body class="min-h-full bg-paper text-ink flex flex-col font-sans antialiased transition-colors duration-200">
+
+  <!-- HEADER (EXACT REPLICA OF TRACHNGIEMTINHCACH) -->
+  <header class="site-header sticky top-0 z-40 w-full bg-paper/85 dark:bg-card/85 backdrop-blur-xl border-b border-line shadow-border transition-colors">
+    <div class="header-inner mx-auto px-4 sm:px-6 flex items-center justify-between">
+      
+      <!-- Brand Logo (Beacon Icon + Title + Uppercase Tracking Subtitle) -->
+      <a href="#home" class="header-brand flex items-center gap-2.5 group focus-visible:ring-2 focus-visible:ring-azure/50 rounded-xl no-underline">
+        <span class="relative grid size-9 place-items-center rounded-[12px] overflow-hidden group-hover:scale-105 transition-transform">
+          <img src="/logo.jpg" alt="For Your Future Logo" class="size-9 object-contain" />
+        </span>
+        <span class="flex flex-col leading-none">
+          <span class="font-display text-[1.05rem] font-semibold tracking-tight text-navy dark:text-cyan-soft">For Your Future</span>
+          <span class="mt-0.5 text-[10px] font-medium uppercase tracking-[0.16em] text-muted">Hướng nghiệp</span>
+        </span>
+      </a>
+
+      <!-- Desktop Navigation Links (FOR YOUR FUTURE COMPLETE ARCHITECTURE) -->
+      <nav class="header-nav hidden lg:flex items-center gap-1 text-sm font-medium" aria-label="Chính">
+        <a href="#home" class="nav-link rounded-[var(--radius-sm)] px-3 py-2 text-sm font-medium text-muted hover:bg-ice/80 hover:text-navy transition">Trang chủ</a>
+        <a href="#trac-nghiem" class="nav-link rounded-[var(--radius-sm)] px-3 py-2 text-sm font-medium text-muted hover:bg-ice/80 hover:text-navy transition">Trắc nghiệm</a>
+        <a href="#nhom-tinh-cach" class="nav-link rounded-[var(--radius-sm)] px-3 py-2 text-sm font-medium text-muted hover:bg-ice/80 hover:text-navy transition">Nhóm tính cách</a>
+        <a href="#huong-nghiep" class="nav-link rounded-[var(--radius-sm)] px-3 py-2 text-sm font-medium text-muted hover:bg-ice/80 hover:text-navy transition">Bộ lọc</a>
+        <a href="#so-sanh" class="nav-link rounded-[var(--radius-sm)] px-3 py-2 text-sm font-medium text-muted hover:bg-ice/80 hover:text-navy transition">So sánh</a>
+        <a href="#tu-van" class="nav-link rounded-[var(--radius-sm)] px-3 py-2 text-sm font-medium text-azure hover:bg-ice/80 hover:text-navy transition flex items-center gap-1.5 font-semibold"><i data-lucide="sparkles" class="size-4 text-cyan animate-pulse"></i>Tư vấn AI</a>
+        <a href="#gioi-thieu" class="nav-link rounded-[var(--radius-sm)] px-3 py-2 text-sm font-medium text-muted hover:bg-ice/80 hover:text-navy transition">Giới thiệu</a>
+      </nav>
+
+      <!-- Right Action Controls -->
+      <div class="header-actions flex items-center gap-2">
+        <!-- Auth Header Container (Login / Register / User Avatar) -->
+        <div id="header-auth-container" class="flex items-center gap-2">
+          <a href="#dang-nhap" id="btn-header-login" class="inline-flex items-center justify-center font-medium select-none rounded-[var(--radius-md)] text-xs sm:text-sm min-h-9 sm:min-h-10 px-3 sm:px-3.5 bg-mist text-navy hover:bg-ice border border-line transition">
+            Đăng nhập
+          </a>
+          <a href="#dang-ky" id="btn-header-register" class="hidden sm:inline-flex items-center justify-center font-medium select-none rounded-[var(--radius-md)] text-xs sm:text-sm min-h-9 sm:min-h-10 px-3.5 bg-card text-azure hover:bg-ice border border-azure/40 font-semibold transition">
+            Đăng ký
+          </a>
+        </div>
+
+        <a href="#trac-nghiem" class="header-quiz-cta hidden sm:inline-flex items-center justify-center font-medium select-none rounded-[var(--radius-md)] text-sm min-h-10 px-4 bg-navy text-paper hover:bg-navy-deep cta-glow transition">
+          Làm trắc nghiệm
+        </a>
+        <button id="btn-toggle-theme" class="p-2 text-muted hover:text-navy rounded-[12px] hover:bg-ice transition" title="Chuyển chế độ sáng/tối" aria-label="Giao diện sáng/tối">
+          <i data-lucide="moon" class="size-4 dark:hidden"></i>
+          <i data-lucide="sun" class="size-4 hidden dark:block text-cyan"></i>
+        </button>
+        <button id="btn-mobile-menu" aria-controls="mobile-menu" aria-expanded="false" class="lg:hidden p-2 text-navy dark:text-cyan-soft rounded-[12px] hover:bg-ice transition" aria-label="Mở menu di động">
+          <i data-lucide="menu" class="size-5"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation Drawer -->
+    <div id="mobile-menu" class="hidden lg:hidden border-b border-line bg-paper/95 dark:bg-card/95 backdrop-blur-xl px-4 pt-2 pb-4 space-y-1">
+      <a href="#home" class="block px-3 py-2 rounded-[var(--radius-sm)] text-sm font-medium text-navy hover:bg-ice">Trang chủ</a>
+      <a href="#trac-nghiem" class="block px-3 py-2 rounded-[var(--radius-sm)] text-sm font-medium text-navy hover:bg-ice">Trắc nghiệm</a>
+      <a href="#nhom-tinh-cach" class="block px-3 py-2 rounded-[var(--radius-sm)] text-sm font-medium text-navy hover:bg-ice">Nhóm tính cách</a>
+      <a href="#huong-nghiep" class="block px-3 py-2 rounded-[var(--radius-sm)] text-sm font-medium text-navy hover:bg-ice">Bộ lọc</a>
+      <a href="#so-sanh" class="block px-3 py-2 rounded-[var(--radius-sm)] text-sm font-medium text-navy hover:bg-ice">So sánh chương trình</a>
+      <a href="#tu-van" class="block px-3 py-2 rounded-[var(--radius-sm)] text-sm font-medium text-azure hover:bg-ice flex items-center gap-1.5 font-semibold"><i data-lucide="sparkles" class="size-4 text-cyan"></i>Tư vấn AI & Nguyện vọng</a>
+      <a href="#gioi-thieu" class="block px-3 py-2 rounded-[var(--radius-sm)] text-sm font-medium text-navy hover:bg-ice">Giới thiệu</a>
+      <a href="#ho-so" class="block px-3 py-2 rounded-[var(--radius-sm)] text-sm font-medium text-azure hover:bg-ice font-semibold">Hồ sơ của bạn</a>
+      <a href="#quan-tri" class="block px-3 py-2 rounded-[var(--radius-sm)] text-sm font-medium text-muted hover:bg-ice">Quản trị hệ thống</a>
+      <div id="mobile-auth-container" class="pt-2 border-t border-line/60 mt-2 space-y-1">
+        <a href="#dang-nhap" class="block px-3 py-2 rounded-[var(--radius-sm)] text-sm font-semibold text-azure hover:bg-ice">Đăng nhập</a>
+        <a href="#dang-ky" class="block px-3 py-2 rounded-[var(--radius-sm)] text-sm font-semibold text-cyan hover:bg-ice">Đăng ký tài khoản</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN APP CONTAINER -->
+  <main id="app-container" class="flex-1 w-full">
+    <!-- Rendered dynamically by app.js router -->
+  </main>
+
+  <!-- FOOTER (EXACT 5-COLUMN REPLICA OF TRACHNGIEMTINHCACH) -->
+  <footer class="mt-20 border-t border-line bg-navy text-paper transition-colors">
+    <div class="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-2 lg:grid-cols-5">
+      <div class="lg:col-span-2">
+        <!-- Logo Light -->
+        <a href="#home" class="flex items-center gap-2.5 no-underline text-paper mb-4">
+          <span class="relative grid size-9 place-items-center rounded-[12px] overflow-hidden">
+            <img src="/logo.jpg" alt="For Your Future Logo" class="size-9 object-contain" />
+          </span>
+          <span class="flex flex-col leading-none">
+            <span class="font-display text-[1.05rem] font-semibold tracking-tight">For Your Future</span>
+            <span class="mt-0.5 text-[10px] font-medium uppercase tracking-[0.16em] text-cyan-soft">Hướng nghiệp</span>
+          </span>
+        </a>
+        <p class="mt-4 max-w-sm text-sm leading-relaxed text-cyan-soft/90">
+          For Your Future giúp bạn nhìn rõ hơn về tính cách, điểm mạnh và hướng đi phù hợp —
+          chậm rãi, trung thực, mang tính tham khảo.
+        </p>
+        <div class="mt-5 flex gap-2">
+          <span class="grid size-10 place-items-center rounded-full bg-white/10 text-paper hover:bg-white/20 transition cursor-pointer">
+            <i data-lucide="compass" class="size-4"></i>
+          </span>
+          <span class="grid size-10 place-items-center rounded-full bg-white/10 text-paper hover:bg-white/20 transition cursor-pointer">
+            <i data-lucide="sparkles" class="size-4"></i>
+          </span>
+          <span class="grid size-10 place-items-center rounded-full bg-white/10 text-paper hover:bg-white/20 transition cursor-pointer">
+            <i data-lucide="book-open" class="size-4"></i>
+          </span>
+        </div>
+      </div>
+
+      <!-- Column 2: Trắc nghiệm -->
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-[0.14em] text-cyan-soft">Trắc nghiệm</p>
+        <ul class="mt-3 space-y-2 text-sm">
+          <li><a href="#trac-nghiem" class="text-paper/85 hover:text-cyan-soft transition">Tất cả bài test</a></li>
+          <li><a href="#trac-nghiem/mbti" class="text-paper/85 hover:text-cyan-soft transition">MBTI</a></li>
+          <li><a href="#trac-nghiem/riasec" class="text-paper/85 hover:text-cyan-soft transition">RIASEC</a></li>
+          <li><a href="#trac-nghiem/cognitive" class="text-paper/85 hover:text-cyan-soft transition">Năng lực nhận thức</a></li>
+          <li><a href="#trac-nghiem/bigfive" class="text-paper/85 hover:text-cyan-soft transition">Big Five</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 3: Khám phá -->
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-[0.14em] text-cyan-soft">Khám phá</p>
+        <ul class="mt-3 space-y-2 text-sm">
+          <li><a href="#nhom-tinh-cach" class="text-paper/85 hover:text-cyan-soft transition">16 nhóm tính cách</a></li>
+          <li><a href="#huong-nghiep" class="text-paper/85 hover:text-cyan-soft transition">Bộ lọc</a></li>
+          <li><a href="#truong-dai-hoc" class="text-paper/85 hover:text-cyan-soft transition">Trường đại học & điểm tuyển sinh</a></li>
+          <li><a href="#so-sanh" class="text-paper/85 hover:text-cyan-soft transition">So sánh chương trình</a></li>
+          <li><a href="#tu-van" class="text-paper/85 hover:text-cyan-soft transition font-medium text-cyan-soft">Tư vấn AI & Nguyện vọng</a></li>
+          <li><a href="#ho-so" class="text-paper/85 hover:text-cyan-soft transition">Hồ sơ học sinh</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 4: Hỗ trợ -->
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-[0.14em] text-cyan-soft">Hỗ trợ & Quản trị</p>
+        <ul class="mt-3 space-y-2 text-sm">
+          <li><a href="#dang-nhap" class="text-paper/85 hover:text-cyan-soft transition">Đăng nhập</a></li>
+          <li><a href="#dang-ky" class="text-paper/85 hover:text-cyan-soft transition">Đăng ký tài khoản</a></li>
+          <li><a href="#gioi-thieu" class="text-paper/85 hover:text-cyan-soft transition">Phương pháp</a></li>
+          <li><a href="#gioi-thieu#chinh-sach" class="text-paper/85 hover:text-cyan-soft transition">Chính sách dữ liệu</a></li>
+          <li><a href="#gioi-thieu#lien-he" class="text-paper/85 hover:text-cyan-soft transition">Liên hệ</a></li>
+          <li><a href="#quan-tri" class="text-paper/85 hover:text-cyan-soft transition">Giám sát hệ thống</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Bottom copyright bar -->
+    <div class="border-t border-white/10">
+      <div class="mx-auto max-w-6xl px-4 py-4 text-xs text-paper/60 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-2">
+        <p>© 2026 For Your Future. Nền tảng trắc nghiệm tính cách & hướng nghiệp.</p>
+        <p class="text-[11px] text-cyan-soft/80">Kết quả mang tính tham khảo giáo dục, không thay thế cho tư vấn tâm lý chuyên sâu.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- DETAIL MODAL FOR PERSONALITY TYPE / CAREER -->
+  <div id="detail-modal" role="dialog" aria-modal="true" aria-label="Thông tin chi tiết" class="fixed inset-0 z-50 hidden bg-navy-deep/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div id="detail-modal-card" class="bg-card border border-line rounded-[28px] max-w-4xl lg:max-w-5xl w-full p-6 sm:p-8 shadow-border-hover relative max-h-[92vh] overflow-y-auto">
+      <button id="btn-close-detail-modal" class="absolute top-5 right-5 text-muted hover:text-navy p-1.5 rounded-lg hover:bg-ice transition" aria-label="Đóng cửa sổ">
+        <i data-lucide="x" class="size-5"></i>
+      </button>
+      <div id="detail-modal-body"></div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col space-y-2 pointer-events-none"></div>
+
+  <!-- FLOATING AI CONSULTATION BEACON BUTTON -->
+  <a href="#tu-van" id="btn-floating-ai" aria-label="Mở tư vấn hướng nghiệp AI" class="fixed bottom-6 right-6 z-40 flex items-center gap-2.5 px-4 py-3 bg-gradient-to-r from-navy via-navy-deep to-azure text-white rounded-full shadow-2xl hover:scale-105 hover:shadow-cyan/20 transition-all duration-300 border border-white/20 cta-glow no-underline group" title="Hỏi Trợ lý AI Tuyển sinh">
+    <span class="relative flex size-3">
+      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-soft opacity-75"></span>
+      <span class="relative inline-flex rounded-full size-3 bg-cyan"></span>
+    </span>
+    <i data-lucide="sparkles" class="size-4 text-cyan-soft group-hover:rotate-12 transition-transform"></i>
+    <span class="ai-beacon-label font-medium text-xs sm:text-sm tracking-tight text-paper">Tư vấn AI & Nguyện vọng</span><span class="ai-beacon-short" aria-hidden="true">AI</span>
+  </a>
+
+  <!-- MAIN SCRIPT CONTROLLER -->
+  <script src="/app.js?v=3.11.0"></script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+# Environment variables and secrets
+.env
+.env.*
+*.env
+!.env.example
+
+# Dependencies & environments
+node_modules/
+.venv/
+venv/
+env/
+
+# Python cache & build artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+
+# Agent lock files (keep .gitkeep)
+.agent-lock/*.lock
+
+# Logs and runtime artifacts
+*.log
+*.pid
+
+# OS generated files
+.DS_Store
+Thumbs.db

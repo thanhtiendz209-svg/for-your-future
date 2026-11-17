@@ -1,0 +1,1228 @@
+[
+  {
+    "sheet": "Rà soát THPT",
+    "rows": [
+      [
+        "RÀ SOÁT ĐIỂM THPT RIÊNG · 2026",
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      [
+        "Phân loại theo dữ liệu của từng ngành. Các dòng có nguồn tuyển sinh được đối chiếu trước khi bỏ cột.",
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      [
+        "Mã sheet",
+        "Trường",
+        "Dòng thiếu",
+        "Tổng dòng",
+        "Phân loại",
+        "Xử lý cột THPT",
+        "Nguồn đối chiếu 2026"
+      ],
+      [
+        "FTU",
+        "Đại học Ngoại thương (FTU)",
+        2,
+        25,
+        "Có điểm xét kết hợp",
+        "Giữ: có ngành có điểm riêng",
+        null
+      ],
+      [
+        "HUCE",
+        "Đại học Xây dựng Hà Nội (HUCE)",
+        3,
+        44,
+        "Có điểm xét kết hợp",
+        "Giữ: có ngành có điểm riêng",
+        null
+      ],
+      [
+        "HAU",
+        "Trường Đại học Kiến trúc Hà Nội (HAU)",
+        11,
+        30,
+        "Có xét năng khiếu",
+        "Giữ: có ngành có điểm riêng",
+        null
+      ],
+      [
+        "HaUI",
+        "Trường Đại học Công nghiệp Hà Nội (HaUI)",
+        1,
+        58,
+        "Có điểm xét kết hợp",
+        "Giữ: có ngành có điểm riêng",
+        null
+      ],
+      [
+        "HOU",
+        "Trường Đại học Mở Hà Nội (HOU)",
+        4,
+        22,
+        "Có xét năng khiếu",
+        "Giữ: có ngành có điểm riêng",
+        null
+      ],
+      [
+        "Thăng Long",
+        "Trường Đại học Thăng Long",
+        2,
+        23,
+        "Có xét năng khiếu",
+        "Giữ: có ngành có điểm riêng",
+        null
+      ],
+      [
+        "TNUE",
+        "Trường Đại học Sư phạm - ĐH Thái Nguyên (TNUE)",
+        3,
+        21,
+        "Có xét năng khiếu",
+        "Giữ: có ngành có điểm riêng",
+        null
+      ],
+      [
+        "ĐH Vinh",
+        "Trường Đại học Vinh",
+        2,
+        67,
+        "Có xét năng khiếu",
+        "Giữ: có ngành có điểm riêng",
+        null
+      ],
+      [
+        "DUE",
+        "Trường Đại học Kinh tế - Đại học Đà Nẵng (DUE)",
+        14,
+        33,
+        "Có điểm xét kết hợp",
+        "Giữ: có ngành có điểm riêng",
+        null
+      ],
+      [
+        "ĐHSP Đà Nẵng",
+        "Trường Đại học Sư phạm - Đại học Đà Nẵng",
+        39,
+        39,
+        "Xét tuyển kết hợp/tổng hợp",
+        "Đã bỏ cột khỏi bảng ngành",
+        "https://ts.udn.vn/DHCD/Chinhquy/diemchuan/19567"
+      ],
+      [
+        "UFL ĐH Đà Nẵng",
+        "Trường Đại học Ngoại ngữ - Đại học Đà Nẵng",
+        24,
+        24,
+        "THPT + học bạ",
+        "Đã bỏ cột khỏi bảng ngành",
+        "https://ts.udn.vn/DHCD/Chinhquy/diemchuan/19567"
+      ],
+      [
+        "DTU",
+        "Trường Đại học Duy Tân (DTU)",
+        3,
+        66,
+        "Có xét năng khiếu",
+        "Giữ: có ngành có điểm riêng",
+        null
+      ],
+      [
+        "HUSC",
+        "Trường Đại học Khoa học - Đại học Huế",
+        1,
+        28,
+        "Có xét năng khiếu",
+        "Giữ: có ngành có điểm riêng",
+        null
+      ],
+      [
+        "ĐHSP Huế",
+        "Trường Đại học Sư phạm - Đại học Huế",
+        2,
+        22,
+        "Có xét năng khiếu",
+        "Giữ: có ngành có điểm riêng",
+        null
+      ],
+      [
+        "Nghệ thuật Huế",
+        "Trường Đại học Nghệ thuật - Đại học Huế",
+        6,
+        6,
+        "Xét tuyển có môn năng khiếu",
+        "Đã bỏ cột khỏi bảng ngành",
+        "https://www.nghethuathue.edu.vn/tuyen-sinh-dai-hoc/"
+      ],
+      [
+        "NTU",
+        "Trường Đại học Nha Trang",
+        1,
+        51,
+        "Có điểm ĐGNL / thi riêng",
+        "Giữ: có ngành có điểm riêng",
+        null
+      ],
+      [
+        "QNU",
+        "Trường Đại học Quy Nhơn",
+        2,
+        56,
+        "Có xét năng khiếu",
+        "Giữ: có ngành có điểm riêng",
+        null
+      ],
+      [
+        "ĐH Tây Nguyên",
+        "Trường Đại học Tây Nguyên",
+        2,
+        37,
+        "Có xét năng khiếu",
+        "Giữ: có ngành có điểm riêng",
+        null
+      ],
+      [
+        "HCMUT",
+        "Trường Đại học Bách khoa - ĐHQG TP.HCM (HCMUT)",
+        32,
+        32,
+        "Xét tuyển kết hợp/tổng hợp",
+        "Đã bỏ cột khỏi bảng ngành",
+        "https://tuyensinh.hcmut.edu.vn/"
+      ],
+      [
+        "HCMUS",
+        "Trường Đại học Khoa học Tự nhiên - ĐHQG TP.HCM (HCMUS)",
+        22,
+        22,
+        "Xét tuyển kết hợp/tổng hợp",
+        "Đã bỏ cột khỏi bảng ngành",
+        "https://tuyensinh.hcmus.edu.vn/2026-thong-tin-tuyen-sinh/"
+      ],
+      [
+        "UIT",
+        "Trường Đại học Công nghệ Thông tin - ĐHQG TP.HCM (UIT)",
+        12,
+        12,
+        "Xét tuyển kết hợp/tổng hợp",
+        "Đã bỏ cột khỏi bảng ngành",
+        "https://tuyensinh.uit.edu.vn/2026-thong-bao-nguong-dam-bao-chat-luong-dau-vao-theo-phuong-thuc-xet-tuyen-tong-hop-nam-2026"
+      ],
+      [
+        "UEL",
+        "Trường Đại học Kinh tế - Luật - ĐHQG TP.HCM (UEL)",
+        29,
+        29,
+        "Xét tuyển kết hợp/tổng hợp",
+        "Đã bỏ cột khỏi bảng ngành",
+        "https://tuyensinh.uel.edu.vn/faq/?faq_category=phuong-thuc-tuyen-sinh"
+      ],
+      [
+        "IU (HCMIU)",
+        "Trường Đại học Quốc tế - ĐHQG TP.HCM (IU)",
+        24,
+        24,
+        "Xét tổng hợp; THPT là thành phần",
+        "Đã bỏ cột khỏi bảng ngành",
+        "https://xaydungchinhsach.chinhphu.vn/diem-chuan-truong-dai-hoc-quoc-te-2026-119260811003816515.htm"
+      ],
+      [
+        "USSH TP.HCM",
+        "Trường Đại học Khoa học Xã hội và Nhân văn - ĐHQG TP.HCM",
+        42,
+        42,
+        "Xét tuyển kết hợp/tổng hợp",
+        "Đã bỏ cột khỏi bảng ngành",
+        "https://hcmussh.edu.vn/post/44275"
+      ],
+      [
+        "UEH",
+        "Đại học Kinh tế TP.HCM (UEH)",
+        62,
+        62,
+        "Xét tuyển tích hợp",
+        "Đã bỏ cột khỏi bảng ngành",
+        "https://tuyensinhdaihoc.ueh.edu.vn/?p=28919"
+      ],
+      [
+        "TDTU",
+        "Trường Đại học Tôn Đức Thắng (TDTU)",
+        69,
+        69,
+        "Tổng hợp THPT + quá trình học + năng lực khác; có V-ACT riêng và xét thẳng",
+        "Đã bỏ cột khỏi bảng ngành",
+        "https://admission.tdtu.edu.vn/dai-hoc/tuyen-sinh/phuong-thuc-tuyen-sinh-2026"
+      ],
+      [
+        "HCMUE",
+        "Trường Đại học Sư phạm TP.HCM (HCMUE)",
+        3,
+        47,
+        "Có xét năng khiếu",
+        "Giữ: có ngành có điểm riêng",
+        null
+      ],
+      [
+        "UTH",
+        "Trường Đại học Giao thông vận tải TP.HCM (UTH)",
+        38,
+        38,
+        "Xét tuyển kết hợp/tổng hợp",
+        "Đã bỏ cột khỏi bảng ngành",
+        "https://giaothongvantaitphcm.edu.vn/tuyen-sinh-chinh-quy"
+      ],
+      [
+        "UAH",
+        "Trường Đại học Kiến trúc TP.HCM (UAH)",
+        13,
+        18,
+        "Có xét năng khiếu",
+        "Giữ: có ngành có điểm riêng",
+        null
+      ],
+      [
+        "Mỹ thuật TP.HCM",
+        "Trường Đại học Mỹ thuật TP.HCM",
+        6,
+        6,
+        "Xét năng khiếu",
+        "Đã bỏ cột khỏi bảng ngành",
+        "https://www.hcmufa.edu.vn/news_detail/id/620"
+      ],
+      [
+        "Văn hóa TP.HCM",
+        "Trường Đại học Văn hóa TP.HCM",
+        1,
+        15,
+        "Có xét năng khiếu",
+        "Giữ: có ngành có điểm riêng",
+        null
+      ],
+      [
+        "Văn Lang",
+        "Trường Đại học Văn Lang",
+        10,
+        64,
+        "Có xét năng khiếu",
+        "Giữ: có ngành có điểm riêng",
+        null
+      ],
+      [
+        "SQ Chính trị",
+        "Trường Đại học Chính trị (Trường Sĩ quan Chính trị)",
+        2,
+        10,
+        "Có điểm xét kết hợp",
+        "Giữ: có ngành có điểm riêng",
+        null
+      ],
+      [
+        "HV An ninh ND",
+        "Học viện An ninh nhân dân",
+        9,
+        9,
+        "THPT kết hợp bài thi Bộ Công an (hệ CAND)",
+        "Đã bỏ cột khỏi bảng ngành",
+        "https://bocongan.gov.vn/bai-viet/thong-tin-tuyen-sinh-cac-hoc-vien-truong-cong-an-nhan-dan-nam-2026-1773897621"
+      ],
+      [
+        "HV Cảnh sát ND",
+        "Học viện Cảnh sát nhân dân",
+        2,
+        2,
+        "THPT kết hợp bài thi Bộ Công an (hệ CAND)",
+        "Đã bỏ cột khỏi bảng ngành",
+        "https://bocongan.gov.vn/bai-viet/thong-tin-tuyen-sinh-cac-hoc-vien-truong-cong-an-nhan-dan-nam-2026-1773897621"
+      ],
+      [
+        "HV Chính trị CAND",
+        "Học viện Chính trị Công an nhân dân",
+        4,
+        4,
+        "THPT kết hợp bài thi Bộ Công an (hệ CAND)",
+        "Đã bỏ cột khỏi bảng ngành",
+        "https://bocongan.gov.vn/bai-viet/thong-tin-tuyen-sinh-cac-hoc-vien-truong-cong-an-nhan-dan-nam-2026-1773897621"
+      ],
+      [
+        "HV KT-CN An ninh",
+        "Học viện Kỹ thuật và Công nghệ An ninh",
+        10,
+        10,
+        "THPT kết hợp bài thi Bộ Công an (hệ CAND)",
+        "Đã bỏ cột khỏi bảng ngành",
+        "https://bocongan.gov.vn/bai-viet/thong-tin-tuyen-sinh-cac-hoc-vien-truong-cong-an-nhan-dan-nam-2026-1773897621"
+      ],
+      [
+        "ĐH An ninh ND",
+        "Trường Đại học An ninh nhân dân",
+        2,
+        2,
+        "THPT kết hợp bài thi Bộ Công an (hệ CAND)",
+        "Đã bỏ cột khỏi bảng ngành",
+        "https://bocongan.gov.vn/bai-viet/thong-tin-tuyen-sinh-cac-hoc-vien-truong-cong-an-nhan-dan-nam-2026-1773897621"
+      ],
+      [
+        "ĐH Cảnh sát ND",
+        "Trường Đại học Cảnh sát nhân dân",
+        2,
+        2,
+        "THPT kết hợp bài thi Bộ Công an (hệ CAND)",
+        "Đã bỏ cột khỏi bảng ngành",
+        "https://bocongan.gov.vn/bai-viet/thong-tin-tuyen-sinh-cac-hoc-vien-truong-cong-an-nhan-dan-nam-2026-1773897621"
+      ],
+      [
+        "ĐH PCCC",
+        "Trường Đại học Phòng cháy chữa cháy",
+        4,
+        4,
+        "THPT kết hợp bài thi Bộ Công an (hệ CAND)",
+        "Đã bỏ cột khỏi bảng ngành",
+        "https://bocongan.gov.vn/bai-viet/thong-tin-tuyen-sinh-cac-hoc-vien-truong-cong-an-nhan-dan-nam-2026-1773897621"
+      ],
+      [
+        "HV Quốc tế (AIS)",
+        "Học viện Quốc tế (AIS)",
+        4,
+        4,
+        "THPT kết hợp bài thi Bộ Công an (hệ CAND)",
+        "Đã bỏ cột khỏi bảng ngành",
+        "https://bocongan.gov.vn/bai-viet/thong-tin-tuyen-sinh-cac-hoc-vien-truong-cong-an-nhan-dan-nam-2026-1773897621"
+      ],
+      [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    ]
+  },
+  {
+    "sheet": "Chi tiết ngành thiếu THPT",
+    "rows": [
+      [
+        "RÀ SOÁT 87 DÒNG THIẾU ĐIỂM THPT RIÊNG · 20 TRƯỜNG",
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      [
+        "Dòng Excel chỉ vị trí trong sheet trường. Nếu ô nguồn trống, ghi chú dựa trên bảng điểm đối chiếu 2026.",
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      [
+        "Trường",
+        "Dòng Excel",
+        "Mã xét tuyển",
+        "Ngành / chương trình",
+        "Kết quả rà soát",
+        "Nguồn đối chiếu bổ sung"
+      ],
+      [
+        "FTU",
+        27,
+        "NTHQT09",
+        "CT TT Quản trị kinh doanh",
+        "Có điểm kết hợp; chưa thấy điểm THPT riêng; ngoài hệ chuẩn",
+        null
+      ],
+      [
+        "FTU",
+        30,
+        "NTHTC14",
+        "CT TT Tài chính - Ngân hàng",
+        "Có điểm kết hợp; chưa thấy điểm THPT riêng; ngoài hệ chuẩn",
+        null
+      ],
+      [
+        "HUCE",
+        60,
+        "XDA42",
+        "Kỹ thuật xây dựng",
+        "Chương trình riêng; bảng tổng hợp có THPT, cần đối chiếu đúng mã và thang",
+        "https://grade.vn/diem-chuan/truong-dai-hoc-xay-dung-ha-noi"
+      ],
+      [
+        "HUCE",
+        61,
+        "XDA43",
+        "Kỹ thuật xây dựng",
+        "Chương trình riêng; bảng tổng hợp có THPT, cần đối chiếu đúng mã và thang",
+        "https://grade.vn/diem-chuan/truong-dai-hoc-xay-dung-ha-noi"
+      ],
+      [
+        "HUCE",
+        62,
+        "XDA44",
+        "Khoa học Máy tính",
+        "Chương trình riêng; bảng tổng hợp có THPT, cần đối chiếu đúng mã và thang",
+        "https://grade.vn/diem-chuan/truong-dai-hoc-xay-dung-ha-noi"
+      ],
+      [
+        "HAU",
+        19,
+        "7580101",
+        "Kiến trúc",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "HAU",
+        20,
+        "7580101_1",
+        "Chương trình tiên tiến ngành Kiến trúc",
+        "Có phương thức năng khiếu; ngoài hệ chuẩn",
+        null
+      ],
+      [
+        "HAU",
+        21,
+        "7580102",
+        "Kiến trúc cảnh quan",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "HAU",
+        22,
+        "7580105",
+        "Quy hoạch vùng và đô thị",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "HAU",
+        23,
+        "7210105",
+        "Điêu khắc",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "HAU",
+        24,
+        "7210105_1",
+        "Mỹ thuật đô thị (Chuyên ngành thuộc ngành Điêu khắc)",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "HAU",
+        27,
+        "7210403",
+        "Thiết kế đồ họa",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "HAU",
+        28,
+        "7210403_1",
+        "Nghệ thuật số (Chuyên ngành thuộc Thiết kế đồ họa)",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "HAU",
+        29,
+        "7210404",
+        "Thiết kế thời trang",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "HAU",
+        30,
+        "7580108",
+        "Thiết kế nội thất",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "HAU",
+        48,
+        "7580105_1",
+        "Thiết kế đô thị (Chuyên ngành thuộc ngành Quy hoạch vùng và đô thị)",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "HaUI",
+        76,
+        "75201162",
+        "Kỹ thuật ô tô và năng lượng mới",
+        "Có đề án tuyển mã 75201162; cần kiểm tra bảng điểm trúng tuyển theo phương thức",
+        "https://www.haui.edu.vn/vn/thong-bao/tuyen-sinh-dai-hoc-chinh-quy-nam-2026/67648"
+      ],
+      [
+        "HOU",
+        19,
+        "7210403",
+        "Thiết kế đồ họa",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "HOU",
+        20,
+        "7210404",
+        "Thiết kế thời trang",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "HOU",
+        37,
+        "7580101",
+        "Kiến trúc",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "HOU",
+        38,
+        "7580108",
+        "Thiết kế nội thất",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "Thăng Long",
+        19,
+        "7210205",
+        "Thanh nhạc",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "Thăng Long",
+        20,
+        "7210403",
+        "Thiết kế đồ hoạ",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "TNUE",
+        24,
+        "7140206",
+        "Giáo dục Thể chất",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "TNUE",
+        38,
+        "7140207",
+        "Huấn luyện thể thao",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "TNUE",
+        39,
+        "7140221",
+        "Sư phạm Âm nhạc",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "ĐH Vinh",
+        34,
+        "7140201",
+        "Giáo dục Mầm non",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "ĐH Vinh",
+        85,
+        "7140206",
+        "Giáo dục Thể chất",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "DUE",
+        21,
+        "7340115GB",
+        "Marketing số (GB - Toàn phần tiếng Anh)",
+        "Nhóm GB/PR/EL; đối chiếu điểm học bạ kết hợp tiếng Anh",
+        "https://ts.udn.vn/DHCD/Chinhquy/diemchuan/19567"
+      ],
+      [
+        "DUE",
+        22,
+        "7340115PR",
+        "Marketing (PR - Bán phần tiếng Anh): - Chuyên ngành Truyền thông Marketing; - Chuyên ngành Quản trị Marketing.",
+        "Nhóm GB/PR/EL; đối chiếu điểm học bạ kết hợp tiếng Anh",
+        "https://ts.udn.vn/DHCD/Chinhquy/diemchuan/19567"
+      ],
+      [
+        "DUE",
+        24,
+        "7340122GB",
+        "Thương mại điện tử (GB - Toàn phần tiếng Anh)",
+        "Nhóm GB/PR/EL; đối chiếu điểm học bạ kết hợp tiếng Anh",
+        "https://ts.udn.vn/DHCD/Chinhquy/diemchuan/19567"
+      ],
+      [
+        "DUE",
+        26,
+        "7340101PR",
+        "Quản trị kinh doanh (PR - Bán phần tiếng Anh): - Chuyên ngành Quản trị chuỗi cung ứng và logistics; - Chuyên ngành Quản trị kinh doanh tổng quát; - Chuyên ngành Kinh doanh số.",
+        "Nhóm GB/PR/EL; đối chiếu điểm học bạ kết hợp tiếng Anh",
+        "https://ts.udn.vn/DHCD/Chinhquy/diemchuan/19567"
+      ],
+      [
+        "DUE",
+        27,
+        "7810103PR",
+        "Quản trị kinh doanh du lịch (PR - Bán phần tiếng Anh)",
+        "Nhóm GB/PR/EL; đối chiếu điểm học bạ kết hợp tiếng Anh",
+        "https://ts.udn.vn/DHCD/Chinhquy/diemchuan/19567"
+      ],
+      [
+        "DUE",
+        31,
+        "7340201PR",
+        "Tài chính - Ngân hàng (PR - Bán phần tiếng Anh): - Chuyên ngành Tài chính quốc tế; - Chuyên ngành Tài chính doanh nghiệp; - Chuyên ngành Ngân hàng.",
+        "Nhóm GB/PR/EL; đối chiếu điểm học bạ kết hợp tiếng Anh",
+        "https://ts.udn.vn/DHCD/Chinhquy/diemchuan/19567"
+      ],
+      [
+        "DUE",
+        36,
+        "7310101PR",
+        "Kinh tế quốc tế (PR - Bán phần tiếng Anh)",
+        "Nhóm GB/PR/EL; đối chiếu điểm học bạ kết hợp tiếng Anh",
+        "https://ts.udn.vn/DHCD/Chinhquy/diemchuan/19567"
+      ],
+      [
+        "DUE",
+        39,
+        "7810201PR",
+        "Quản trị khách sạn (PR - Bán phần tiếng Anh)",
+        "Nhóm GB/PR/EL; đối chiếu điểm học bạ kết hợp tiếng Anh",
+        "https://ts.udn.vn/DHCD/Chinhquy/diemchuan/19567"
+      ],
+      [
+        "DUE",
+        41,
+        "7340205PR",
+        "Công nghệ tài chính (PR - Bán phần tiếng Anh)",
+        "Nhóm GB/PR/EL; đối chiếu điểm học bạ kết hợp tiếng Anh",
+        "https://ts.udn.vn/DHCD/Chinhquy/diemchuan/19567"
+      ],
+      [
+        "DUE",
+        44,
+        "7380107PR",
+        "Luật thương mại quốc tế (PR - Bán phần tiếng Anh)",
+        "Nhóm GB/PR/EL; đối chiếu điểm học bạ kết hợp tiếng Anh",
+        "https://ts.udn.vn/DHCD/Chinhquy/diemchuan/19567"
+      ],
+      [
+        "DUE",
+        48,
+        "7340120EL",
+        "Cử nhân tài năng Ngoại thương (DUE-Elite, Toàn phần tiếng Anh)",
+        "Nhóm GB/PR/EL; đối chiếu điểm học bạ kết hợp tiếng Anh",
+        "https://ts.udn.vn/DHCD/Chinhquy/diemchuan/19567"
+      ],
+      [
+        "DUE",
+        49,
+        "7340120GB",
+        "Ngoại thương (GB - Toàn phần tiếng Anh)",
+        "Nhóm GB/PR/EL; đối chiếu điểm học bạ kết hợp tiếng Anh",
+        "https://ts.udn.vn/DHCD/Chinhquy/diemchuan/19567"
+      ],
+      [
+        "DUE",
+        50,
+        "7340404PR",
+        "Quản trị nguồn nhân lực (PR - Bán phần tiếng Anh)",
+        "Nhóm GB/PR/EL; đối chiếu điểm học bạ kết hợp tiếng Anh",
+        "https://ts.udn.vn/DHCD/Chinhquy/diemchuan/19567"
+      ],
+      [
+        "DUE",
+        51,
+        "7340405PR",
+        "Trí tuệ nhân tạo trong kinh doanh (PR - Bán phần tiếng Anh)",
+        "Nhóm GB/PR/EL; đối chiếu điểm học bạ kết hợp tiếng Anh",
+        "https://ts.udn.vn/DHCD/Chinhquy/diemchuan/19567"
+      ],
+      [
+        "DTU",
+        82,
+        "7210205",
+        "Thanh nhạc",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "DTU",
+        83,
+        "7580101_2",
+        "Kiến trúc",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "DTU",
+        84,
+        "7580103",
+        "Kiến trúc Nội thất",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "HUSC",
+        26,
+        "7580101",
+        "Kiến trúc",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "ĐHSP Huế",
+        19,
+        "7140201",
+        "Giáo dục mầm non",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "ĐHSP Huế",
+        40,
+        "7140221",
+        "Sư phạm Âm nhạc",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "NTU",
+        27,
+        "7420201",
+        "Công nghệ sinh học",
+        "Có điểm theo tổ hợp mã riêng; kiểm tra công thức trước khi nhập cột THPT",
+        "https://tuyensinh.ntu.edu.vn/thong-bao/diem-chuan-trung-tuyen-2026"
+      ],
+      [
+        "QNU",
+        73,
+        "7140201",
+        "Giáo dục Mầm non",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "QNU",
+        74,
+        "7140206",
+        "Giáo dục Thể chất",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "ĐH Tây Nguyên",
+        22,
+        "7140201",
+        "Giáo dục Mầm non",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "ĐH Tây Nguyên",
+        55,
+        "7140206",
+        "Giáo dục Thể chất",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "HCMUE",
+        19,
+        "7140201",
+        "Giáo dục Mầm non",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "HCMUE",
+        24,
+        "7140206",
+        "Giáo dục Thể chất",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "HCMUE",
+        25,
+        "7140208",
+        "Giáo dục Quốc phòng - An ninh",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "UAH",
+        19,
+        "7210110",
+        "Mỹ thuật đô thị",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "UAH",
+        20,
+        "7210402",
+        "Thiết kế công nghiệp",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "UAH",
+        21,
+        "7210403",
+        "Thiết kế đồ họa",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "UAH",
+        22,
+        "7210404",
+        "Thiết kế thời trang",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "UAH",
+        23,
+        "7580101",
+        "Kiến trúc",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "UAH",
+        24,
+        "7580102",
+        "Kiến trúc cảnh quan",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "UAH",
+        25,
+        "7580105",
+        "Quy hoạch vùng và đô thị",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "UAH",
+        31,
+        "7210403QT",
+        "Thiết kế đồ họa",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "UAH",
+        32,
+        "7580101CT",
+        "Kiến trúc (CS: Cần Thơ)",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "UAH",
+        33,
+        "7580101DL",
+        "Kiến trúc (CS: Đà Lạt)",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "UAH",
+        34,
+        "7580108",
+        "Thiết kế nội thất",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "UAH",
+        35,
+        "7580108QT",
+        "Thiết kế nội thất (Chương trình Định hướng Quốc tế)",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "UAH",
+        36,
+        "7580108QT",
+        "Thiết kế nội thất",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "Văn hóa TP.HCM",
+        26,
+        "7229042C",
+        "Quản lý văn hóa, chuyên ngành Tổ chức, dàn dựng chương trình văn hóa nghệ thuật",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "Văn Lang",
+        19,
+        "7210205",
+        "Thanh nhạc",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "Văn Lang",
+        20,
+        "7210403",
+        "Thiết kế Đồ họa",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "Văn Lang",
+        21,
+        "7210404",
+        "Thiết kế thời trang",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "Văn Lang",
+        76,
+        "7210208",
+        "Piano",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "Văn Lang",
+        77,
+        "7210234",
+        "Diễn viên kịch, điện ảnh - truyền hình",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "Văn Lang",
+        78,
+        "7210235",
+        "Đạo diễn điện ảnh, truyền hình",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "Văn Lang",
+        79,
+        "7210402",
+        "Thiết kế công nghiệp",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "Văn Lang",
+        80,
+        "7210409",
+        "Thiết kế Mỹ thuật số",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "Văn Lang",
+        81,
+        "7580101",
+        "Kiến trúc",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "Văn Lang",
+        82,
+        "7580108",
+        "Thiết kế nội thất",
+        "Có phương thức năng khiếu",
+        null
+      ],
+      [
+        "HV Biên phòng",
+        34,
+        "7860214_B",
+        "Biên phòng (Thí sinh miền Bắc)",
+        "Có điểm kết hợp; chưa thấy điểm THPT riêng",
+        null
+      ],
+      [
+        "HV Biên phòng",
+        35,
+        "7860214_N_4",
+        "Biên phòng (Quân khu 4)",
+        "Có điểm kết hợp; chưa thấy điểm THPT riêng",
+        null
+      ],
+      [
+        "HV Biên phòng",
+        36,
+        "7860214_N_5",
+        "Biên phòng (Quân khu 5)",
+        "Có điểm kết hợp; chưa thấy điểm THPT riêng",
+        null
+      ],
+      [
+        "HV Biên phòng",
+        37,
+        "7860214_N_7",
+        "Biên phòng (Quân khu 7)",
+        "Có điểm kết hợp; chưa thấy điểm THPT riêng",
+        null
+      ],
+      [
+        "HV Biên phòng",
+        38,
+        "7860214_N_9",
+        "Biên phòng (Quân khu 9)",
+        "Có điểm kết hợp; chưa thấy điểm THPT riêng",
+        null
+      ],
+      [
+        "SQ Chính trị",
+        19,
+        "7310202_B",
+        "Xây dựng Đảng và Chính quyền Nhà nước (miền Bắc)",
+        "Có điểm kết hợp; chưa thấy điểm THPT riêng",
+        null
+      ],
+      [
+        "SQ Chính trị",
+        20,
+        "7310202_N",
+        "Xây dựng Đảng và Chính quyền Nhà nước (miền Nam)",
+        "Có điểm kết hợp; chưa thấy điểm THPT riêng",
+        null
+      ],
+      [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    ]
+  }
+]

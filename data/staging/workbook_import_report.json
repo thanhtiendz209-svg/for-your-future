@@ -1,0 +1,29 @@
+{
+  "revision": "9a8f24126a17101d3220e22c1a224101ec4035cdd92902b8530b805e6cc1802b",
+  "schools": 126,
+  "programs": 3478,
+  "admission_cells": 11428,
+  "schools_without_thpt": [
+    "ĐHSP Đà Nẵng",
+    "UFL ĐH Đà Nẵng",
+    "Nghệ thuật Huế",
+    "HCMUT",
+    "HCMUS",
+    "UIT",
+    "UEL",
+    "IU (HCMIU)",
+    "USSH TP.HCM",
+    "UEH",
+    "TDTU",
+    "UTH",
+    "Mỹ thuật TP.HCM",
+    "HV An ninh ND",
+    "HV Cảnh sát ND",
+    "HV Chính trị CAND",
+    "HV KT-CN An ninh",
+    "ĐH An ninh ND",
+    "ĐH Cảnh sát ND",
+    "ĐH PCCC",
+    "HV Quốc tế (AIS)"
+  ]
+}

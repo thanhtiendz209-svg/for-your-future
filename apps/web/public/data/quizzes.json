@@ -1,0 +1,46 @@
+[
+  {
+    "id": "riasec",
+    "kind": "riasec",
+    "name": "RIASEC",
+    "tagline": "Sở thích nghề theo 6 nhóm Holland",
+    "description": "Khám phá bạn bị cuốn bởi kiểu việc nào: thao tác, nghiên cứu, sáng tạo, hỗ trợ người, dẫn dắt hay vận hành hệ thống.",
+    "duration": "10–15 phút",
+    "questionCount": 60,
+    "icon": "compass",
+    "image": "/illustrations/quiz-riasec-animated.svg"
+  },
+  {
+    "id": "cognitive",
+    "kind": "cognitive",
+    "name": "Năng lực nhận thức",
+    "tagline": "3 miền tư duy: Ngôn ngữ, Định lượng & Quy luật",
+    "description": "Bộ 30 câu hỏi chuẩn hóa đánh giá 3 năng lực cốt lõi: Verbal (ngôn ngữ), Numerical (định lượng) và Figural (hình ảnh/quy luật).",
+    "duration": "15 phút",
+    "questionCount": 30,
+    "icon": "brain",
+    "image": "/illustrations/quiz-cognitive-animated.svg"
+  },
+  {
+    "id": "bigfive",
+    "kind": "bigfive",
+    "name": "Big Five",
+    "tagline": "Năm chiều tính cách cốt lõi",
+    "description": "Một bức tranh cân bằng về mức độ cởi mở, tận tâm, hướng ngoại, hòa hợp và ổn định cảm xúc — để hiểu cách bạn vận hành hằng ngày.",
+    "duration": "7–9 phút",
+    "questionCount": 25,
+    "icon": "layers",
+    "image": "/illustrations/quiz-bigfive-animated.svg"
+  },
+  {
+    "id": "mbti",
+    "kind": "mbti",
+    "name": "MBTI",
+    "tagline": "16 nhóm tính cách",
+    "description": "Tìm nhóm gần với cách bạn nạp năng lượng, tiếp nhận thông tin, ra quyết định và sắp xếp đời sống. Kết quả mang tính tham khảo.",
+    "duration": "10–12 phút",
+    "questionCount": 40,
+    "icon": "spark",
+    "image": "/illustrations/quiz-mbti-animated.svg"
+  }
+]

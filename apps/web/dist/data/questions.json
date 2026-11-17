@@ -1,0 +1,5111 @@
+{
+  "mbti": [
+    {
+      "id": "m1",
+      "text": "Cuối tuần, cách nào giúp bạn ‘đầy pin’ hơn?",
+      "hint": "Không có đáp án đúng. Chọn phía gần bạn hơn.",
+      "options": [
+        {
+          "label": "Gặp bạn bè, ra ngoài, có chuyện để nói",
+          "scores": {
+            "E": 1
+          }
+        },
+        {
+          "label": "Ở nhà, yên, làm việc riêng hoặc nghỉ thật sự",
+          "scores": {
+            "I": 1
+          }
+        }
+      ],
+      "dimension": "E/I"
+    },
+    {
+      "id": "m2",
+      "text": "Khi bước vào một nhóm người mới, bạn thường…",
+      "options": [
+        {
+          "label": "Bắt chuyện, giới thiệu, làm quen khá nhanh",
+          "scores": {
+            "E": 1
+          }
+        },
+        {
+          "label": "Quan sát trước, nói khi đã có chỗ đứng vừa phải",
+          "scores": {
+            "I": 1
+          }
+        }
+      ],
+      "dimension": "E/I"
+    },
+    {
+      "id": "m3",
+      "text": "Sau một ngày gặp nhiều người, bạn thấy…",
+      "options": [
+        {
+          "label": "Hưng phấn, muốn kể lại hoặc còn muốn gặp nữa",
+          "scores": {
+            "E": 1
+          }
+        },
+        {
+          "label": "Cần im lặng một lúc mới thấy người trở lại",
+          "scores": {
+            "I": 1
+          }
+        }
+      ],
+      "dimension": "E/I"
+    },
+    {
+      "id": "m4",
+      "text": "Khi học hoặc làm việc, bạn thích…",
+      "options": [
+        {
+          "label": "Thảo luận, nghĩ thành tiếng, có người để cọ xát",
+          "scores": {
+            "E": 1
+          }
+        },
+        {
+          "label": "Tập trung một mình rồi mới mang ý ra ngoài",
+          "scores": {
+            "I": 1
+          }
+        }
+      ],
+      "dimension": "E/I"
+    },
+    {
+      "id": "m5",
+      "text": "Trong tin nhắn nhóm, bạn thường…",
+      "options": [
+        {
+          "label": "Hay trả lời, thả ý, giữ cuộc nói không tắt",
+          "scores": {
+            "E": 1
+          }
+        },
+        {
+          "label": "Đọc nhiều, viết khi thật sự có điều muốn nói",
+          "scores": {
+            "I": 1
+          }
+        }
+      ],
+      "dimension": "E/I"
+    },
+    {
+      "id": "m6",
+      "text": "Buổi họp kéo dài làm bạn…",
+      "options": [
+        {
+          "label": "Ổn nếu cuộc họp có tương tác và nhịp",
+          "scores": {
+            "E": 1
+          }
+        },
+        {
+          "label": "Mệt vì phải ‘bật’ liên tục, muốn kết sớm",
+          "scores": {
+            "I": 1
+          }
+        }
+      ],
+      "dimension": "E/I"
+    },
+    {
+      "id": "m7",
+      "text": "Bạn muốn cuối ngày hôm nay thế nào?",
+      "options": [
+        {
+          "label": "Có kế hoạch gặp ai đó, dù ngắn",
+          "scores": {
+            "E": 1
+          }
+        },
+        {
+          "label": "Được ở một mình với việc mình chọn",
+          "scores": {
+            "I": 1
+          }
+        }
+      ],
+      "dimension": "E/I"
+    },
+    {
+      "id": "m8",
+      "text": "Khi nghe một câu chuyện, bạn chú ý hơn đến…",
+      "options": [
+        {
+          "label": "Chi tiết cụ thể: ai, lúc nào, chuyện gì xảy ra",
+          "scores": {
+            "S": 1
+          }
+        },
+        {
+          "label": "Ý nghĩa phía sau, mô típ, khả năng liên quan",
+          "scores": {
+            "N": 1
+          }
+        }
+      ],
+      "dimension": "S/N"
+    },
+    {
+      "id": "m9",
+      "text": "Khi giải thích một ý, bạn hay…",
+      "options": [
+        {
+          "label": "Lấy ví dụ thật, từng bước, sờ được",
+          "scores": {
+            "S": 1
+          }
+        },
+        {
+          "label": "Dùng hình ảnh, ẩn dụ, bức tranh lớn",
+          "scores": {
+            "N": 1
+          }
+        }
+      ],
+      "dimension": "S/N"
+    },
+    {
+      "id": "m10",
+      "text": "Bạn tin tưởng hơn vào…",
+      "options": [
+        {
+          "label": "Kinh nghiệm đã kiểm chứng và sự kiện rõ",
+          "scores": {
+            "S": 1
+          }
+        },
+        {
+          "label": "Trực giác, khả năng và mối liên hệ chưa thấy",
+          "scores": {
+            "N": 1
+          }
+        }
+      ],
+      "dimension": "S/N"
+    },
+    {
+      "id": "m11",
+      "text": "Bạn thích công việc…",
+      "options": [
+        {
+          "label": "Có quy trình, kết quả đo được, ít bất ngờ",
+          "scores": {
+            "S": 1
+          }
+        },
+        {
+          "label": "Có chỗ cho ý mới, thử nghiệm, đổi cách làm",
+          "scores": {
+            "N": 1
+          }
+        }
+      ],
+      "dimension": "S/N"
+    },
+    {
+      "id": "m12",
+      "text": "Khi đọc, bạn bị cuốn bởi…",
+      "options": [
+        {
+          "label": "Thông tin dùng được, hướng dẫn, sự kiện",
+          "scores": {
+            "S": 1
+          }
+        },
+        {
+          "label": "Ý tưởng, tương lai, tầng nghĩa, ‘nếu như’",
+          "scores": {
+            "N": 1
+          }
+        }
+      ],
+      "dimension": "S/N"
+    },
+    {
+      "id": "m13",
+      "text": "Bạn mô tả một ngày đi chơi theo kiểu…",
+      "options": [
+        {
+          "label": "Lịch trình, món ăn, chỗ ngồi, chuyện đã xảy ra",
+          "scores": {
+            "S": 1
+          }
+        },
+        {
+          "label": "Cảm giác tổng thể, điều chợt nghĩ ra, không khí",
+          "scores": {
+            "N": 1
+          }
+        }
+      ],
+      "dimension": "S/N"
+    },
+    {
+      "id": "m14",
+      "text": "Khi học kỹ năng mới, bạn muốn…",
+      "options": [
+        {
+          "label": "Làm theo mẫu đúng rồi tinh chỉnh",
+          "scores": {
+            "S": 1
+          }
+        },
+        {
+          "label": "Hiểu nguyên lý rồi tự improvises",
+          "scores": {
+            "N": 1
+          }
+        }
+      ],
+      "dimension": "S/N"
+    },
+    {
+      "id": "m15",
+      "text": "Khi phải quyết một việc quan trọng, bạn ưu tiên…",
+      "options": [
+        {
+          "label": "Phân tích đúng–sai, hiệu quả, nguyên tắc logic",
+          "scores": {
+            "T": 1
+          }
+        },
+        {
+          "label": "Tác động tới người, giá trị, hòa khí",
+          "scores": {
+            "F": 1
+          }
+        }
+      ],
+      "dimension": "T/F"
+    },
+    {
+      "id": "m16",
+      "text": "Bạn muốn được nhớ đến như người…",
+      "options": [
+        {
+          "label": "Công bằng, sắc sảo, đáng tin về lý lẽ",
+          "scores": {
+            "T": 1
+          }
+        },
+        {
+          "label": "Tử tế, thấu, đứng về phía con người",
+          "scores": {
+            "F": 1
+          }
+        }
+      ],
+      "dimension": "T/F"
+    },
+    {
+      "id": "m17",
+      "text": "Khi bạn bè kể chuyện buồn, bạn thường…",
+      "options": [
+        {
+          "label": "Góp cách nhìn, gợi hướng xử lý",
+          "scores": {
+            "T": 1
+          }
+        },
+        {
+          "label": "Ở bên, xác nhận cảm xúc trước đã",
+          "scores": {
+            "F": 1
+          }
+        }
+      ],
+      "dimension": "T/F"
+    },
+    {
+      "id": "m18",
+      "text": "Trong tranh luận, bạn…",
+      "options": [
+        {
+          "label": "Tách ý khỏi người, chơi với lập luận",
+          "scores": {
+            "T": 1
+          }
+        },
+        {
+          "label": "Để ý người kia có bị tổn không, rồi mới nói",
+          "scores": {
+            "F": 1
+          }
+        }
+      ],
+      "dimension": "T/F"
+    },
+    {
+      "id": "m19",
+      "text": "Phản hồi của bạn thường…",
+      "options": [
+        {
+          "label": "Thẳng, đi thẳng vào chỗ cần sửa",
+          "scores": {
+            "T": 1
+          }
+        },
+        {
+          "label": "Bọc lại cho người kia còn muốn nghe",
+          "scores": {
+            "F": 1
+          }
+        }
+      ],
+      "dimension": "T/F"
+    },
+    {
+      "id": "m20",
+      "text": "Điều khiến bạn ‘ưng’ một quyết định…",
+      "options": [
+        {
+          "label": "Nó hợp lý, đứng được khi bị hỏi ‘vì sao’",
+          "scores": {
+            "T": 1
+          }
+        },
+        {
+          "label": "Nó không làm mình phản bội người hoặc giá trị",
+          "scores": {
+            "F": 1
+          }
+        }
+      ],
+      "dimension": "T/F"
+    },
+    {
+      "id": "m21",
+      "text": "Khi góp ý đồng đội, bạn sợ hơn nếu…",
+      "options": [
+        {
+          "label": "Nói vòng vo đến mức việc không được sửa",
+          "scores": {
+            "T": 1
+          }
+        },
+        {
+          "label": "Nói khiến người kia thấy bị từ chối",
+          "scores": {
+            "F": 1
+          }
+        }
+      ],
+      "dimension": "T/F"
+    },
+    {
+      "id": "m22",
+      "text": "Lịch trình tuần của bạn thường…",
+      "options": [
+        {
+          "label": "Có khung rõ, việc được xếp chỗ",
+          "scores": {
+            "J": 1
+          }
+        },
+        {
+          "label": "Để trống một phần, quyết theo mạch ngày",
+          "scores": {
+            "P": 1
+          }
+        }
+      ],
+      "dimension": "J/P"
+    },
+    {
+      "id": "m23",
+      "text": "Trước hạn nộp, bạn thường…",
+      "options": [
+        {
+          "label": "Chia nhỏ và làm sớm cho chắc",
+          "scores": {
+            "J": 1
+          }
+        },
+        {
+          "label": "Tăng tốc gần hạn, vẫn về đích",
+          "scores": {
+            "P": 1
+          }
+        }
+      ],
+      "dimension": "J/P"
+    },
+    {
+      "id": "m24",
+      "text": "Không gian làm việc gọn giúp bạn…",
+      "options": [
+        {
+          "label": "Yên tâm, nghĩ được việc tiếp theo",
+          "scores": {
+            "J": 1
+          }
+        },
+        {
+          "label": "Cũng thích, nhưng ‘hơi loạn’ vẫn làm được",
+          "scores": {
+            "P": 1
+          }
+        }
+      ],
+      "dimension": "J/P"
+    },
+    {
+      "id": "m25",
+      "text": "Khi đi chơi, bạn thích…",
+      "options": [
+        {
+          "label": "Có lịch: chỗ nào, lúc nào, dự phòng",
+          "scores": {
+            "J": 1
+          }
+        },
+        {
+          "label": "Có hướng, còn lại để ngày tự mở",
+          "scores": {
+            "P": 1
+          }
+        }
+      ],
+      "dimension": "J/P"
+    },
+    {
+      "id": "m26",
+      "text": "Thay đổi kế hoạch đột ngột khiến bạn…",
+      "options": [
+        {
+          "label": "Khó chịu, cần chỉnh lại cả chuỗi việc",
+          "scores": {
+            "J": 1
+          }
+        },
+        {
+          "label": "Ổn, coi như một nhánh mới",
+          "scores": {
+            "P": 1
+          }
+        }
+      ],
+      "dimension": "J/P"
+    },
+    {
+      "id": "m27",
+      "text": "Bạn thấy thoải mái hơn khi…",
+      "options": [
+        {
+          "label": "Việc đã chốt, hộp đã đóng",
+          "scores": {
+            "J": 1
+          }
+        },
+        {
+          "label": "Còn cửa để đổi nếu có thông tin mới",
+          "scores": {
+            "P": 1
+          }
+        }
+      ],
+      "dimension": "J/P"
+    },
+    {
+      "id": "m28",
+      "text": "Danh sách việc của bạn…",
+      "options": [
+        {
+          "label": "Được tick đều, thấy tiến độ là đã yên",
+          "scores": {
+            "J": 1
+          }
+        },
+        {
+          "label": "Có, nhưng sống với ưu tiên của lúc này",
+          "scores": {
+            "P": 1
+          }
+        }
+      ],
+      "dimension": "J/P"
+    },
+    {
+      "id": "m29",
+      "text": "Cuộc họp đông người làm bạn…",
+      "options": [
+        {
+          "label": "Tỉnh hơn, muốn góp ý hoặc hỏi",
+          "scores": {
+            "E": 1
+          }
+        },
+        {
+          "label": "Tốn pin, muốn về chỗ yên để nghĩ",
+          "scores": {
+            "I": 1
+          }
+        }
+      ],
+      "dimension": "E/I"
+    },
+    {
+      "id": "m30",
+      "text": "Khi có tin vui, bạn thường…",
+      "options": [
+        {
+          "label": "Kể ngay cho ai đó",
+          "scores": {
+            "E": 1
+          }
+        },
+        {
+          "label": "Ngồi với nó một lúc rồi mới chia",
+          "scores": {
+            "I": 1
+          }
+        }
+      ],
+      "dimension": "E/I"
+    },
+    {
+      "id": "m31",
+      "text": "Bạn chọn khóa học vì…",
+      "options": [
+        {
+          "label": "Kỹ năng dùng được, giáo viên có case thật",
+          "scores": {
+            "S": 1
+          }
+        },
+        {
+          "label": "Nó mở một cách nhìn mới, dù chưa rõ ‘dùng ngay’",
+          "scores": {
+            "N": 1
+          }
+        }
+      ],
+      "dimension": "S/N"
+    },
+    {
+      "id": "m32",
+      "text": "Khi một ý tưởng hay xuất hiện, bạn…",
+      "options": [
+        {
+          "label": "Hỏi ngay: làm thế nào, mất bao lâu, rủi ro gì",
+          "scores": {
+            "S": 1
+          }
+        },
+        {
+          "label": "Để nó nở, nối với ý khác, vẽ bức tranh lớn",
+          "scores": {
+            "N": 1
+          }
+        }
+      ],
+      "dimension": "S/N"
+    },
+    {
+      "id": "m33",
+      "text": "Một quyết định ‘đúng người’ nhưng kém hiệu quả khiến bạn…",
+      "options": [
+        {
+          "label": "Khó chịu — việc phải chạy đã",
+          "scores": {
+            "T": 1
+          }
+        },
+        {
+          "label": "Chấp nhận được nếu không ai bị bỏ lại",
+          "scores": {
+            "F": 1
+          }
+        }
+      ],
+      "dimension": "T/F"
+    },
+    {
+      "id": "m34",
+      "text": "Khi nhận góp ý thẳng, bạn cần…",
+      "options": [
+        {
+          "label": "Nội dung đúng, tông giọng đứng sau",
+          "scores": {
+            "T": 1
+          }
+        },
+        {
+          "label": "Cảm thấy người kia vẫn đứng về phía mình",
+          "scores": {
+            "F": 1
+          }
+        }
+      ],
+      "dimension": "T/F"
+    },
+    {
+      "id": "m35",
+      "text": "Cuối ngày, việc chưa tick làm bạn…",
+      "options": [
+        {
+          "label": "Móc trong đầu, muốn khép hộp",
+          "scores": {
+            "J": 1
+          }
+        },
+        {
+          "label": "Để đó, mai còn cửa",
+          "scores": {
+            "P": 1
+          }
+        }
+      ],
+      "dimension": "J/P"
+    },
+    {
+      "id": "m36",
+      "text": "Bạn thích dự án kiểu…",
+      "options": [
+        {
+          "label": "Phạm vi rõ, mốc rõ, biết lúc nào là xong",
+          "scores": {
+            "J": 1
+          }
+        },
+        {
+          "label": "Mở, được đổi khi học được điều mới",
+          "scores": {
+            "P": 1
+          }
+        }
+      ],
+      "dimension": "J/P"
+    },
+    {
+      "id": "m37",
+      "text": "Ở quán cà phê đông, bạn…",
+      "options": [
+        {
+          "label": "Dễ bắt chuyện hoặc hòa vào ồn",
+          "scores": {
+            "E": 1
+          }
+        },
+        {
+          "label": "Muốn góc khuất, tai nghe, ít bị kéo",
+          "scores": {
+            "I": 1
+          }
+        }
+      ],
+      "dimension": "E/I"
+    },
+    {
+      "id": "m38",
+      "text": "Bạn tin một hướng đi khi…",
+      "options": [
+        {
+          "label": "Đã có người làm được, có số liệu",
+          "scores": {
+            "S": 1
+          }
+        },
+        {
+          "label": "Nhìn thấy khả năng, dù đường còn mờ",
+          "scores": {
+            "N": 1
+          }
+        }
+      ],
+      "dimension": "S/N"
+    },
+    {
+      "id": "m39",
+      "text": "Trong nhóm, bạn hay được nhờ…",
+      "options": [
+        {
+          "label": "Phân tích, chốt, chỉ chỗ lệch",
+          "scores": {
+            "T": 1
+          }
+        },
+        {
+          "label": "Giữ khí, dàn hòa, để ý ai đang mệt",
+          "scores": {
+            "F": 1
+          }
+        }
+      ],
+      "dimension": "T/F"
+    },
+    {
+      "id": "m40",
+      "text": "Kỳ nghỉ không kế hoạch sẵn khiến bạn…",
+      "options": [
+        {
+          "label": "Hơi đứng hình, muốn có khung tối thiểu",
+          "scores": {
+            "J": 1
+          }
+        },
+        {
+          "label": "Thích, coi như được thở",
+          "scores": {
+            "P": 1
+          }
+        }
+      ],
+      "dimension": "J/P"
+    }
+  ],
+  "riasec": [
+    {
+      "id": "r1",
+      "text": "Tôi thích tự tay lắp ráp hoặc tháo một thiết bị để xem nó hoạt động như thế nào.",
+      "group": "R",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "R": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "R": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "R": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "R": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "R": 5
+          }
+        }
+      ],
+      "trait": "R"
+    },
+    {
+      "id": "r2",
+      "text": "Tôi thích giúp một bạn trong lớp hiểu một bài mà bạn ấy đang gặp khó khăn.",
+      "group": "S",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "S": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "S": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "S": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "S": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "S": 5
+          }
+        }
+      ],
+      "trait": "S"
+    },
+    {
+      "id": "r3",
+      "text": "Tôi thích sắp xếp tài liệu, ghi chú hoặc tệp máy tính theo từng nhóm rõ ràng.",
+      "group": "C",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "C": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "C": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "C": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "C": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "C": 5
+          }
+        }
+      ],
+      "trait": "C"
+    },
+    {
+      "id": "r4",
+      "text": "Tôi thích đứng ra phân công công việc khi nhóm thực hiện một dự án.",
+      "group": "E",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "E": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "E": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "E": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "E": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "E": 5
+          }
+        }
+      ],
+      "trait": "E"
+    },
+    {
+      "id": "r5",
+      "text": "Tôi thích tìm hiểu nguyên nhân đằng sau một hiện tượng mà mình chưa hiểu.",
+      "group": "I",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "I": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "I": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "I": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "I": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "I": 5
+          }
+        }
+      ],
+      "trait": "I"
+    },
+    {
+      "id": "r6",
+      "text": "Tôi thích nghĩ ra cách trình bày mới lạ cho một bài thuyết trình hoặc sản phẩm học tập.",
+      "group": "A",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "A": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "A": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "A": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "A": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "A": 5
+          }
+        }
+      ],
+      "trait": "A"
+    },
+    {
+      "id": "r7",
+      "text": "Tôi cảm thấy thoải mái khi làm một công việc có hướng dẫn và quy trình rõ ràng.",
+      "group": "C",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "C": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "C": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "C": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "C": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "C": 5
+          }
+        }
+      ],
+      "trait": "C"
+    },
+    {
+      "id": "r8",
+      "text": "Tôi thích thực hành với các dụng cụ, mô hình hoặc thiết bị hơn là chỉ đọc lý thuyết.",
+      "group": "R",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "R": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "R": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "R": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "R": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "R": 5
+          }
+        }
+      ],
+      "trait": "R"
+    },
+    {
+      "id": "r9",
+      "text": "Tôi thích thuyết phục người khác ủng hộ một ý tưởng mà tôi tin là tốt.",
+      "group": "E",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "E": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "E": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "E": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "E": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "E": 5
+          }
+        }
+      ],
+      "trait": "E"
+    },
+    {
+      "id": "r10",
+      "text": "Tôi thích giải những câu hỏi cần suy luận để tìm ra quy luật hoặc cách giải.",
+      "group": "I",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "I": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "I": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "I": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "I": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "I": 5
+          }
+        }
+      ],
+      "trait": "I"
+    },
+    {
+      "id": "r11",
+      "text": "Tôi thường chủ động lắng nghe khi bạn bè muốn chia sẻ một vấn đề.",
+      "group": "S",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "S": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "S": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "S": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "S": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "S": 5
+          }
+        }
+      ],
+      "trait": "S"
+    },
+    {
+      "id": "r12",
+      "text": "Tôi thích viết, vẽ, thiết kế, chụp ảnh hoặc tạo nội dung theo ý tưởng riêng.",
+      "group": "A",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "A": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "A": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "A": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "A": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "A": 5
+          }
+        }
+      ],
+      "trait": "A"
+    },
+    {
+      "id": "r13",
+      "text": "Tôi thích tìm cách sửa một đồ vật hoặc thiết bị khi nó bị hỏng.",
+      "group": "R",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "R": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "R": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "R": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "R": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "R": 5
+          }
+        }
+      ],
+      "trait": "R"
+    },
+    {
+      "id": "r14",
+      "text": "Tôi có thói quen kiểm tra lại bài làm để phát hiện lỗi trước khi nộp.",
+      "group": "C",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "C": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "C": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "C": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "C": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "C": 5
+          }
+        }
+      ],
+      "trait": "C"
+    },
+    {
+      "id": "r15",
+      "text": "Tôi thích đọc hoặc xem tài liệu để tìm hiểu sâu hơn về một chủ đề mình tò mò.",
+      "group": "I",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "I": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "I": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "I": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "I": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "I": 5
+          }
+        }
+      ],
+      "trait": "I"
+    },
+    {
+      "id": "r16",
+      "text": "Tôi hứng thú với việc lên kế hoạch và tổ chức một hoạt động cho lớp hoặc trường.",
+      "group": "E",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "E": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "E": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "E": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "E": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "E": 5
+          }
+        }
+      ],
+      "trait": "E"
+    },
+    {
+      "id": "r17",
+      "text": "Tôi không ngại thử một cách làm khác nếu cách đó giúp sản phẩm trở nên độc đáo hơn.",
+      "group": "A",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "A": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "A": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "A": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "A": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "A": 5
+          }
+        }
+      ],
+      "trait": "A"
+    },
+    {
+      "id": "r18",
+      "text": "Tôi thích hướng dẫn một người khác cách thực hiện một nhiệm vụ.",
+      "group": "S",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "S": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "S": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "S": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "S": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "S": 5
+          }
+        }
+      ],
+      "trait": "S"
+    },
+    {
+      "id": "r19",
+      "text": "Tôi thích làm việc với bảng biểu, danh sách, số liệu hoặc thông tin được sắp xếp.",
+      "group": "C",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "C": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "C": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "C": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "C": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "C": 5
+          }
+        }
+      ],
+      "trait": "C"
+    },
+    {
+      "id": "r20",
+      "text": "Tôi thích những hoạt động tạo ra một sản phẩm hoặc kết quả có thể nhìn thấy rõ ràng.",
+      "group": "R",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "R": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "R": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "R": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "R": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "R": 5
+          }
+        }
+      ],
+      "trait": "R"
+    },
+    {
+      "id": "r21",
+      "text": "Khi gặp một vấn đề khó, tôi muốn tìm hiểu nguyên nhân trước khi đưa ra kết luận.",
+      "group": "I",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "I": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "I": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "I": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "I": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "I": 5
+          }
+        }
+      ],
+      "trait": "I"
+    },
+    {
+      "id": "r22",
+      "text": "Tôi thích những bài tập cho phép mình tự do lựa chọn cách thể hiện.",
+      "group": "A",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "A": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "A": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "A": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "A": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "A": 5
+          }
+        }
+      ],
+      "trait": "A"
+    },
+    {
+      "id": "r23",
+      "text": "Tôi thích làm việc nhóm khi công việc đòi hỏi mọi người trao đổi và hỗ trợ nhau.",
+      "group": "S",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "S": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "S": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "S": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "S": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "S": 5
+          }
+        }
+      ],
+      "trait": "S"
+    },
+    {
+      "id": "r24",
+      "text": "Tôi thấy hứng thú khi đặt ra mục tiêu và tìm cách đạt được mục tiêu đó.",
+      "group": "E",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "E": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "E": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "E": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "E": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "E": 5
+          }
+        }
+      ],
+      "trait": "E"
+    },
+    {
+      "id": "r25",
+      "text": "Tôi thích lập danh sách việc cần làm để không bỏ sót nhiệm vụ.",
+      "group": "C",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "C": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "C": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "C": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "C": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "C": 5
+          }
+        }
+      ],
+      "trait": "C"
+    },
+    {
+      "id": "r26",
+      "text": "Tôi thích quan sát cách máy móc, phương tiện hoặc hệ thống kỹ thuật vận hành.",
+      "group": "R",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "R": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "R": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "R": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "R": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "R": 5
+          }
+        }
+      ],
+      "trait": "R"
+    },
+    {
+      "id": "r27",
+      "text": "Tôi thích phân tích nhiều thông tin khác nhau để tìm ra câu trả lời hợp lý nhất.",
+      "group": "I",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "I": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "I": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "I": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "I": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "I": 5
+          }
+        }
+      ],
+      "trait": "I"
+    },
+    {
+      "id": "r28",
+      "text": "Tôi thường chú ý đến màu sắc, bố cục, hình ảnh hoặc cách trình bày của một sản phẩm.",
+      "group": "A",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "A": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "A": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "A": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "A": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "A": 5
+          }
+        }
+      ],
+      "trait": "A"
+    },
+    {
+      "id": "r29",
+      "text": "Tôi thích tham gia các hoạt động bán hàng, gây quỹ hoặc quảng bá sản phẩm/sự kiện.",
+      "group": "E",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "E": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "E": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "E": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "E": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "E": 5
+          }
+        }
+      ],
+      "trait": "E"
+    },
+    {
+      "id": "r30",
+      "text": "Tôi thích làm những việc có thể mang lại lợi ích trực tiếp cho người khác.",
+      "group": "S",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "S": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "S": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "S": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "S": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "S": 5
+          }
+        }
+      ],
+      "trait": "S"
+    },
+    {
+      "id": "r31",
+      "text": "Tôi thích hoàn thành công việc đúng thời hạn và đúng yêu cầu đã đề ra.",
+      "group": "C",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "C": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "C": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "C": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "C": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "C": 5
+          }
+        }
+      ],
+      "trait": "C"
+    },
+    {
+      "id": "r32",
+      "text": "Tôi thích thử nghiệm một cách làm mới để xem kết quả có thay đổi không.",
+      "group": "I",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "I": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "I": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "I": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "I": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "I": 5
+          }
+        }
+      ],
+      "trait": "I"
+    },
+    {
+      "id": "r33",
+      "text": "Tôi thích các hoạt động thực hành như làm mô hình, thí nghiệm hoặc sử dụng thiết bị.",
+      "group": "R",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "R": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "R": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "R": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "R": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "R": 5
+          }
+        }
+      ],
+      "trait": "R"
+    },
+    {
+      "id": "r34",
+      "text": "Tôi cảm thấy vui khi được bạn bè tin tưởng nhờ mình tư vấn hoặc hỗ trợ.",
+      "group": "S",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "S": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "S": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "S": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "S": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "S": 5
+          }
+        }
+      ],
+      "trait": "S"
+    },
+    {
+      "id": "r35",
+      "text": "Tôi khá thoải mái khi phát biểu trước nhiều người để trình bày quan điểm của mình.",
+      "group": "E",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "E": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "E": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "E": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "E": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "E": 5
+          }
+        }
+      ],
+      "trait": "E"
+    },
+    {
+      "id": "r36",
+      "text": "Tôi thích biến một ý tưởng trong đầu thành một sản phẩm cụ thể như poster, video, bài viết hoặc thiết kế.",
+      "group": "A",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "A": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "A": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "A": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "A": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "A": 5
+          }
+        }
+      ],
+      "trait": "A"
+    },
+    {
+      "id": "r37",
+      "text": "Tôi thích thử nghiệm những cách thể hiện khác nhau để tạo ra sản phẩm mang dấu ấn riêng.",
+      "group": "A",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "A": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "A": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "A": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "A": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "A": 5
+          }
+        }
+      ],
+      "trait": "A"
+    },
+    {
+      "id": "r38",
+      "text": "Tôi thích công việc mà kết quả phụ thuộc nhiều vào kỹ năng thực hành của bản thân.",
+      "group": "R",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "R": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "R": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "R": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "R": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "R": 5
+          }
+        }
+      ],
+      "trait": "R"
+    },
+    {
+      "id": "r39",
+      "text": "Tôi thích những môn học hoặc hoạt động khiến mình phải đặt câu hỏi và tự tìm lời giải.",
+      "group": "I",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "I": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "I": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "I": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "I": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "I": 5
+          }
+        }
+      ],
+      "trait": "I"
+    },
+    {
+      "id": "r40",
+      "text": "Tôi thích tìm hiểu cách một doanh nghiệp thu hút khách hàng và tạo ra lợi nhuận.",
+      "group": "E",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "E": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "E": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "E": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "E": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "E": 5
+          }
+        }
+      ],
+      "trait": "E"
+    },
+    {
+      "id": "r41",
+      "text": "Tôi thích giải thích một vấn đề bằng cách dễ hiểu để người khác có thể làm theo.",
+      "group": "S",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "S": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "S": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "S": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "S": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "S": 5
+          }
+        }
+      ],
+      "trait": "S"
+    },
+    {
+      "id": "r42",
+      "text": "Tôi thích làm việc trong môi trường cho phép mình tự do đưa ra ý tưởng.",
+      "group": "A",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "A": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "A": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "A": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "A": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "A": 5
+          }
+        }
+      ],
+      "trait": "A"
+    },
+    {
+      "id": "r43",
+      "text": "Tôi thích sử dụng lịch, thời khóa biểu hoặc kế hoạch để quản lý công việc.",
+      "group": "C",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "C": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "C": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "C": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "C": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "C": 5
+          }
+        }
+      ],
+      "trait": "C"
+    },
+    {
+      "id": "r44",
+      "text": "Tôi thích tìm hiểu cách vận hành của các phương tiện như xe máy, ô tô, máy móc hoặc robot.",
+      "group": "R",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "R": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "R": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "R": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "R": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "R": 5
+          }
+        }
+      ],
+      "trait": "R"
+    },
+    {
+      "id": "r45",
+      "text": "Tôi thích so sánh dữ liệu hoặc các khả năng khác nhau trước khi quyết định.",
+      "group": "I",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "I": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "I": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "I": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "I": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "I": 5
+          }
+        }
+      ],
+      "trait": "I"
+    },
+    {
+      "id": "r46",
+      "text": "Tôi thích tham gia các hoạt động mà mình có cơ hội gặp gỡ và làm việc với nhiều người.",
+      "group": "S",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "S": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "S": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "S": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "S": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "S": 5
+          }
+        }
+      ],
+      "trait": "S"
+    },
+    {
+      "id": "r47",
+      "text": "Tôi thích nhận trách nhiệm điều phối một nhóm khi mọi người cần một người đứng ra tổ chức.",
+      "group": "E",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "E": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "E": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "E": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "E": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "E": 5
+          }
+        }
+      ],
+      "trait": "E"
+    },
+    {
+      "id": "r48",
+      "text": "Tôi thích tìm cảm hứng từ âm nhạc, phim ảnh, nghệ thuật, thời trang hoặc những ý tưởng mới.",
+      "group": "A",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "A": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "A": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "A": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "A": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "A": 5
+          }
+        }
+      ],
+      "trait": "A"
+    },
+    {
+      "id": "r49",
+      "text": "Tôi thích những công việc yêu cầu sự chính xác và nhất quán.",
+      "group": "C",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "C": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "C": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "C": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "C": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "C": 5
+          }
+        }
+      ],
+      "trait": "C"
+    },
+    {
+      "id": "r50",
+      "text": "Tôi thích học một kỹ năng mới bằng cách trực tiếp làm thử thay vì chỉ nghe hướng dẫn.",
+      "group": "R",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "R": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "R": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "R": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "R": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "R": 5
+          }
+        }
+      ],
+      "trait": "R"
+    },
+    {
+      "id": "r51",
+      "text": "Tôi thường muốn biết bằng chứng hoặc lý do trước khi tin vào một kết luận.",
+      "group": "I",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "I": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "I": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "I": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "I": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "I": 5
+          }
+        }
+      ],
+      "trait": "I"
+    },
+    {
+      "id": "r52",
+      "text": "Tôi thích sáng tạo cách kể chuyện hoặc truyền tải thông điệp để thu hút người xem.",
+      "group": "A",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "A": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "A": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "A": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "A": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "A": 5
+          }
+        }
+      ],
+      "trait": "A"
+    },
+    {
+      "id": "r53",
+      "text": "Tôi muốn công việc tương lai của mình có nhiều cơ hội giao tiếp và hợp tác với người khác.",
+      "group": "S",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "S": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "S": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "S": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "S": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "S": 5
+          }
+        }
+      ],
+      "trait": "S"
+    },
+    {
+      "id": "r54",
+      "text": "Tôi thích đặt mục tiêu cho bản thân và cạnh tranh một cách tích cực để tiến bộ.",
+      "group": "E",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "E": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "E": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "E": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "E": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "E": 5
+          }
+        }
+      ],
+      "trait": "E"
+    },
+    {
+      "id": "r55",
+      "text": "Tôi thích rà soát thông tin để đảm bảo không có sai sót trước khi hoàn thành công việc.",
+      "group": "C",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "C": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "C": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "C": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "C": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "C": 5
+          }
+        }
+      ],
+      "trait": "C"
+    },
+    {
+      "id": "r56",
+      "text": "Tôi thích những công việc đòi hỏi sự khéo léo khi sử dụng dụng cụ hoặc thiết bị.",
+      "group": "R",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "R": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "R": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "R": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "R": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "R": 5
+          }
+        }
+      ],
+      "trait": "R"
+    },
+    {
+      "id": "r57",
+      "text": "Tôi thích tìm hiểu một vấn đề từ nhiều góc độ trước khi đưa ra quyết định.",
+      "group": "I",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "I": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "I": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "I": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "I": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "I": 5
+          }
+        }
+      ],
+      "trait": "I"
+    },
+    {
+      "id": "r58",
+      "text": "Tôi cảm thấy có ý nghĩa khi công việc của mình giúp người khác tiến bộ hoặc giải quyết khó khăn.",
+      "group": "S",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "S": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "S": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "S": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "S": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "S": 5
+          }
+        }
+      ],
+      "trait": "S"
+    },
+    {
+      "id": "r59",
+      "text": "Tôi thích nghĩ cách biến một ý tưởng thành một kế hoạch có thể thực hiện được.",
+      "group": "E",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "E": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "E": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "E": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "E": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "E": 5
+          }
+        }
+      ],
+      "trait": "E"
+    },
+    {
+      "id": "r60",
+      "text": "Tôi thích duy trì mọi thứ ngăn nắp để có thể nhanh chóng tìm thấy thứ mình cần.",
+      "group": "C",
+      "options": [
+        {
+          "label": "Hoàn toàn không thích",
+          "score": 1,
+          "scores": {
+            "C": 1
+          }
+        },
+        {
+          "label": "Không thích",
+          "score": 2,
+          "scores": {
+            "C": 2
+          }
+        },
+        {
+          "label": "Phân vân / Bình thường",
+          "score": 3,
+          "scores": {
+            "C": 3
+          }
+        },
+        {
+          "label": "Khá thích",
+          "score": 4,
+          "scores": {
+            "C": 4
+          }
+        },
+        {
+          "label": "Rất thích",
+          "score": 5,
+          "scores": {
+            "C": 5
+          }
+        }
+      ],
+      "trait": "C"
+    }
+  ],
+  "bigfive": [
+    {
+      "id": "b1",
+      "text": "Tôi thích ý tưởng lạ, góc nhìn mới, chuyện chưa ai kể.",
+      "options": [
+        {
+          "label": "Hoàn toàn không",
+          "score": 1,
+          "scores": {
+            "O": 1
+          }
+        },
+        {
+          "label": "Ít khi",
+          "score": 2,
+          "scores": {
+            "O": 2
+          }
+        },
+        {
+          "label": "Ở giữa",
+          "score": 3,
+          "scores": {
+            "O": 3
+          }
+        },
+        {
+          "label": "Khá đúng",
+          "score": 4,
+          "scores": {
+            "O": 4
+          }
+        },
+        {
+          "label": "Rất đúng",
+          "score": 5,
+          "scores": {
+            "O": 5
+          }
+        }
+      ],
+      "group": "O",
+      "trait": "O",
+      "isReverse": false
+    },
+    {
+      "id": "b2",
+      "text": "Tôi thấy nghệ thuật, sách, hoặc khái niệm trừu tượng nuôi mình.",
+      "options": [
+        {
+          "label": "Hoàn toàn không",
+          "score": 1,
+          "scores": {
+            "O": 1
+          }
+        },
+        {
+          "label": "Ít khi",
+          "score": 2,
+          "scores": {
+            "O": 2
+          }
+        },
+        {
+          "label": "Ở giữa",
+          "score": 3,
+          "scores": {
+            "O": 3
+          }
+        },
+        {
+          "label": "Khá đúng",
+          "score": 4,
+          "scores": {
+            "O": 4
+          }
+        },
+        {
+          "label": "Rất đúng",
+          "score": 5,
+          "scores": {
+            "O": 5
+          }
+        }
+      ],
+      "group": "O",
+      "trait": "O",
+      "isReverse": false
+    },
+    {
+      "id": "b3",
+      "text": "Tôi thích giữ thói quen cũ, ít muốn đổi cách làm.",
+      "options": [
+        {
+          "label": "Hoàn toàn không",
+          "score": 5,
+          "scores": {
+            "O": 5
+          }
+        },
+        {
+          "label": "Ít khi",
+          "score": 4,
+          "scores": {
+            "O": 4
+          }
+        },
+        {
+          "label": "Ở giữa",
+          "score": 3,
+          "scores": {
+            "O": 3
+          }
+        },
+        {
+          "label": "Khá đúng",
+          "score": 2,
+          "scores": {
+            "O": 2
+          }
+        },
+        {
+          "label": "Rất đúng",
+          "score": 1,
+          "scores": {
+            "O": 1
+          }
+        }
+      ],
+      "group": "O",
+      "trait": "O",
+      "isReverse": true
+    },
+    {
+      "id": "b4",
+      "text": "Tôi tò mò về ‘vì sao’ hơn là chỉ ‘làm sao cho xong’.",
+      "options": [
+        {
+          "label": "Hoàn toàn không",
+          "score": 1,
+          "scores": {
+            "O": 1
+          }
+        },
+        {
+          "label": "Ít khi",
+          "score": 2,
+          "scores": {
+            "O": 2
+          }
+        },
+        {
+          "label": "Ở giữa",
+          "score": 3,
+          "scores": {
+            "O": 3
+          }
+        },
+        {
+          "label": "Khá đúng",
+          "score": 4,
+          "scores": {
+            "O": 4
+          }
+        },
+        {
+          "label": "Rất đúng",
+          "score": 5,
+          "scores": {
+            "O": 5
+          }
+        }
+      ],
+      "group": "O",
+      "trait": "O",
+      "isReverse": false
+    },
+    {
+      "id": "b5",
+      "text": "Tôi hay lên kế hoạch và làm đúng hạn.",
+      "options": [
+        {
+          "label": "Hoàn toàn không",
+          "score": 1,
+          "scores": {
+            "C": 1
+          }
+        },
+        {
+          "label": "Ít khi",
+          "score": 2,
+          "scores": {
+            "C": 2
+          }
+        },
+        {
+          "label": "Ở giữa",
+          "score": 3,
+          "scores": {
+            "C": 3
+          }
+        },
+        {
+          "label": "Khá đúng",
+          "score": 4,
+          "scores": {
+            "C": 4
+          }
+        },
+        {
+          "label": "Rất đúng",
+          "score": 5,
+          "scores": {
+            "C": 5
+          }
+        }
+      ],
+      "group": "C",
+      "trait": "C",
+      "isReverse": false
+    },
+    {
+      "id": "b6",
+      "text": "Bàn làm việc và file của tôi thường có chỗ cho từng thứ.",
+      "options": [
+        {
+          "label": "Hoàn toàn không",
+          "score": 1,
+          "scores": {
+            "C": 1
+          }
+        },
+        {
+          "label": "Ít khi",
+          "score": 2,
+          "scores": {
+            "C": 2
+          }
+        },
+        {
+          "label": "Ở giữa",
+          "score": 3,
+          "scores": {
+            "C": 3
+          }
+        },
+        {
+          "label": "Khá đúng",
+          "score": 4,
+          "scores": {
+            "C": 4
+          }
+        },
+        {
+          "label": "Rất đúng",
+          "score": 5,
+          "scores": {
+            "C": 5
+          }
+        }
+      ],
+      "group": "C",
+      "trait": "C",
+      "isReverse": false
+    },
+    {
+      "id": "b7",
+      "text": "Tôi dễ bắt đầu rồi bỏ dở khi việc không còn thú.",
+      "options": [
+        {
+          "label": "Hoàn toàn không",
+          "score": 5,
+          "scores": {
+            "C": 5
+          }
+        },
+        {
+          "label": "Ít khi",
+          "score": 4,
+          "scores": {
+            "C": 4
+          }
+        },
+        {
+          "label": "Ở giữa",
+          "score": 3,
+          "scores": {
+            "C": 3
+          }
+        },
+        {
+          "label": "Khá đúng",
+          "score": 2,
+          "scores": {
+            "C": 2
+          }
+        },
+        {
+          "label": "Rất đúng",
+          "score": 1,
+          "scores": {
+            "C": 1
+          }
+        }
+      ],
+      "group": "C",
+      "trait": "C",
+      "isReverse": true
+    },
+    {
+      "id": "b8",
+      "text": "Tôi giữ lời hứa, kể cả việc nhỏ.",
+      "options": [
+        {
+          "label": "Hoàn toàn không",
+          "score": 1,
+          "scores": {
+            "C": 1
+          }
+        },
+        {
+          "label": "Ít khi",
+          "score": 2,
+          "scores": {
+            "C": 2
+          }
+        },
+        {
+          "label": "Ở giữa",
+          "score": 3,
+          "scores": {
+            "C": 3
+          }
+        },
+        {
+          "label": "Khá đúng",
+          "score": 4,
+          "scores": {
+            "C": 4
+          }
+        },
+        {
+          "label": "Rất đúng",
+          "score": 5,
+          "scores": {
+            "C": 5
+          }
+        }
+      ],
+      "group": "C",
+      "trait": "C",
+      "isReverse": false
+    },
+    {
+      "id": "b9",
+      "text": "Tôi lấy năng lượng từ người khác và cuộc nói chuyện.",
+      "options": [
+        {
+          "label": "Hoàn toàn không",
+          "score": 1,
+          "scores": {
+            "E": 1
+          }
+        },
+        {
+          "label": "Ít khi",
+          "score": 2,
+          "scores": {
+            "E": 2
+          }
+        },
+        {
+          "label": "Ở giữa",
+          "score": 3,
+          "scores": {
+            "E": 3
+          }
+        },
+        {
+          "label": "Khá đúng",
+          "score": 4,
+          "scores": {
+            "E": 4
+          }
+        },
+        {
+          "label": "Rất đúng",
+          "score": 5,
+          "scores": {
+            "E": 5
+          }
+        }
+      ],
+      "group": "E",
+      "trait": "E",
+      "isReverse": false
+    },
+    {
+      "id": "b10",
+      "text": "Ở nhóm mới tôi thường lên tiếng khá sớm.",
+      "options": [
+        {
+          "label": "Hoàn toàn không",
+          "score": 1,
+          "scores": {
+            "E": 1
+          }
+        },
+        {
+          "label": "Ít khi",
+          "score": 2,
+          "scores": {
+            "E": 2
+          }
+        },
+        {
+          "label": "Ở giữa",
+          "score": 3,
+          "scores": {
+            "E": 3
+          }
+        },
+        {
+          "label": "Khá đúng",
+          "score": 4,
+          "scores": {
+            "E": 4
+          }
+        },
+        {
+          "label": "Rất đúng",
+          "score": 5,
+          "scores": {
+            "E": 5
+          }
+        }
+      ],
+      "group": "E",
+      "trait": "E",
+      "isReverse": false
+    },
+    {
+      "id": "b11",
+      "text": "Tôi thích ở rìa, quan sát, không cần là trung tâm.",
+      "options": [
+        {
+          "label": "Hoàn toàn không",
+          "score": 5,
+          "scores": {
+            "E": 5
+          }
+        },
+        {
+          "label": "Ít khi",
+          "score": 4,
+          "scores": {
+            "E": 4
+          }
+        },
+        {
+          "label": "Ở giữa",
+          "score": 3,
+          "scores": {
+            "E": 3
+          }
+        },
+        {
+          "label": "Khá đúng",
+          "score": 2,
+          "scores": {
+            "E": 2
+          }
+        },
+        {
+          "label": "Rất đúng",
+          "score": 1,
+          "scores": {
+            "E": 1
+          }
+        }
+      ],
+      "group": "E",
+      "trait": "E",
+      "isReverse": true
+    },
+    {
+      "id": "b12",
+      "text": "Tôi chủ động rủ người đi làm hoặc đi chơi.",
+      "options": [
+        {
+          "label": "Hoàn toàn không",
+          "score": 1,
+          "scores": {
+            "E": 1
+          }
+        },
+        {
+          "label": "Ít khi",
+          "score": 2,
+          "scores": {
+            "E": 2
+          }
+        },
+        {
+          "label": "Ở giữa",
+          "score": 3,
+          "scores": {
+            "E": 3
+          }
+        },
+        {
+          "label": "Khá đúng",
+          "score": 4,
+          "scores": {
+            "E": 4
+          }
+        },
+        {
+          "label": "Rất đúng",
+          "score": 5,
+          "scores": {
+            "E": 5
+          }
+        }
+      ],
+      "group": "E",
+      "trait": "E",
+      "isReverse": false
+    },
+    {
+      "id": "b13",
+      "text": "Tôi hay để ý cảm xúc người khác trước khi nói.",
+      "options": [
+        {
+          "label": "Hoàn toàn không",
+          "score": 1,
+          "scores": {
+            "A": 1
+          }
+        },
+        {
+          "label": "Ít khi",
+          "score": 2,
+          "scores": {
+            "A": 2
+          }
+        },
+        {
+          "label": "Ở giữa",
+          "score": 3,
+          "scores": {
+            "A": 3
+          }
+        },
+        {
+          "label": "Khá đúng",
+          "score": 4,
+          "scores": {
+            "A": 4
+          }
+        },
+        {
+          "label": "Rất đúng",
+          "score": 5,
+          "scores": {
+            "A": 5
+          }
+        }
+      ],
+      "group": "A",
+      "trait": "A",
+      "isReverse": false
+    },
+    {
+      "id": "b14",
+      "text": "Tôi tin người ta có thiện ý, trừ khi bị chứng minh ngược.",
+      "options": [
+        {
+          "label": "Hoàn toàn không",
+          "score": 1,
+          "scores": {
+            "A": 1
+          }
+        },
+        {
+          "label": "Ít khi",
+          "score": 2,
+          "scores": {
+            "A": 2
+          }
+        },
+        {
+          "label": "Ở giữa",
+          "score": 3,
+          "scores": {
+            "A": 3
+          }
+        },
+        {
+          "label": "Khá đúng",
+          "score": 4,
+          "scores": {
+            "A": 4
+          }
+        },
+        {
+          "label": "Rất đúng",
+          "score": 5,
+          "scores": {
+            "A": 5
+          }
+        }
+      ],
+      "group": "A",
+      "trait": "A",
+      "isReverse": false
+    },
+    {
+      "id": "b15",
+      "text": "Tôi thẳng và có thể bị thấy là cứng, miễn là đúng việc.",
+      "options": [
+        {
+          "label": "Hoàn toàn không",
+          "score": 5,
+          "scores": {
+            "A": 5
+          }
+        },
+        {
+          "label": "Ít khi",
+          "score": 4,
+          "scores": {
+            "A": 4
+          }
+        },
+        {
+          "label": "Ở giữa",
+          "score": 3,
+          "scores": {
+            "A": 3
+          }
+        },
+        {
+          "label": "Khá đúng",
+          "score": 2,
+          "scores": {
+            "A": 2
+          }
+        },
+        {
+          "label": "Rất đúng",
+          "score": 1,
+          "scores": {
+            "A": 1
+          }
+        }
+      ],
+      "group": "A",
+      "trait": "A",
+      "isReverse": true
+    },
+    {
+      "id": "b16",
+      "text": "Tôi sẵn sàng nhường một phần ý mình để giữ quan hệ.",
+      "options": [
+        {
+          "label": "Hoàn toàn không",
+          "score": 1,
+          "scores": {
+            "A": 1
+          }
+        },
+        {
+          "label": "Ít khi",
+          "score": 2,
+          "scores": {
+            "A": 2
+          }
+        },
+        {
+          "label": "Ở giữa",
+          "score": 3,
+          "scores": {
+            "A": 3
+          }
+        },
+        {
+          "label": "Khá đúng",
+          "score": 4,
+          "scores": {
+            "A": 4
+          }
+        },
+        {
+          "label": "Rất đúng",
+          "score": 5,
+          "scores": {
+            "A": 5
+          }
+        }
+      ],
+      "group": "A",
+      "trait": "A",
+      "isReverse": false
+    },
+    {
+      "id": "b17",
+      "text": "Tôi hay lo trước những việc chưa xảy ra.",
+      "options": [
+        {
+          "label": "Hoàn toàn không",
+          "score": 1,
+          "scores": {
+            "N": 1
+          }
+        },
+        {
+          "label": "Ít khi",
+          "score": 2,
+          "scores": {
+            "N": 2
+          }
+        },
+        {
+          "label": "Ở giữa",
+          "score": 3,
+          "scores": {
+            "N": 3
+          }
+        },
+        {
+          "label": "Khá đúng",
+          "score": 4,
+          "scores": {
+            "N": 4
+          }
+        },
+        {
+          "label": "Rất đúng",
+          "score": 5,
+          "scores": {
+            "N": 5
+          }
+        }
+      ],
+      "group": "N",
+      "trait": "N",
+      "isReverse": false
+    },
+    {
+      "id": "b18",
+      "text": "Khi căng, tôi cần thời gian mới lấy lại được nhịp.",
+      "options": [
+        {
+          "label": "Hoàn toàn không",
+          "score": 1,
+          "scores": {
+            "N": 1
+          }
+        },
+        {
+          "label": "Ít khi",
+          "score": 2,
+          "scores": {
+            "N": 2
+          }
+        },
+        {
+          "label": "Ở giữa",
+          "score": 3,
+          "scores": {
+            "N": 3
+          }
+        },
+        {
+          "label": "Khá đúng",
+          "score": 4,
+          "scores": {
+            "N": 4
+          }
+        },
+        {
+          "label": "Rất đúng",
+          "score": 5,
+          "scores": {
+            "N": 5
+          }
+        }
+      ],
+      "group": "N",
+      "trait": "N",
+      "isReverse": false
+    },
+    {
+      "id": "b19",
+      "text": "Tôi vẫn nghĩ được việc khi áp lực tăng.",
+      "options": [
+        {
+          "label": "Hoàn toàn không",
+          "score": 5,
+          "scores": {
+            "N": 5
+          }
+        },
+        {
+          "label": "Ít khi",
+          "score": 4,
+          "scores": {
+            "N": 4
+          }
+        },
+        {
+          "label": "Ở giữa",
+          "score": 3,
+          "scores": {
+            "N": 3
+          }
+        },
+        {
+          "label": "Khá đúng",
+          "score": 2,
+          "scores": {
+            "N": 2
+          }
+        },
+        {
+          "label": "Rất đúng",
+          "score": 1,
+          "scores": {
+            "N": 1
+          }
+        }
+      ],
+      "group": "N",
+      "trait": "N",
+      "isReverse": true
+    },
+    {
+      "id": "b20",
+      "text": "Tâm trạng tôi đổi khá rõ trong ngày.",
+      "options": [
+        {
+          "label": "Hoàn toàn không",
+          "score": 1,
+          "scores": {
+            "N": 1
+          }
+        },
+        {
+          "label": "Ít khi",
+          "score": 2,
+          "scores": {
+            "N": 2
+          }
+        },
+        {
+          "label": "Ở giữa",
+          "score": 3,
+          "scores": {
+            "N": 3
+          }
+        },
+        {
+          "label": "Khá đúng",
+          "score": 4,
+          "scores": {
+            "N": 4
+          }
+        },
+        {
+          "label": "Rất đúng",
+          "score": 5,
+          "scores": {
+            "N": 5
+          }
+        }
+      ],
+      "group": "N",
+      "trait": "N",
+      "isReverse": false
+    },
+    {
+      "id": "b21",
+      "text": "Tôi hay thử món, nơi, cách làm chưa quen.",
+      "options": [
+        {
+          "label": "Hoàn toàn không",
+          "score": 1,
+          "scores": {
+            "O": 1
+          }
+        },
+        {
+          "label": "Ít khi",
+          "score": 2,
+          "scores": {
+            "O": 2
+          }
+        },
+        {
+          "label": "Ở giữa",
+          "score": 3,
+          "scores": {
+            "O": 3
+          }
+        },
+        {
+          "label": "Khá đúng",
+          "score": 4,
+          "scores": {
+            "O": 4
+          }
+        },
+        {
+          "label": "Rất đúng",
+          "score": 5,
+          "scores": {
+            "O": 5
+          }
+        }
+      ],
+      "group": "O",
+      "trait": "O",
+      "isReverse": false
+    },
+    {
+      "id": "b22",
+      "text": "Tôi hoàn tất việc nhàm nếu đã hứa.",
+      "options": [
+        {
+          "label": "Hoàn toàn không",
+          "score": 1,
+          "scores": {
+            "C": 1
+          }
+        },
+        {
+          "label": "Ít khi",
+          "score": 2,
+          "scores": {
+            "C": 2
+          }
+        },
+        {
+          "label": "Ở giữa",
+          "score": 3,
+          "scores": {
+            "C": 3
+          }
+        },
+        {
+          "label": "Khá đúng",
+          "score": 4,
+          "scores": {
+            "C": 4
+          }
+        },
+        {
+          "label": "Rất đúng",
+          "score": 5,
+          "scores": {
+            "C": 5
+          }
+        }
+      ],
+      "group": "C",
+      "trait": "C",
+      "isReverse": false
+    },
+    {
+      "id": "b23",
+      "text": "Sau một buổi đông người tôi thường còn muốn gặp tiếp.",
+      "options": [
+        {
+          "label": "Hoàn toàn không",
+          "score": 1,
+          "scores": {
+            "E": 1
+          }
+        },
+        {
+          "label": "Ít khi",
+          "score": 2,
+          "scores": {
+            "E": 2
+          }
+        },
+        {
+          "label": "Ở giữa",
+          "score": 3,
+          "scores": {
+            "E": 3
+          }
+        },
+        {
+          "label": "Khá đúng",
+          "score": 4,
+          "scores": {
+            "E": 4
+          }
+        },
+        {
+          "label": "Rất đúng",
+          "score": 5,
+          "scores": {
+            "E": 5
+          }
+        }
+      ],
+      "group": "E",
+      "trait": "E",
+      "isReverse": false
+    },
+    {
+      "id": "b24",
+      "text": "Tôi tránh tranh cãi dù nghĩ mình đúng, nếu sợ mất hòa khí.",
+      "options": [
+        {
+          "label": "Hoàn toàn không",
+          "score": 1,
+          "scores": {
+            "A": 1
+          }
+        },
+        {
+          "label": "Ít khi",
+          "score": 2,
+          "scores": {
+            "A": 2
+          }
+        },
+        {
+          "label": "Ở giữa",
+          "score": 3,
+          "scores": {
+            "A": 3
+          }
+        },
+        {
+          "label": "Khá đúng",
+          "score": 4,
+          "scores": {
+            "A": 4
+          }
+        },
+        {
+          "label": "Rất đúng",
+          "score": 5,
+          "scores": {
+            "A": 5
+          }
+        }
+      ],
+      "group": "A",
+      "trait": "A",
+      "isReverse": false
+    },
+    {
+      "id": "b25",
+      "text": "Một lời chê có thể ở lại trong đầu tôi khá lâu.",
+      "options": [
+        {
+          "label": "Hoàn toàn không",
+          "score": 1,
+          "scores": {
+            "N": 1
+          }
+        },
+        {
+          "label": "Ít khi",
+          "score": 2,
+          "scores": {
+            "N": 2
+          }
+        },
+        {
+          "label": "Ở giữa",
+          "score": 3,
+          "scores": {
+            "N": 3
+          }
+        },
+        {
+          "label": "Khá đúng",
+          "score": 4,
+          "scores": {
+            "N": 4
+          }
+        },
+        {
+          "label": "Rất đúng",
+          "score": 5,
+          "scores": {
+            "N": 5
+          }
+        }
+      ],
+      "group": "N",
+      "trait": "N",
+      "isReverse": false
+    }
+  ],
+  "cognitive": [
+    {
+      "id": "cog-1",
+      "text": "Từ nào gần nghĩa nhất với “khách quan”?",
+      "domain": "verbal",
+      "domainName": "Verbal – Ngôn ngữ",
+      "correctAnswer": 0,
+      "options": [
+        {
+          "label": "A. Công bằng, dựa trên thực tế"
+        },
+        {
+          "label": "B. Cảm tính, thiên vị"
+        },
+        {
+          "label": "C. Chủ quan, tùy ý"
+        },
+        {
+          "label": "D. Bí mật, khó biết"
+        }
+      ],
+      "explanation": "“Khách quan” nghĩa là nhìn nhận sự việc độc lập với ý muốn chủ quan, phản ánh trung thực thực tế bên ngoài."
+    },
+    {
+      "id": "cog-2",
+      "text": "Chọn từ có quan hệ với “bác sĩ : bệnh nhân” tương tự “giáo viên : …”",
+      "domain": "verbal",
+      "domainName": "Verbal – Ngôn ngữ",
+      "correctAnswer": 1,
+      "options": [
+        {
+          "label": "A. Bài học"
+        },
+        {
+          "label": "B. Học sinh"
+        },
+        {
+          "label": "C. Trường học"
+        },
+        {
+          "label": "D. Bảng"
+        }
+      ],
+      "explanation": "Quan hệ giữa người cung cấp dịch vụ chuyên môn và đối tượng thụ hưởng (bác sĩ chữa bệnh nhân, giáo viên dạy học sinh)."
+    },
+    {
+      "id": "cog-3",
+      "text": "Câu nào có ý nghĩa gần nhất với: “Không phải mọi quyết định nhanh đều là quyết định đúng.”",
+      "domain": "verbal",
+      "domainName": "Verbal – Ngôn ngữ",
+      "correctAnswer": 2,
+      "options": [
+        {
+          "label": "A. Quyết định càng nhanh càng đúng."
+        },
+        {
+          "label": "B. Quyết định chậm luôn đúng."
+        },
+        {
+          "label": "C. Tốc độ ra quyết định không bảo đảm tính đúng đắn."
+        },
+        {
+          "label": "D. Không nên đưa ra bất kỳ quyết định nhanh nào."
+        }
+      ],
+      "explanation": "Tốc độ phản ứng và tính chính xác là hai phạm trù độc lập; quyết định nhanh không đồng nghĩa chắc chắn đúng."
+    },
+    {
+      "id": "cog-4",
+      "text": "Từ nào khác nhóm?",
+      "domain": "verbal",
+      "domainName": "Verbal – Ngôn ngữ",
+      "correctAnswer": 3,
+      "options": [
+        {
+          "label": "A. Phân tích"
+        },
+        {
+          "label": "B. So sánh"
+        },
+        {
+          "label": "C. Đánh giá"
+        },
+        {
+          "label": "D. Sao chép"
+        }
+      ],
+      "explanation": "Phân tích, So sánh, Đánh giá là các hoạt động tư duy phân tích nhận thức bậc cao; Sao chép là thao tác cơ học thụ động."
+    },
+    {
+      "id": "cog-5",
+      "text": "“Một số học sinh thích Vật lí. Lan là học sinh và Lan thích Vật lí.” Kết luận nào chắc chắn đúng?",
+      "domain": "verbal",
+      "domainName": "Verbal – Ngôn ngữ",
+      "correctAnswer": 1,
+      "options": [
+        {
+          "label": "A. Tất cả học sinh thích Vật lí."
+        },
+        {
+          "label": "B. Lan là một học sinh thích Vật lí."
+        },
+        {
+          "label": "C. Chỉ Lan thích Vật lí."
+        },
+        {
+          "label": "D. Không học sinh nào khác thích Vật lí."
+        }
+      ],
+      "explanation": "Từ tiền đề đề bài cho, thông tin chắc chắn xác thực duy nhất là Lan là một học sinh thích Vật lí."
+    },
+    {
+      "id": "cog-6",
+      "text": "Chọn cặp quan hệ đúng nhất: “bản đồ : vị trí” tương tự “từ điển : …”",
+      "domain": "verbal",
+      "domainName": "Verbal – Ngôn ngữ",
+      "correctAnswer": 0,
+      "options": [
+        {
+          "label": "A. Ngữ nghĩa"
+        },
+        {
+          "label": "B. Âm thanh"
+        },
+        {
+          "label": "C. Bài hát"
+        },
+        {
+          "label": "D. Hình ảnh"
+        }
+      ],
+      "explanation": "Bản đồ là công cụ tra cứu vị trí địa lý; từ điển là công cụ tra cứu ngữ nghĩa của từ ngữ."
+    },
+    {
+      "id": "cog-7",
+      "text": "Từ nào trái nghĩa với “linh hoạt” trong ngữ cảnh giải quyết vấn đề?",
+      "domain": "verbal",
+      "domainName": "Verbal – Ngôn ngữ",
+      "correctAnswer": 1,
+      "options": [
+        {
+          "label": "A. Sáng tạo"
+        },
+        {
+          "label": "B. Cứng nhắc"
+        },
+        {
+          "label": "C. Nhanh nhạy"
+        },
+        {
+          "label": "D. Chủ động"
+        }
+      ],
+      "explanation": "Linh hoạt là khả năng thích ứng linh động; đối lập trực tiếp với cứng nhắc, bất biến."
+    },
+    {
+      "id": "cog-8",
+      "text": "Đọc nhận định: “Tất cả thành viên của nhóm A đều biết Excel. Minh không biết Excel.” Kết luận hợp lý nhất là:",
+      "domain": "verbal",
+      "domainName": "Verbal – Ngôn ngữ",
+      "correctAnswer": 0,
+      "options": [
+        {
+          "label": "A. Minh không thuộc nhóm A."
+        },
+        {
+          "label": "B. Minh thuộc nhóm A."
+        },
+        {
+          "label": "C. Tất cả người biết Excel thuộc nhóm A."
+        },
+        {
+          "label": "D. Không thể biết Minh thuộc nhóm nào."
+        }
+      ],
+      "explanation": "Theo quy tắc suy luận phản đảo: Nếu thuộc nhóm A thì biết Excel -> Không biết Excel chắc chắn không thuộc nhóm A."
+    },
+    {
+      "id": "cog-9",
+      "text": "Chọn câu có lập luận hợp lý nhất.",
+      "domain": "verbal",
+      "domainName": "Verbal – Ngôn ngữ",
+      "correctAnswer": 2,
+      "options": [
+        {
+          "label": "A. Tôi học tốt hôm nay nên tôi chắc chắn sẽ luôn học tốt."
+        },
+        {
+          "label": "B. Nhiều người thích ngành X nên ngành X chắc chắn phù hợp với tôi."
+        },
+        {
+          "label": "C. Điểm mạnh của một người là một trong những yếu tố cần xem xét khi chọn ngành."
+        },
+        {
+          "label": "D. Một ngành có lương cao thì chắc chắn là ngành tốt nhất."
+        }
+      ],
+      "explanation": "Câu C mang tính khách quan, thận trọng và phù hợp logic khoa học hướng nghiệp."
+    },
+    {
+      "id": "cog-10",
+      "text": "“Ưu tiên” gần nghĩa nhất với:",
+      "domain": "verbal",
+      "domainName": "Verbal – Ngôn ngữ",
+      "correctAnswer": 0,
+      "options": [
+        {
+          "label": "A. Đặt lên trước vì có mức độ quan trọng cao hơn."
+        },
+        {
+          "label": "B. Loại bỏ hoàn toàn."
+        },
+        {
+          "label": "C. Làm sau cùng."
+        },
+        {
+          "label": "D. Không cần cân nhắc."
+        }
+      ],
+      "explanation": "Ưu tiên nghĩa là sắp xếp tiến hành trước dựa trên tầm mức quan trọng."
+    },
+    {
+      "id": "cog-11",
+      "text": "Một lớp có 40 học sinh, 60% tham gia câu lạc bộ. Có bao nhiêu học sinh tham gia?",
+      "domain": "numerical",
+      "domainName": "Numerical – Định lượng",
+      "correctAnswer": 1,
+      "options": [
+        {
+          "label": "A. 20"
+        },
+        {
+          "label": "B. 24"
+        },
+        {
+          "label": "C. 26"
+        },
+        {
+          "label": "D. 28"
+        }
+      ],
+      "explanation": "40 × 60% = 40 × 0.6 = 24 học sinh."
+    },
+    {
+      "id": "cog-12",
+      "text": "Dãy số: 3, 6, 12, 24, … Số tiếp theo là:",
+      "domain": "numerical",
+      "domainName": "Numerical – Định lượng",
+      "correctAnswer": 2,
+      "options": [
+        {
+          "label": "A. 36"
+        },
+        {
+          "label": "B. 42"
+        },
+        {
+          "label": "C. 48"
+        },
+        {
+          "label": "D. 54"
+        }
+      ],
+      "explanation": "Quy luật nhân đôi liên tiếp: 24 × 2 = 48."
+    },
+    {
+      "id": "cog-13",
+      "text": "Một sản phẩm giá 500.000 đồng được giảm 20%. Giá sau giảm là:",
+      "domain": "numerical",
+      "domainName": "Numerical – Định lượng",
+      "correctAnswer": 1,
+      "options": [
+        {
+          "label": "A. 380.000"
+        },
+        {
+          "label": "B. 400.000"
+        },
+        {
+          "label": "C. 420.000"
+        },
+        {
+          "label": "D. 450.000"
+        }
+      ],
+      "explanation": "500.000 × (1 - 0.20) = 400.000 đồng."
+    },
+    {
+      "id": "cog-14",
+      "text": "Dãy số: 2, 5, 11, 23, 47, … Số tiếp theo là:",
+      "domain": "numerical",
+      "domainName": "Numerical – Định lượng",
+      "correctAnswer": 2,
+      "options": [
+        {
+          "label": "A. 93"
+        },
+        {
+          "label": "B. 94"
+        },
+        {
+          "label": "C. 95"
+        },
+        {
+          "label": "D. 96"
+        }
+      ],
+      "explanation": "Quy luật: số sau = (số trước × 2) + 1. 47 × 2 + 1 = 95."
+    },
+    {
+      "id": "cog-15",
+      "text": "3 quyển vở giá 45.000 đồng. Nếu đơn giá không đổi, 7 quyển giá bao nhiêu?",
+      "domain": "numerical",
+      "domainName": "Numerical – Định lượng",
+      "correctAnswer": 2,
+      "options": [
+        {
+          "label": "A. 90.000"
+        },
+        {
+          "label": "B. 95.000"
+        },
+        {
+          "label": "C. 105.000"
+        },
+        {
+          "label": "D. 115.000"
+        }
+      ],
+      "explanation": "Đơn giá 1 quyển = 45.000 / 3 = 15.000 đ. 7 quyển = 7 × 15.000 = 105.000 đồng."
+    },
+    {
+      "id": "cog-16",
+      "text": "Một xe đi 120 km trong 2 giờ. Với cùng vận tốc, đi 300 km cần:",
+      "domain": "numerical",
+      "domainName": "Numerical – Định lượng",
+      "correctAnswer": 1,
+      "options": [
+        {
+          "label": "A. 4 giờ"
+        },
+        {
+          "label": "B. 5 giờ"
+        },
+        {
+          "label": "C. 6 giờ"
+        },
+        {
+          "label": "D. 7 giờ"
+        }
+      ],
+      "explanation": "Vận tốc = 120 / 2 = 60 km/h. Thời gian = 300 / 60 = 5 giờ."
+    },
+    {
+      "id": "cog-17",
+      "text": "Trung bình của 6, 8, 10 và x là 9. Giá trị x bằng:",
+      "domain": "numerical",
+      "domainName": "Numerical – Định lượng",
+      "correctAnswer": 2,
+      "options": [
+        {
+          "label": "A. 10"
+        },
+        {
+          "label": "B. 11"
+        },
+        {
+          "label": "C. 12"
+        },
+        {
+          "label": "D. 13"
+        }
+      ],
+      "explanation": "Tổng = 9 × 4 = 36. x = 36 - (6 + 8 + 10) = 12."
+    },
+    {
+      "id": "cog-18",
+      "text": "Một nhóm có nam:nữ = 2:3 và tổng cộng 25 người. Số nữ là:",
+      "domain": "numerical",
+      "domainName": "Numerical – Định lượng",
+      "correctAnswer": 2,
+      "options": [
+        {
+          "label": "A. 10"
+        },
+        {
+          "label": "B. 12"
+        },
+        {
+          "label": "C. 15"
+        },
+        {
+          "label": "D. 18"
+        }
+      ],
+      "explanation": "Tổng số phần = 2 + 3 = 5 phần. 1 phần = 5 người. Số nữ = 3 × 5 = 15 người."
+    },
+    {
+      "id": "cog-19",
+      "text": "Dãy số: 81, 27, 9, 3, … Số tiếp theo là:",
+      "domain": "numerical",
+      "domainName": "Numerical – Định lượng",
+      "correctAnswer": 1,
+      "options": [
+        {
+          "label": "A. 0"
+        },
+        {
+          "label": "B. 1"
+        },
+        {
+          "label": "C. 1,5"
+        },
+        {
+          "label": "D. 2"
+        }
+      ],
+      "explanation": "Quy luật chia 3 liên tiếp: 3 / 3 = 1."
+    },
+    {
+      "id": "cog-20",
+      "text": "Một cửa hàng tăng giá 10% rồi giảm 10% trên mức giá mới. So với giá ban đầu, giá cuối cùng:",
+      "domain": "numerical",
+      "domainName": "Numerical – Định lượng",
+      "correctAnswer": 2,
+      "options": [
+        {
+          "label": "A. Bằng giá ban đầu"
+        },
+        {
+          "label": "B. Cao hơn 1%"
+        },
+        {
+          "label": "C. Thấp hơn 1%"
+        },
+        {
+          "label": "D. Thấp hơn 10%"
+        }
+      ],
+      "explanation": "100 -> 110 -> 110 × 0.9 = 99 -> Thấp hơn 1% so với ban đầu."
+    },
+    {
+      "id": "cog-21",
+      "text": "Chọn ký hiệu tiếp theo: ▲, ■, ▲, ■, ▲, …",
+      "domain": "figural",
+      "domainName": "Figural – Hình ảnh/Quy luật",
+      "correctAnswer": 1,
+      "options": [
+        {
+          "label": "A. ▲"
+        },
+        {
+          "label": "B. ■"
+        },
+        {
+          "label": "C. ●"
+        },
+        {
+          "label": "D. ◆"
+        }
+      ],
+      "explanation": "Quy luật xen kẽ tam giác và hình vuông -> tiếp theo là hình vuông (■)."
+    },
+    {
+      "id": "cog-22",
+      "text": "Chuỗi hướng: ↑, →, ↓, ←, … Ký hiệu tiếp theo là:",
+      "domain": "figural",
+      "domainName": "Figural – Hình ảnh/Quy luật",
+      "correctAnswer": 0,
+      "options": [
+        {
+          "label": "A. ↑"
+        },
+        {
+          "label": "B. →"
+        },
+        {
+          "label": "C. ↓"
+        },
+        {
+          "label": "D. ←"
+        }
+      ],
+      "explanation": "Chu kỳ xoay 90 độ theo chiều kim đồng hồ: Lên, Phải, Xuống, Trái -> quay lại Lên (↑)."
+    },
+    {
+      "id": "cog-23",
+      "text": "Chuỗi: ●, ●●, ●●●, ●●●●, … Hình tiếp theo có:",
+      "domain": "figural",
+      "domainName": "Figural – Hình ảnh/Quy luật",
+      "correctAnswer": 2,
+      "options": [
+        {
+          "label": "A. 3 chấm"
+        },
+        {
+          "label": "B. 4 chấm"
+        },
+        {
+          "label": "C. 5 chấm"
+        },
+        {
+          "label": "D. 6 chấm"
+        }
+      ],
+      "explanation": "Số lượng chấm tròn tăng dần từng đơn vị: 1, 2, 3, 4 -> tiếp theo là 5 chấm."
+    },
+    {
+      "id": "cog-24",
+      "text": "Một hình vuông được xoay 90° theo chiều kim đồng hồ sau mỗi bước. Sau 4 lần xoay, nó:",
+      "domain": "figural",
+      "domainName": "Figural – Hình ảnh/Quy luật",
+      "correctAnswer": 3,
+      "options": [
+        {
+          "label": "A. Quay 90°"
+        },
+        {
+          "label": "B. Quay 180°"
+        },
+        {
+          "label": "C. Quay 270°"
+        },
+        {
+          "label": "D. Trở về hướng ban đầu"
+        }
+      ],
+      "explanation": "4 lần xoay 90 độ = 360 độ (trọn một vòng), hình trở về trạng thái định hướng ban đầu."
+    },
+    {
+      "id": "cog-25",
+      "text": "Chuỗi ký hiệu: ▲, ▼, ▲, ▼, ▲, … Ký hiệu tiếp theo là:",
+      "domain": "figural",
+      "domainName": "Figural – Hình ảnh/Quy luật",
+      "correctAnswer": 1,
+      "options": [
+        {
+          "label": "A. ▲"
+        },
+        {
+          "label": "B. ▼"
+        },
+        {
+          "label": "C. ■"
+        },
+        {
+          "label": "D. ●"
+        }
+      ],
+      "explanation": "Quy luật đảo chiều đỉnh tam giác: Hướng lên rồi hướng xuống xen kẽ -> tiếp theo là ▼."
+    },
+    {
+      "id": "cog-26",
+      "text": "Quy luật số cạnh: tam giác → tứ giác → ngũ giác → … Hình tiếp theo có:",
+      "domain": "figural",
+      "domainName": "Figural – Hình ảnh/Quy luật",
+      "correctAnswer": 1,
+      "options": [
+        {
+          "label": "A. 5 cạnh"
+        },
+        {
+          "label": "B. 6 cạnh"
+        },
+        {
+          "label": "C. 7 cạnh"
+        },
+        {
+          "label": "D. 8 cạnh"
+        }
+      ],
+      "explanation": "Số cạnh tăng đều: 3 cạnh -> 4 cạnh -> 5 cạnh -> tiếp theo là lục giác có 6 cạnh."
+    },
+    {
+      "id": "cog-27",
+      "text": "Chuỗi hướng quay 90° theo chiều kim đồng hồ: ↑ → ↓ → ← → … Ký hiệu tiếp theo là:",
+      "domain": "figural",
+      "domainName": "Figural – Hình ảnh/Quy luật",
+      "correctAnswer": 0,
+      "options": [
+        {
+          "label": "A. ↑"
+        },
+        {
+          "label": "B. →"
+        },
+        {
+          "label": "C. ↓"
+        },
+        {
+          "label": "D. ←"
+        }
+      ],
+      "explanation": "Tuần hoàn 4 hướng la bàn: Bắc (↑) -> Đông (→) -> Nam (↓) -> Tây (←) -> tiếp tục Bắc (↑)."
+    },
+    {
+      "id": "cog-28",
+      "text": "Một ô có 1 hình tròn. Mỗi bước số hình tròn tăng thêm 2: 1 → 3 → 5 → 7 → … Bước tiếp theo có:",
+      "domain": "figural",
+      "domainName": "Figural – Hình ảnh/Quy luật",
+      "correctAnswer": 1,
+      "options": [
+        {
+          "label": "A. 8"
+        },
+        {
+          "label": "B. 9"
+        },
+        {
+          "label": "C. 10"
+        },
+        {
+          "label": "D. 11"
+        }
+      ],
+      "explanation": "Dãy số lẻ tăng với khoảng cách 2: 7 + 2 = 9 hình tròn."
+    },
+    {
+      "id": "cog-29",
+      "text": "Một hình được phản chiếu qua trục dọc. Nếu mũi tên ban đầu chỉ sang phải →, sau phản chiếu nó chỉ:",
+      "domain": "figural",
+      "domainName": "Figural – Hình ảnh/Quy luật",
+      "correctAnswer": 2,
+      "options": [
+        {
+          "label": "A. ↑"
+        },
+        {
+          "label": "B. ↓"
+        },
+        {
+          "label": "C. ←"
+        },
+        {
+          "label": "D. →"
+        }
+      ],
+      "explanation": "Đối xứng gương qua trục dọc đảo ngược trục ngang: từ phải (→) thành trái (←)."
+    },
+    {
+      "id": "cog-30",
+      "text": "Chuỗi: ■, ■■, ■■■, ■■■■, … Nếu quy luật tiếp tục, hình thứ 6 có:",
+      "domain": "figural",
+      "domainName": "Figural – Hình ảnh/Quy luật",
+      "correctAnswer": 1,
+      "options": [
+        {
+          "label": "A. 5 ô vuông"
+        },
+        {
+          "label": "B. 6 ô vuông"
+        },
+        {
+          "label": "C. 7 ô vuông"
+        },
+        {
+          "label": "D. 8 ô vuông"
+        }
+      ],
+      "explanation": "Hình thứ n có n ô vuông -> hình thứ 6 có 6 ô vuông."
+    }
+  ]
+}
