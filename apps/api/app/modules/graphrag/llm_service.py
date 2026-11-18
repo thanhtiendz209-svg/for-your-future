@@ -96,7 +96,7 @@ async def stream_gemini_messages(
 
 async def call_gemini_native(prompt_text: str, max_tokens: int = 800) -> str:
     """Gọi native Google Gemini generateContent API nếu OpenAI endpoint quá tải (503/429)."""
-    native_url = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent?key={GEMINI_API_KEY}"
+    native_url = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent"
     payload = {
         "contents": [{"parts": [{"text": prompt_text}]}],
         "generationConfig": {
@@ -106,7 +106,7 @@ async def call_gemini_native(prompt_text: str, max_tokens: int = 800) -> str:
     }
     try:
         async with httpx.AsyncClient(timeout=15.0) as client:
-            res = await client.post(native_url, json=payload)
+            res = await client.post(native_url, headers={"x-goog-api-key": GEMINI_API_KEY}, json=payload)
             if res.status_code == 200:
                 data = res.json()
                 candidates = data.get("candidates", [])

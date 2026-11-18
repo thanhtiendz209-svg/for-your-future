@@ -50,17 +50,19 @@ async def send(sid:str,req:MessageRequest,user=Depends(get_current_user),db:Sess
     if not prompt:raise HTTPException(422,'Vui lòng nhập tin nhắn.')
     history=db.query(ChatMessage).filter(ChatMessage.session_id==sid).order_by(ChatMessage.created_at.desc()).limit(12).all()[::-1]
     history_data=[{'role':m.role,'content':m.content[:5000]} for m in history]
+    is_greeting = prompt.lower().strip('!?. ') in ('xin chào', 'chào', 'hello', 'hi')
+    # Request sessions and their ORM objects are closed before the response streams.
+    profile_data = None if is_greeting else extract_user_profile_data(db, user)
     if not history:thread.title=prompt[:80]
     db.add(ChatMessage(session_id=sid,role='user',content=prompt));db.commit()
     async def events():
         parts=[];evidence=[]
         event=lambda data:'data: '+json.dumps(data,ensure_ascii=False)+'\n\n'
         try:
-            if prompt.lower().strip('!?. ') in ['xin chào','chào','hello','hi']:
+            if is_greeting:
                 answer='Chào bạn! Tôi có thể giúp bạn tìm ngành phù hợp, tra cứu trường và học phí, hoặc cân nhắc nguyện vọng. Bạn đang quan tâm đến ngành hay trường nào?'
                 parts.append(answer);yield event({'type':'token','token':answer})
             else:
-                profile_data = extract_user_profile_data(db, user)
                 try:
                     async for ev in career_advisory_service.run_advisory_flow(
                         prompt=prompt,

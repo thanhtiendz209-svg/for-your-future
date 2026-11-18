@@ -6,9 +6,9 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 from fastapi import FastAPI,HTTPException
 from fastapi.testclient import TestClient
-from fastapi.responses import StreamingResponse
 from app.core.models_db import Base,User,ChatMessage
 from app.core.database import get_db
+from app.core.security import create_access_token
 from app.modules.auth.service import get_current_user
 from app.modules.consultation.history_router import router
 from app.modules.consultation.history_migration import ensure_chat_owner
@@ -38,20 +38,32 @@ class ChatTests(unittest.TestCase):
    self.assertEqual(self.client.get('/api/v1/chat/sessions'+path).status_code,404)
   self.assertEqual(self.client.post(f'/api/v1/chat/sessions/{sid}/messages/stream',json={'prompt':'Xin chào'}).status_code,404)
  def test_multi_turn_context_and_stream_saved(self):
-  sid=self.create();self.client.post(f'/api/v1/chat/sessions/{sid}/messages/stream',json={'prompt':'Xin chào'})
-  received=[]
-  async def reply(request,*args):
-   received.append(request)
-   async def chunks():
-    yield 'data: {"type":"token","token":"Kết quả **có nguồn**"}\n\n'
-    yield 'data: [DONE]\n\n'
-   return StreamingResponse(chunks(),media_type='text/event-stream')
-  with patch('app.modules.consultation.history_router.chat_recommend_stream',new=reply):
-   self.client.post(f'/api/v1/chat/sessions/{sid}/messages/stream',json={'prompt':'Ngành công nghệ thông tin'})
-   self.client.post(f'/api/v1/chat/sessions/{sid}/messages/stream',json={'prompt':'Còn học phí thì sao?'})
-  self.assertTrue(any(m['content']=='Ngành công nghệ thông tin' for m in received[-1].conversation))
-  self.assertTrue(any(m['role']=='assistant' for m in received[-1].conversation))
-  rows=self.client.get(f'/api/v1/chat/sessions/{sid}/messages').json();self.assertEqual(len(rows),6);self.assertEqual(rows[-1]['content'],'Kết quả **có nguồn**')
+  # Use a real authenticated ORM user so the test detects stale session access.
+  del self.app.dependency_overrides[get_current_user]
+  self.client.headers["Authorization"] = f"Bearer {create_access_token('alice')}"
+  sid = self.create()
+  path = f'/api/v1/chat/sessions/{sid}/messages'
+  greeting = self.client.post(path + '/stream', json={'prompt': 'Xin chào'})
+  self.assertEqual(greeting.status_code, 200, greeting.text)
+  received = []
+
+  async def reply(**kwargs):
+   received.append(kwargs)
+   yield {'type': 'token', 'token': 'Kết quả **có nguồn**'}
+
+  with patch('app.modules.consultation.history_router.career_advisory_service.run_advisory_flow', new=reply):
+   for prompt in ('Ngành công nghệ thông tin', 'Còn học phí thì sao?'):
+    response = self.client.post(path + '/stream', json={'prompt': prompt})
+    self.assertEqual(response.status_code, 200, response.text)
+    self.assertIn('Kết quả **có nguồn**', response.text)
+    self.assertIn('[DONE]', response.text)
+
+  self.assertEqual(received[-1]['profile_data']['student_id'], 'alice')
+  self.assertIn({'role': 'user', 'content': 'Ngành công nghệ thông tin'}, received[-1]['history'])
+  self.assertTrue(any(message['role'] == 'assistant' for message in received[-1]['history']))
+  rows = self.client.get(path).json()
+  self.assertEqual(len(rows), 6)
+  self.assertEqual(rows[-1]['content'], 'Kết quả **có nguồn**')
  def test_missing_profile_becomes_saved_actionable_message(self):
   sid=self.create()
   async def missing(*args):raise HTTPException(422,'Vui lòng hoàn thành RIASEC')
