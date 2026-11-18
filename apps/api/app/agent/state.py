@@ -10,6 +10,7 @@ class AgentState(TypedDict, total=False):
     student_id: str
     messages: List[Dict[str, str]]
     latest_user_prompt: str
+    continuation: Optional[str]
     intent: str  # RECOMMEND, COMPARE, LOOKUP, CHITCHAT, OUT_OF_SCOPE
     profile_data: Optional[Dict[str, Any]]  # Full profile from PostgreSQL
     slots: Dict[str, Any]  # Persistent slot dictionary

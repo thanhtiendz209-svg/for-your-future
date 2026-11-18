@@ -33,65 +33,129 @@ GEMINI_MODEL: str = settings.GEMINI_MODEL
 GEMINI_OPENAI_URL: str = settings.GEMINI_OPENAI_BASE_URL.rstrip("/") + "/chat/completions"
 
 
+class GeminiStreamInterrupted(Exception):
+    """Gemini ended before delivering a complete response."""
+
+    def __init__(self, reason: str):
+        super().__init__(reason)
+        self.reason = reason
+
+
+def with_continuation(
+    messages: List[Dict[str, str]], continuation: Optional[str]
+) -> List[Dict[str, str]]:
+    if not continuation:
+        return messages
+    return [
+        *messages,
+        {"role": "assistant", "content": continuation},
+        {"role": "user", "content": "Viết tiếp từ chỗ đang dở. Chỉ bổ sung phần còn thiếu."},
+    ]
+
+
+async def _gemini_sse(client, url, headers, body, *, native=False) -> AsyncGenerator[str, None]:
+    has_text = False
+    finished = False
+    try:
+        async with client.stream("POST", url, headers=headers, json=body) as response:
+            if response.status_code in (429, 503):
+                logger.warning("Gemini streaming HTTP %s", response.status_code)
+                raise GeminiStreamInterrupted("busy")
+            response.raise_for_status()
+            async for line in response.aiter_lines():
+                if not line.startswith("data:"):
+                    continue
+                payload = line[5:].strip()
+                if not payload:
+                    continue
+                if payload == "[DONE]":
+                    finished = True
+                    break
+                data = json.loads(payload)
+                if error := data.get("error"):
+                    reason = "busy" if error.get("code") in (429, 503) else "connection"
+                    raise GeminiStreamInterrupted(reason)
+                if native:
+                    if (data.get("promptFeedback") or {}).get("blockReason"):
+                        raise GeminiStreamInterrupted("blocked")
+                    candidates = data.get("candidates") or []
+                    if not candidates:
+                        continue
+                    candidate = candidates[0]
+                    parts = (candidate.get("content") or {}).get("parts") or []
+                    text = "".join(part.get("text", "") for part in parts if not part.get("thought"))
+                    finish = candidate.get("finishReason")
+                else:
+                    choices = data.get("choices") or []
+                    if not choices:
+                        continue
+                    choice = choices[0]
+                    text = (choice.get("delta") or {}).get("content") or ""
+                    finish = choice.get("finish_reason")
+                if text:
+                    has_text = has_text or bool(text.strip())
+                    yield text
+                if finish in ("length", "MAX_TOKENS"):
+                    raise GeminiStreamInterrupted("length")
+                if finish in ("stop", "STOP"):
+                    finished = True
+                    break
+                if finish in ("content_filter", "SAFETY", "RECITATION", "BLOCKLIST", "PROHIBITED_CONTENT", "SPII"):
+                    raise GeminiStreamInterrupted("blocked")
+                if finish and finish != "FINISH_REASON_UNSPECIFIED":
+                    raise GeminiStreamInterrupted("connection")
+    except (httpx.HTTPError, json.JSONDecodeError) as error:
+        logger.warning("Gemini stream ended (%s)", type(error).__name__)
+        raise GeminiStreamInterrupted("connection") from error
+
+    if not finished or not has_text:
+        raise GeminiStreamInterrupted("connection")
+
+
 async def stream_gemini_messages(
     messages: List[Dict[str, str]],
     temperature: float = 0.3,
     max_tokens: int = 1500
 ) -> AsyncGenerator[str, None]:
-    """
-    Stream tokens from Google Gemini API using OpenAI-compatible protocol.
-    Yields raw token strings.
-    """
-    headers = {
-        "Authorization": f"Bearer {GEMINI_API_KEY}",
-        "Content-Type": "application/json"
-    }
+    """Yield Gemini text as it arrives, switching APIs only before visible text."""
+    headers = {"Authorization": f"Bearer {GEMINI_API_KEY}"}
     body = {
         "model": GEMINI_MODEL,
         "messages": messages,
         "temperature": temperature,
         "max_tokens": max_tokens,
-        "stream": True
+        "stream": True,
     }
-
-    yielded_any = False
-    try:
-        async with httpx.AsyncClient(timeout=25.0) as client:
-            async with client.stream("POST", GEMINI_OPENAI_URL, headers=headers, json=body) as res:
-                if res.status_code == 200:
-                    async for line in res.aiter_lines():
-                        if not line.strip():
-                            continue
-                        if line.startswith("data: "):
-                            raw = line[6:].strip()
-                            if raw == "[DONE]":
-                                break
-                            try:
-                                d = json.loads(raw)
-                                choices = d.get("choices", [])
-                                if choices:
-                                    delta = choices[0].get("delta", {})
-                                    content = delta.get("content", "")
-                                    if content:
-                                        yielded_any = True
-                                        yield content
-                            except json.JSONDecodeError:
-                                continue
-                else:
-                    await res.aread()
-                    logger.warning(f"Gemini OpenAI API returned HTTP {res.status_code}: {res.text[:200]}")
-    except Exception as e:
-        logger.error(f"Error streaming from Gemini API: {e}", exc_info=True)
-
-    # Fallback dự phòng nếu stream gặp sự cố mạng hoặc 429 rate limit
-    if not yielded_any:
+    has_text = False
+    async with httpx.AsyncClient(timeout=httpx.Timeout(25.0, connect=8.0)) as client:
         try:
-            fallback_text = await call_gemini_chat(messages, temperature=temperature, max_tokens=max_tokens)
-            if fallback_text:
-                for i in range(0, len(fallback_text), 40):
-                    yield fallback_text[i:i+40]
-        except Exception as e:
-            logger.error(f"Fallback call_gemini_chat failed: {e}")
+            async for text in _gemini_sse(client, GEMINI_OPENAI_URL, headers, body):
+                has_text = has_text or bool(text.strip())
+                yield text
+            return
+        except GeminiStreamInterrupted as error:
+            if has_text or error.reason not in ("connection", "busy"):
+                raise
+
+        native_url = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:streamGenerateContent?alt=sse"
+        native_body = {
+            "contents": [
+                {
+                    "role": "model" if message["role"] == "assistant" else "user",
+                    "parts": [{"text": message["content"]}],
+                }
+                for message in messages if message["role"] != "system"
+            ],
+            "generationConfig": {"temperature": temperature, "maxOutputTokens": max_tokens},
+        }
+        system = "\n".join(message["content"] for message in messages if message["role"] == "system")
+        if system:
+            native_body["systemInstruction"] = {"parts": [{"text": system}]}
+        logger.info("Using Gemini native streaming fallback")
+        async for text in _gemini_sse(
+            client, native_url, {"x-goog-api-key": GEMINI_API_KEY}, native_body, native=True
+        ):
+            yield text
 
 
 async def call_gemini_native(prompt_text: str, max_tokens: int = 800) -> str:
@@ -291,11 +355,9 @@ def build_portfolio_system_prompt(
     return prompt
 
 
-async def generate_fallback_portfolio_stream(
-    portfolio: Any,
-    user_prompt: str,
-    slots: Optional[Dict[str, Any]] = None
-) -> AsyncGenerator[str, None]:
+def _fallback_portfolio_text(
+    portfolio: Any, slots: Optional[Dict[str, Any]] = None
+) -> List[str]:
     """Bộ sinh Grounded In-Context cục bộ nếu mất mạng hoàn toàn"""
     score = 25.0
     group = "A00"
@@ -306,9 +368,9 @@ async def generate_fallback_portfolio_stream(
         score = portfolio.extracted_intent.student_score
         group = portfolio.extracted_intent.student_group_code
 
-    reach_list = portfolio.get("reach", []) if isinstance(portfolio, dict) else (getattr(portfolio, "reach_programs", []) or [])
-    target_list = portfolio.get("target", []) if isinstance(portfolio, dict) else (getattr(portfolio, "target_programs", []) or [])
-    safe_list = portfolio.get("safe", []) if isinstance(portfolio, dict) else (getattr(portfolio, "safe_programs", []) or [])
+    reach_list = (portfolio.get("reach") or portfolio.get("reach_programs") or []) if isinstance(portfolio, dict) else (getattr(portfolio, "reach_programs", []) or [])
+    target_list = (portfolio.get("target") or portfolio.get("target_programs") or []) if isinstance(portfolio, dict) else (getattr(portfolio, "target_programs", []) or [])
+    safe_list = (portfolio.get("safe") or portfolio.get("safe_programs") or []) if isinstance(portfolio, dict) else (getattr(portfolio, "safe_programs", []) or [])
 
     lines = [
         f"Chào bạn! Dựa trên phân tích từ Knowledge Graph và điểm số {score} khối {group}:\n\n",
@@ -317,7 +379,7 @@ async def generate_fallback_portfolio_stream(
 
     def _get_name_and_margin(p):
         if isinstance(p, dict):
-            return p.get("program_name"), p.get("university_name"), p.get("admission_score"), p.get("score_margin", 0.0)
+            return p.get("program_name"), p.get("university_name"), p.get("admission_score", p.get("benchmark_score")), p.get("score_margin", 0.0)
         return p.program_name, p.university_name, p.benchmark_score, getattr(p, "score_margin", 0.0)
 
     if reach_list:
@@ -340,45 +402,45 @@ async def generate_fallback_portfolio_stream(
 
     lines.append("\nChúc bạn đưa ra quyết định sáng suốt và đạt kết quả cao nhất!")
 
-    for line in lines:
-        for word in line.split(" "):
-            yield f"data: {json.dumps({'token': word + ' '}, ensure_ascii=False)}\n\n"
-            await asyncio.sleep(0.005)
+    return lines
 
-    yield "data: [DONE]\n\n"
+
+async def stream_portfolio_tokens(
+    portfolio: Any,
+    user_prompt: str,
+    slots: Optional[Dict[str, Any]] = None,
+    continuation: Optional[str] = None,
+) -> AsyncGenerator[str, None]:
+    prompt = build_portfolio_system_prompt(portfolio, user_prompt, slots=slots)
+    messages = [
+        {"role": "system", "content": "Bạn là chuyên gia tư vấn tuyển sinh đại học cấp cao, phản hồi mạch lạc bằng tiếng Việt."},
+        {"role": "user", "content": prompt},
+    ]
+    has_text = False
+    try:
+        async for token in stream_gemini_messages(with_continuation(messages, continuation), temperature=0.3):
+            has_text = has_text or bool(token.strip())
+            yield token
+    except GeminiStreamInterrupted as error:
+        if has_text or continuation or error.reason not in ("connection", "busy"):
+            raise
+        for line in _fallback_portfolio_text(portfolio, slots):
+            yield line
 
 
 async def stream_portfolio_ai_consultation(
     portfolio: Any,
     user_prompt: str,
-    slots: Optional[Dict[str, Any]] = None
+    slots: Optional[Dict[str, Any]] = None,
 ) -> AsyncGenerator[str, None]:
-    """
-    Gửi prompt tới Google Gemini API (gemini-flash-lite-latest) với tốc độ cao.
-    Phát Server-Sent Events trực tiếp dạng data: {"token": "..."}\n\n.
-    """
-    prompt = build_portfolio_system_prompt(portfolio, user_prompt, slots=slots)
-    messages = [
-        {"role": "system", "content": "Bạn là chuyên gia tư vấn tuyển sinh đại học cấp cao, phản hồi mạch lạc bằng tiếng Việt."},
-        {"role": "user", "content": prompt}
-    ]
-
-    has_streamed = False
+    """Compatibility adapter for callers that consume SSE-formatted tokens."""
     try:
-        async for token in stream_gemini_messages(messages, temperature=0.3):
-            has_streamed = True
+        async for token in stream_portfolio_tokens(portfolio, user_prompt, slots):
             yield f"data: {json.dumps({'token': token}, ensure_ascii=False)}\n\n"
-
-        if has_streamed:
-            yield "data: [DONE]\n\n"
-            return
-    except Exception as e:
-        logger.warning(f"Gemini API streaming error ({e}), using grounded in-context fallback")
-
-    # Dự phòng offline cục bộ nếu mất kết nối
-    if not has_streamed:
-        async for chunk in generate_fallback_portfolio_stream(portfolio, user_prompt, slots=slots):
-            yield chunk
+    except GeminiStreamInterrupted as error:
+        yield f"data: {json.dumps({'type': 'interrupted', 'reason': error.reason})}\n\n"
+        return
+    yield "data: [DONE]\n\n"
 
 
 async def stream_ai_consultation(

@@ -4,7 +4,7 @@ from types import SimpleNamespace
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
-from fastapi import FastAPI,HTTPException
+from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from app.core.models_db import Base,User,ChatMessage
 from app.core.database import get_db
@@ -50,6 +50,7 @@ class ChatTests(unittest.TestCase):
   async def reply(**kwargs):
    received.append(kwargs)
    yield {'type': 'token', 'token': 'Kết quả **có nguồn**'}
+   yield {'type': 'done'}
 
   with patch('app.modules.consultation.history_router.career_advisory_service.run_advisory_flow', new=reply):
    for prompt in ('Ngành công nghệ thông tin', 'Còn học phí thì sao?'):
@@ -64,13 +65,57 @@ class ChatTests(unittest.TestCase):
   rows = self.client.get(path).json()
   self.assertEqual(len(rows), 6)
   self.assertEqual(rows[-1]['content'], 'Kết quả **có nguồn**')
- def test_missing_profile_becomes_saved_actionable_message(self):
-  sid=self.create()
-  async def missing(*args):raise HTTPException(422,'Vui lòng hoàn thành RIASEC')
-  with patch('app.modules.consultation.history_router.chat_recommend_stream',new=missing):
-   r=self.client.post(f'/api/v1/chat/sessions/{sid}/messages/stream',json={'prompt':'Tư vấn giúp tôi'})
-  self.assertIn('RIASEC',r.text)
-  self.assertIn('RIASEC',self.client.get(f'/api/v1/chat/sessions/{sid}/messages').json()[-1]['content'])
+ def test_interrupted_reply_is_saved_and_can_be_continued(self):
+  sid = self.create()
+  path = f'/api/v1/chat/sessions/{sid}/messages'
+  prompt = 'Học phí ngành công nghệ thông tin là bao nhiêu?'
+  partial = 'Phần tư vấn đang dở'
+  received = []
+
+  async def reply(**kwargs):
+   received.append(kwargs)
+   if kwargs['continuation']:
+    yield {'type': 'token', 'token': 'Phần tư vấn tiếp theo'}
+    yield {'type': 'done'}
+   else:
+    yield {'type': 'token', 'token': partial}
+    yield {'type': 'interrupted', 'reason': 'length'}
+
+  with patch('app.modules.consultation.history_router.career_advisory_service.run_advisory_flow', new=reply):
+   response = self.client.post(path + '/stream', json={'prompt': prompt, 'target_year': 2027})
+   self.assertEqual(response.status_code, 200)
+   self.assertIn(partial, response.text)
+   self.assertIn('"reason": "length"', response.text)
+   self.assertNotIn('[DONE]', response.text)
+   saved = self.client.get(path).json()[-1]
+   self.assertEqual(saved['content'], partial)
+   self.assertEqual(saved['evidence'], [{
+    'type': 'interrupted', 'reason': 'length', 'prompt': prompt, 'target_year': 2027,
+   }])
+
+   response = self.client.post(path + '/stream', json={'prompt': prompt, 'target_year': 2027, 'continuation': partial})
+   self.assertIn('[DONE]', response.text)
+   self.assertEqual(received[-1]['prompt'], prompt)
+   self.assertEqual(received[-1]['continuation'], partial)
+   self.assertIn({'role': 'assistant', 'content': partial}, received[-1]['history'])
+   rows = self.client.get(path).json()
+   self.assertEqual(rows[1]['content'], partial)
+   self.assertEqual(rows[2]['content'], 'Viết tiếp câu trả lời')
+   self.assertEqual(rows[3]['content'], 'Phần tư vấn tiếp theo')
+   self.assertEqual(rows[3]['evidence'], [])
+
+ def test_missing_completion_does_not_publish_done(self):
+  path = f'/api/v1/chat/sessions/{self.create()}/messages'
+
+  async def reply(**kwargs):
+   yield {'type': 'token', 'token': 'Một phần dữ liệu'}
+
+  with patch('app.modules.consultation.history_router.career_advisory_service.run_advisory_flow', new=reply):
+   response = self.client.post(path + '/stream', json={'prompt': 'Cho tôi hỏi về học phí'})
+  self.assertIn('"reason": "connection"', response.text)
+  self.assertNotIn('[DONE]', response.text)
+  self.assertEqual(self.client.get(path).json()[-1]['content'], 'Một phần dữ liệu')
+
  def test_followup_overrides_city_and_keeps_prior_score(self):
   from app.modules.graphrag.profile_context import build_profile_intent
   p=SimpleNamespace(academic={'subject_scores':{}},background={},health={},gender='Other',latest_riasec={'result_code':'RIA'},latest_mbti=None)

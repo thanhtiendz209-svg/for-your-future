@@ -4611,7 +4611,7 @@ async function renderConsultation(container, param) {
     container.querySelector('#chat-new').disabled=chatRuntime.busy;
     container.querySelector('#chat-new-shortcut').disabled=chatRuntime.busy;
     container.querySelector('#chat-year').disabled=chatRuntime.busy;
-    container.querySelectorAll('[data-chat-session]').forEach(b=>b.disabled=chatRuntime.busy);
+    container.querySelectorAll('[data-chat-session], [data-chat-recovery]').forEach(button => button.disabled = chatRuntime.busy);
     container.querySelector('#chat-status').textContent=chatRuntime.busy?'Trợ lý đang trả lời...':'Enter để gửi · Shift + Enter để xuống dòng';
   }
   function drawSidebar(){
@@ -4726,6 +4726,47 @@ async function renderConsultation(container, param) {
     renderCards('all');
     return widget;
   }
+  function nearChatBottom() {
+    return log.scrollHeight - log.scrollTop - log.clientHeight < 100;
+  }
+  function showChatRecovery(message, body, interrupted) {
+    const {reason, prompt, target_year} = interrupted;
+    const follow = nearChatBottom();
+    const hasText = Boolean(message.content.trim());
+    if (!hasText) body.replaceChildren();
+
+    const panel = document.createElement('div');
+    panel.className = 'chat-recovery';
+    const notice = document.createElement('p');
+    notice.setAttribute('role', 'status');
+    const labels = {
+      stopped: 'Đã dừng phản hồi.',
+      length: 'Phản hồi chưa hoàn tất vì đã chạm giới hạn độ dài.',
+      busy: hasText ? 'Phản hồi chưa hoàn tất vì trợ lý đang bận.' : 'Trợ lý đang bận. Bạn có thể thử lại.',
+      blocked: 'Trợ lý đã dừng phản hồi. Bạn có thể diễn đạt câu hỏi rõ hơn.',
+    };
+    notice.textContent = labels[reason] || (hasText ? 'Phản hồi chưa hoàn tất.' : 'Chưa nhận được phản hồi.');
+    panel.append(notice);
+    if (prompt && reason !== 'blocked') {
+      const actions = document.createElement('div');
+      actions.className = 'chat-recovery-actions';
+      const addAction = (label, continuation, primary) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.dataset.chatRecovery = '';
+        button.className = primary ? 'chat-recovery-primary' : '';
+        button.textContent = label;
+        button.disabled = chatRuntime.busy;
+        button.onclick = () => sendChatPrompt(prompt, target_year, continuation);
+        actions.append(button);
+      };
+      if (hasText) addAction('Viết tiếp', Array.from(message.content).slice(-6000).join(''), true);
+      addAction('Gửi lại', '', !hasText);
+      panel.append(actions);
+    }
+    body.after(panel);
+    if (follow) log.scrollTop = log.scrollHeight;
+  }
   function appendMessage(message){
     const row=document.createElement('article');row.className=`chat-message chat-message-${message.role==='user'?'user':'assistant'}`;
     const label=document.createElement('p');label.className='chat-message-label';label.textContent=message.role==='user'?'Bạn':'Trợ lý AI';
@@ -4740,7 +4781,10 @@ async function renderConsultation(container, param) {
       if(widget)row.append(widget);
     }
 
-    log.append(row);return body;
+    log.append(row);
+    const interruption = Array.isArray(message.evidence) && message.evidence.find(item => item?.type === 'interrupted');
+    if (message.role === 'assistant' && interruption) showChatRecovery(message, body, interruption);
+    return body;
   }
   function drawMessages(){
     log.replaceChildren();
@@ -4765,24 +4809,44 @@ async function renderConsultation(container, param) {
   container.querySelector('#chat-new-shortcut').onclick=()=>container.querySelector('#chat-new').click();
   container.querySelector('#chat-stop').onclick=()=>chatRuntime.controller?.abort();
   input.addEventListener('keydown',event=>{if(event.key==='Enter'&&!event.shiftKey&&!event.isComposing){event.preventDefault();container.querySelector('#chat-form').requestSubmit();}});
-  container.querySelector('#chat-form').onsubmit=async event=>{
-    event.preventDefault();const prompt=input.value.trim();if(!prompt||chatRuntime.busy)return;
-    ++selection;chatRuntime.busy=true;error.textContent='';controls();
-    let submitted=false,assistant=null,bubble=null,paintFrame=null;
-    const paintAnswer=()=>{
-      if(paintFrame!==null)cancelAnimationFrame(paintFrame);
-      paintFrame=null;
-      if(!current()||!bubble||!assistant?.content.trim())return;
-      const nearBottom=log.scrollHeight-log.scrollTop-log.clientHeight<100;
-      renderChatText(bubble,assistant.content);
-      if(nearBottom)log.scrollTop=log.scrollHeight;
+  async function sendChatPrompt(prompt, targetYear = Number(container.querySelector('#chat-year').value), continuation = '') {
+    if (!prompt || chatRuntime.busy) return;
+    ++selection;
+    chatRuntime.busy = true;
+    error.textContent = '';
+    controls();
+    let assistant = null, bubble = null, paintFrame = null, paintedLength = 0;
+    const paintAnswer = () => {
+      if (paintFrame !== null) cancelAnimationFrame(paintFrame);
+      paintFrame = null;
+      if (!current() || !bubble || !assistant.content.trim() || assistant.content.length === paintedLength) return;
+      const follow = nearChatBottom();
+      renderChatText(bubble, assistant.content);
+      paintedLength = assistant.content.length;
+      if (follow) log.scrollTop = log.scrollHeight;
     };
-    const controller=new AbortController();chatRuntime.controller=controller;
+    const controller = new AbortController();
+    chatRuntime.controller = controller;
+    let interruption = null;
     try {
-      await syncAccountAssessments();if(!current())return;
-      if(!chatRuntime.sessionId){const s=await(await api('',{method:'POST',body:'{}'})).json();if(!current())return;chatRuntime.sessionId=s.session_id;if(awayAt!==null)saveChatResume(owner,s.session_id,awayAt);sessions.unshift(s);drawSidebar();}
+      await syncAccountAssessments();
+      if (!current() || controller.signal.aborted) return;
+      if (!chatRuntime.sessionId) {
+        const session = await (await api('', {method: 'POST', body: '{}'})).json();
+        if (!current() || controller.signal.aborted) return;
+        chatRuntime.sessionId = session.session_id;
+        if (awayAt !== null) saveChatResume(owner, session.session_id, awayAt);
+        sessions.unshift(session);
+        drawSidebar();
+      }
       log.querySelector('.chat-welcome')?.remove();
-      const userMessage={role:'user',content:prompt};chatRuntime.messages.push(userMessage);setConversationMode();appendMessage(userMessage);input.value='';resizeInput();submitted=true;
+      const userMessage = {role: 'user', content: continuation ? 'Viết tiếp câu trả lời' : prompt};
+      chatRuntime.messages.push(userMessage);
+      setConversationMode();
+      appendMessage(userMessage);
+      if (!continuation && input.value.trim() === prompt) input.value = '';
+      resizeInput();
+
       assistant = {role: 'assistant', content: ''};
       chatRuntime.messages.push(assistant);
       bubble = appendMessage(assistant);
@@ -4791,51 +4855,89 @@ async function renderConsultation(container, param) {
       thinking.textContent = 'Đang suy nghĩ…';
       bubble.append(thinking);
       log.scrollTop = log.scrollHeight;
-      const r=await api('/'+encodeURIComponent(chatRuntime.sessionId)+'/messages/stream',{method:'POST',body:JSON.stringify({prompt,target_year:Number(container.querySelector('#chat-year').value)}),signal:controller.signal});
-      const reader=r.body.getReader(),decoder=new TextDecoder();let buffer='',doneSignal=false;
-      const onAsk=setDraft;
-      const consume=block=>{
-        for(const line of block.split('\n')){
-          if(!line.startsWith('data: '))continue;const payload=line.slice(6).trim();if(payload==='[DONE]'){doneSignal=true;continue;}
+
+      const response = await api('/' + encodeURIComponent(chatRuntime.sessionId) + '/messages/stream', {
+        method: 'POST',
+        body: JSON.stringify({prompt, target_year: targetYear, ...(continuation && {continuation})}),
+        signal: controller.signal,
+      });
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '', doneSignal = false;
+      const consume = block => {
+        for (const line of block.split('\n')) {
+          if (!line.startsWith('data:')) continue;
+          const payload = line.slice(5).trim();
+          if (payload === '[DONE]') {
+            doneSignal = true;
+            return;
+          }
+          let item;
           try {
-            const item=JSON.parse(payload);
-            if(item.type==='portfolio'&&item.data){
-              assistant.portfolio=item.data;
-              try {
-                if(!bubble.parentElement.querySelector('.chat-portfolio-widget')){
-                  const widget=createPortfolioWidget(item.data,onAsk);
-                  if(widget)bubble.parentElement.append(widget);
-                }
-              }catch(wErr){console.warn('Portfolio widget render error:', wErr);}
+            item = JSON.parse(payload);
+          } catch {
+            interruption = 'connection';
+            return;
+          }
+          if (item.type === 'interrupted') {
+            interruption = item.reason || 'connection';
+            return;
+          }
+          if (item.type === 'portfolio' && item.data) {
+            assistant.portfolio = item.data;
+            try {
+              if (!bubble.parentElement.querySelector('.chat-portfolio-widget')) {
+                const widget = createPortfolioWidget(item.data, setDraft);
+                if (widget) bubble.parentElement.append(widget);
+              }
+            } catch (widgetError) {
+              console.warn('Portfolio widget render error:', widgetError);
             }
-            if(item.type==='token'&&item.token){
-              assistant.content+=item.token;
-              if(paintFrame===null)paintFrame=requestAnimationFrame(paintAnswer);
-            }
-          }catch(jsonErr){
-            console.warn('Malformed SSE line in stream:', jsonErr);
+          }
+          if (item.type === 'token' && typeof item.token === 'string') {
+            assistant.content += item.token;
+            if (paintFrame === null) paintFrame = requestAnimationFrame(paintAnswer);
           }
         }
       };
-      while(true){const chunk=await reader.read();if(!current()){await reader.cancel();return;}buffer+=decoder.decode(chunk.value||new Uint8Array(),{stream:!chunk.done});const blocks=buffer.replace(/\r\n/g,'\n').split('\n\n');buffer=blocks.pop();blocks.forEach(consume);if(chunk.done)break;}
-      if(buffer.trim())consume(buffer);
-      paintAnswer();
-      if (!assistant.content.trim()) {
-        if (!doneSignal) throw new Error('Kết nối bị gián đoạn. Bạn có thể gửi lại câu hỏi.');
-        bubble.textContent = 'Chưa nhận được phản hồi. Vui lòng thử lại.';
+      try {
+        while (!doneSignal && !interruption) {
+          const {value, done} = await reader.read();
+          if (!current()) return;
+          buffer += decoder.decode(value, {stream: !done});
+          const blocks = buffer.replace(/\r\n/g, '\n').split('\n\n');
+          buffer = blocks.pop();
+          for (const block of blocks) {
+            consume(block);
+            if (doneSignal || interruption) break;
+          }
+          if (done) break;
+        }
+        if (!doneSignal && !interruption && buffer.trim()) consume(buffer);
+      } finally {
+        await reader.cancel().catch(() => {});
       }
-      await refreshSessions();
-    }catch(e){
+      if (!doneSignal || !assistant.content.trim()) interruption ||= 'connection';
+      if (current()) refreshSessions().catch(() => {});
+    } catch (requestError) {
+      if (bubble) interruption ||= controller.signal.aborted ? 'stopped' : 'connection';
+      else if (current()) error.textContent = controller.signal.aborted ? 'Đã dừng phản hồi.' : requestError.message;
+    } finally {
       paintAnswer();
       if (current()) {
-        const stopped = e.name === 'AbortError';
-        error.textContent = stopped ? 'Đã dừng phản hồi.' : e.message;
-        if (!submitted) input.value = prompt;
-        if (bubble && !assistant.content.trim()) {
-          bubble.textContent = stopped ? 'Đã dừng phản hồi.' : 'Chưa nhận được phản hồi.';
+        chatRuntime.busy = false;
+        if (interruption && bubble) {
+          showChatRecovery(assistant, bubble, {reason: interruption, prompt, target_year: targetYear});
         }
+        controls();
+        resizeInput();
       }
-    }finally{if(paintFrame!==null)cancelAnimationFrame(paintFrame);if(current()){chatRuntime.busy=false;controls();resizeInput();input.focus();}if(chatRuntime.controller===controller)chatRuntime.controller=null;}
+      if (chatRuntime.controller === controller) chatRuntime.controller = null;
+    }
+  }
+  container.querySelector('#chat-form').onsubmit = event => {
+    event.preventDefault();
+    sendChatPrompt(input.value.trim());
   };
   drawMessages();
   const resumeSelection=selection;

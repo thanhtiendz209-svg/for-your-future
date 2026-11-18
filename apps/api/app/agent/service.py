@@ -9,21 +9,20 @@ Module được thiết kế độc lập, chuẩn hóa dạng Service để b�
 endpoint HTTP, WebSocket, hoặc third-party service nào cũng có thể tái sử dụng dễ dàng.
 """
 
-import json
 import logging
-import asyncio
+from contextlib import aclosing
 from typing import Dict, Any, List, Optional, AsyncGenerator
 
 try:
     from .graph import career_agent_app
-    from app.modules.graphrag.llm_service import stream_portfolio_ai_consultation, call_gemini_chat
+    from app.modules.graphrag.llm_service import GeminiStreamInterrupted, stream_gemini_messages, stream_portfolio_tokens, with_continuation
 except ImportError:
     try:
         from .graph import career_agent_app
-        from ..modules.graphrag.llm_service import stream_portfolio_ai_consultation, call_gemini_chat
+        from ..modules.graphrag.llm_service import GeminiStreamInterrupted, stream_gemini_messages, stream_portfolio_tokens, with_continuation
     except ImportError:
         from agent.graph import career_agent_app
-        from llm_service import stream_portfolio_ai_consultation, call_gemini_chat
+        from llm_service import GeminiStreamInterrupted, stream_gemini_messages, stream_portfolio_tokens, with_continuation
 
 logger = logging.getLogger("graphrag.career_service")
 
@@ -34,135 +33,86 @@ class CareerAdvisoryService:
     def __init__(self):
         self.app = career_agent_app
 
-    async def _generate_fallback_consultation(self, prompt: str, slots: Dict[str, Any]) -> str:
-        """Sinh lời tư vấn dự phòng trực tiếp qua Gemini khi đồ thị không khớp dữ liệu cứng."""
-        try:
-            sys_msg = (
-                "Bạn là Chuyên gia Cố vấn Tuyển sinh Đại học & Định hướng Nghề nghiệp AI của hệ thống GraphRAG. "
-                "Hãy giải đáp chi tiết, thấu hiểu, mang tính định hướng cao và truyền cảm hứng cho học sinh về câu hỏi sau. "
-                "Trình bày chuyên nghiệp bằng định dạng Markdown với các gạch đầu dòng rõ ràng."
-            )
-            resp = await call_gemini_chat([
-                {"role": "system", "content": sys_msg},
-                {"role": "user", "content": f"Câu hỏi của học sinh: {prompt}"}
-            ], temperature=0.35, max_tokens=1000)
-            if resp:
-                return resp
-        except Exception as e:
-            logger.warning(f"Fallback generation error: {e}")
-        return "Chào bạn! Mình đã tiếp nhận câu hỏi của bạn. Bạn hãy chia sẻ thêm về điểm thi dự kiến, khối thi hoặc ngành nghề mong muốn để mình tư vấn chi tiết nhất nhé!"
-
     async def run_advisory_flow(
         self,
         prompt: str,
         session_id: str = "default_session",
         history: Optional[List[Dict[str, str]]] = None,
-        profile_data: Optional[Dict[str, Any]] = None
+        profile_data: Optional[Dict[str, Any]] = None,
+        continuation: Optional[str] = None,
     ) -> AsyncGenerator[Dict[str, Any], None]:
-        """
-        Thực thi trọn vẹn quy trình 3 bước chuẩn hóa:
-        1. LLM Trích xuất (Entity, Slots, Intent)
-        2. LangGraph StateGraph + Neo4j Graph Query + MCDM Ranking
-        3. LLM Làm mịn (Streaming token tư vấn)
-        
-        Trả về AsyncGenerator các sự kiện dạng dictionary:
-          - {"type": "intent", "data": {...}}
-          - {"type": "portfolio", "data": {...}}
-          - {"type": "clarification", "question": "..."}
-          - {"type": "token", "token": "..."}
-          - {"type": "done", "full_reply": "..."}
-        """
+        """Forward text during graph execution and report incomplete generations."""
         graph_config = {"configurable": {"thread_id": session_id}}
-
         initial_input = {
             "session_id": session_id,
             "student_id": "caller",
             "latest_user_prompt": prompt,
             "messages": history or [],
-            "profile_data": profile_data
+            "profile_data": profile_data,
+            "continuation": continuation,
         }
+        logger.info("[CareerAdvisoryService] Running flow for session_id=%s", session_id)
+        parts = []
+        final_state = {}
+        results = self.app.astream(initial_input, config=graph_config, stream_mode=["custom", "values"])
+        try:
+            async with aclosing(results):
+                async for mode, data in results:
+                    if mode == "custom":
+                        parts.append(data["token"])
+                        yield data
+                    else:
+                        final_state = data
 
-        logger.info(f"[CareerAdvisoryService] Running flow for session_id={session_id}")
-        final_state = await self.app.ainvoke(initial_input, config=graph_config)
+            intent = final_state.get("intent", "RECOMMEND")
+            clarification = final_state.get("clarification_question")
+            portfolio = final_state.get("portfolio")
+            slots = final_state.get("slots") or {}
+            has_portfolio = portfolio and any(portfolio.get(tier) for tier in ("reach", "target", "safe"))
 
-        intent = final_state.get("intent", "RECOMMEND")
-        clarification_q = final_state.get("clarification_question")
-        portfolio_dict = final_state.get("portfolio")
-        portfolio_obj = final_state.get("portfolio_obj")
-        slots = final_state.get("slots", {})
+            if intent == "RECOMMEND" and clarification and final_state.get("missing_slots"):
+                yield {"type": "clarification", "question": clarification}
 
-        full_reply = ""
-
-        # TRƯỜNG HỢP 1: Cần hỏi lại (Thiếu điểm / khối khi muốn tư vấn đề xuất nguyện vọng)
-        if intent not in ("LOOKUP", "CHITCHAT", "OUT_OF_SCOPE") and (final_state.get("missing_slots") or not portfolio_dict) and clarification_q:
-            logger.info(f"[CareerAdvisoryService] Clarification required: {clarification_q}")
-            yield {"type": "clarification", "question": clarification_q}
-
-            words = clarification_q.split(" ")
-            for i, w in enumerate(words):
-                token = w if i == len(words) - 1 else w + " "
-                full_reply += token
-                yield {"type": "token", "token": token}
-                await asyncio.sleep(0.01)
-
-            yield {"type": "done", "full_reply": full_reply}
+            if not parts and intent == "RECOMMEND" and has_portfolio:
+                yield {"type": "intent", "data": {
+                    "raw_query": prompt,
+                    "student_score": slots.get("student_score"),
+                    "subject_group": slots.get("student_group_code"),
+                    "preferred_majors": slots.get("target_major_keywords", []),
+                    "preferred_locations": [slots.get("preferred_city") or "Toàn quốc"],
+                    "max_tuition_million_vnd": int(slots["max_annual_budget"] / 1_000_000) if slots.get("max_annual_budget") else None,
+                    "personality_holland_code": slots.get("inferred_holland_code"),
+                }}
+                yield {"type": "portfolio", "data": portfolio}
+                target_portfolio = final_state.get("portfolio_obj") or portfolio
+                tokens = stream_portfolio_tokens(target_portfolio, prompt, slots=slots, continuation=continuation)
+                async with aclosing(tokens):
+                    async for token in tokens:
+                        parts.append(token)
+                        yield {"type": "token", "token": token}
+            elif not parts:
+                reply = final_state.get("final_text")
+                if reply and reply != "READY_FOR_PORTFOLIO_STREAM":
+                    parts.append(reply)
+                    yield {"type": "token", "token": reply}
+                else:
+                    messages = [
+                        {"role": "system", "content": (
+                            "Bạn là chuyên gia hướng nghiệp. Hãy tư vấn bằng tiếng Việt, "
+                            "trình bày rõ ràng và chỉ dùng số liệu tuyển sinh khi có căn cứ."
+                        )},
+                        {"role": "user", "content": f"Câu hỏi của học sinh: {prompt}"},
+                    ]
+                    tokens = stream_gemini_messages(with_continuation(messages, continuation), temperature=0.35, max_tokens=1000)
+                    async with aclosing(tokens):
+                        async for token in tokens:
+                            parts.append(token)
+                            yield {"type": "token", "token": token}
+        except GeminiStreamInterrupted as error:
+            yield {"type": "interrupted", "reason": error.reason}
             return
 
-        # TRƯỜNG HỢP 2: Tra cứu trực tiếp (LOOKUP), So sánh (COMPARE), Chào hỏi hoặc Ngoài phạm vi
-        has_valid_portfolio = bool(portfolio_dict and (portfolio_dict.get("reach") or portfolio_dict.get("target") or portfolio_dict.get("safe")))
-
-        if intent in ("CHITCHAT", "OUT_OF_SCOPE", "LOOKUP", "COMPARE") or not has_valid_portfolio:
-            text_reply = final_state.get("final_text")
-
-            # Tuyệt đối không bao giờ stream chuỗi token kỹ thuật nội bộ
-            if not text_reply or text_reply == "READY_FOR_PORTFOLIO_STREAM":
-                if has_valid_portfolio and intent == "RECOMMEND":
-                    # Trường hợp đề xuất hợp lệ có danh mục -> chuyển sang Case 3
-                    pass
-                else:
-                    text_reply = await self._generate_fallback_consultation(prompt, slots)
-
-            if text_reply and text_reply != "READY_FOR_PORTFOLIO_STREAM":
-                words = text_reply.split(" ")
-                for i, w in enumerate(words):
-                    token = w if i == len(words) - 1 else w + " "
-                    full_reply += token
-                    yield {"type": "token", "token": token}
-                    await asyncio.sleep(0.01)
-
-                yield {"type": "done", "full_reply": full_reply}
-                return
-
-        # TRƯỜNG HỢP 3: Đủ thông tin -> Bắn Intent, Thẻ Nguyện Vọng 3 Tầng & Stream LLM Làm mịn
-        intent_data = {
-            "raw_query": prompt,
-            "student_score": slots.get("student_score"),
-            "subject_group": slots.get("student_group_code"),
-            "preferred_majors": slots.get("target_major_keywords", []),
-            "preferred_locations": [slots.get("preferred_city")] if slots.get("preferred_city") else ["Toàn quốc"],
-            "max_tuition_million_vnd": int(slots.get("max_annual_budget", 0) / 1_000_000) if slots.get("max_annual_budget") else None,
-            "personality_holland_code": slots.get("inferred_holland_code")
-        }
-        yield {"type": "intent", "data": intent_data}
-        yield {"type": "portfolio", "data": portfolio_dict}
-
-        # 3. LLM Làm mịn: Sinh lời tư vấn trực tiếp qua Gemini
-        target_portfolio = portfolio_obj if portfolio_obj is not None else portfolio_dict
-        async for chunk in stream_portfolio_ai_consultation(target_portfolio, prompt, slots=slots):
-            if chunk.startswith("data: ") and not chunk.startswith("data: [DONE]"):
-                try:
-                    inner = json.loads(chunk[6:].strip())
-                    token = inner.get("token", "")
-                    if token:
-                        full_reply += token
-                        yield {"type": "token", "token": token}
-                except Exception:
-                    pass
-            elif not chunk.startswith("data:"):
-                full_reply += chunk
-                yield {"type": "token", "token": chunk}
-
-        yield {"type": "done", "full_reply": full_reply}
+        yield {"type": "done", "full_reply": "".join(parts)}
 
     async def get_advisory_recommendation(
         self,
@@ -178,6 +128,7 @@ class CareerAdvisoryService:
         portfolio_data = None
         clarification_data = None
         collected_tokens = []
+        interruption = None
 
         async for event in self.run_advisory_flow(prompt, session_id, history, profile_data):
             ev_type = event.get("type")
@@ -189,14 +140,19 @@ class CareerAdvisoryService:
                 clarification_data = event.get("question")
             elif ev_type == "token":
                 collected_tokens.append(event.get("token", ""))
+            elif ev_type == "interrupted":
+                interruption = event["reason"]
 
-        return {
+        result = {
             "intent": intent_data,
             "portfolio": portfolio_data,
             "clarification_question": clarification_data,
             "advice": "".join(collected_tokens),
             "full_reply": "".join(collected_tokens)
         }
+        if interruption:
+            result["interruption"] = interruption
+        return result
 
 
 # Singleton instance sẵn sàng dùng chung cho mọi module

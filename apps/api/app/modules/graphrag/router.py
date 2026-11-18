@@ -4,6 +4,7 @@ MCDM Portfolio Ranking, and Streaming Gemini Consultation via LangGraph Agent.
 """
 
 import json
+from contextlib import aclosing
 import uuid
 import logging
 from typing import List, Optional, Dict, Any
@@ -138,25 +139,33 @@ async def chat_recommend_stream(
         profile_data = extract_user_profile_data(db, user)
 
         async def event_generator():
-            async for ev in career_advisory_service.run_advisory_flow(
+            yield ": ready\n\n"
+            flow = career_advisory_service.run_advisory_flow(
                 prompt=prompt_text,
                 session_id=session_id,
                 history=request.conversation if hasattr(request, "conversation") else None,
-                profile_data=profile_data
-            ):
-                ev_type = ev.get("type")
-                if ev_type in ("intent", "portfolio", "clarification"):
-                    yield f"data: {json.dumps(ev, ensure_ascii=False)}\n\n"
-                elif ev_type == "token":
-                    yield f"data: {json.dumps(ev, ensure_ascii=False)}\n\n"
-
-            yield "data: [DONE]\n\n"
+                profile_data=profile_data,
+            )
+            try:
+                async with aclosing(flow):
+                    async for item in flow:
+                        kind = item.get("type")
+                        if kind == "done":
+                            yield "data: [DONE]\n\n"
+                            return
+                        if kind in ("intent", "portfolio", "clarification", "token", "interrupted"):
+                            yield f"data: {json.dumps(item, ensure_ascii=False)}\n\n"
+                        if kind == "interrupted":
+                            return
+            except Exception:
+                logger.exception("Error streaming advisory recommendation")
+            yield 'data: {"type":"interrupted","reason":"connection"}\n\n'
 
         return StreamingResponse(
             event_generator(),
             media_type="text/event-stream",
             headers={
-                "Cache-Control": "no-cache",
+                "Cache-Control": "no-cache, no-transform",
                 "Connection": "keep-alive",
                 "X-Accel-Buffering": "no",
                 "Content-Type": "text/event-stream; charset=utf-8"

@@ -9,6 +9,7 @@ import logging
 from typing import Dict, Any, List, Optional
 from langgraph.graph import StateGraph, END
 from langgraph.checkpoint.memory import MemorySaver
+from langgraph.types import StreamWriter
 
 from .state import AgentState
 from .intent_classifier import classify_intent
@@ -31,7 +32,7 @@ try:
         PortfolioRecommendationResponse
     )
     from app.modules.graphrag.recommender import rank_and_score_programs, build_portfolio_recommendations
-    from app.modules.graphrag.llm_service import call_gemini_chat
+    from app.modules.graphrag.llm_service import GeminiStreamInterrupted, stream_gemini_messages, with_continuation
 except ImportError:
     try:
         from ..integrations.neo4j.client import execute_query_async
@@ -43,7 +44,7 @@ except ImportError:
             PortfolioRecommendationResponse
         )
         from ..modules.graphrag.recommender import rank_and_score_programs, build_portfolio_recommendations
-        from ..modules.graphrag.llm_service import call_gemini_chat
+        from ..modules.graphrag.llm_service import GeminiStreamInterrupted, stream_gemini_messages, with_continuation
     except ImportError:
         from database import execute_query_async
         from models.query_builder import CypherQueryBuilder
@@ -54,7 +55,7 @@ except ImportError:
             PortfolioRecommendationResponse
         )
         from recommender import rank_and_score_programs, build_portfolio_recommendations
-        from llm_service import call_gemini_chat
+        from llm_service import GeminiStreamInterrupted, stream_gemini_messages, with_continuation
 
 logger = logging.getLogger("graphrag.agent.graph")
 
@@ -109,7 +110,32 @@ async def node_extract_slots(state: AgentState) -> Dict[str, Any]:
     }
 
 
-async def node_ask_clarification(state: AgentState) -> Dict[str, Any]:
+async def _write_gemini_answer(
+    state: AgentState,
+    writer: StreamWriter,
+    messages: List[Dict[str, str]],
+    *,
+    temperature: float,
+    max_tokens: int,
+    fallback: str = "",
+) -> str:
+    continuation = state.get("continuation")
+    parts = []
+    try:
+        async for token in stream_gemini_messages(
+            with_continuation(messages, continuation), temperature=temperature, max_tokens=max_tokens
+        ):
+            parts.append(token)
+            writer({"type": "token", "token": token})
+    except GeminiStreamInterrupted as error:
+        if not fallback or continuation or error.reason not in ("connection", "busy") or "".join(parts).strip():
+            raise
+        writer({"type": "token", "token": fallback})
+        return fallback
+    return "".join(parts)
+
+
+async def node_ask_clarification(state: AgentState, writer: StreamWriter) -> Dict[str, Any]:
     """Node 3: Sinh câu hỏi gợi mở khi thiếu điểm hoặc khối thi."""
     slots = state.get("slots", {})
     missing = state.get("missing_slots", [])
@@ -132,20 +158,17 @@ async def node_ask_clarification(state: AgentState) -> Dict[str, Any]:
         f"Câu nói vừa rồi của học sinh: \"{latest_user_prompt}\""
     )
 
-    clarify_text = await call_gemini_chat(
-        [{"role": "user", "content": prompt}],
-        temperature=0.4,
-        max_tokens=350
-    )
+    if "student_score" in missing and "student_group_code" in missing:
+        fallback = "Chào bạn! Bạn cho mình biết điểm thi dự kiến và tổ hợp xét tuyển (ví dụ A00, A01 hoặc D01) để mình tra cứu trường phù hợp nhé!"
+    elif "student_score" in missing:
+        fallback = f"Bạn đã chọn khối {slots.get('student_group_code')}. Bạn cho mình xin thêm mức điểm thi dự kiến để tra cứu nhé!"
+    else:
+        fallback = f"Với mức điểm {slots.get('student_score')}, bạn dự định xét tuyển theo tổ hợp nào (ví dụ A00, A01 hoặc D01)?"
 
-    if not clarify_text:
-        # Fallback thân thiện nếu mất mạng
-        if "student_score" in missing and "student_group_code" in missing:
-            clarify_text = "Chào bạn! Để mình có thể tra cứu đồ thị tuyển sinh và đề xuất danh mục trường chuẩn xác nhất, bạn hãy cho mình biết mức điểm thi dự kiến (hoặc mục tiêu) và khối thi (ví dụ: A00, A01, D01) của bạn nhé!"
-        elif "student_score" in missing:
-            clarify_text = f"Chào bạn! Bạn đã chọn khối thi {slots.get('student_group_code')}. Bạn cho mình xin thêm mức điểm thi dự kiến để mình đối chiếu điểm chuẩn từng trường nhé!"
-        else:
-            clarify_text = f"Chào bạn! Với mức điểm {slots.get('student_score')}, bạn dự định xét tuyển theo khối thi nào (ví dụ: A00, A01, D01, B00) để mình lọc trường phù hợp nhất nhé!"
+    clarify_text = await _write_gemini_answer(
+        state, writer, [{"role": "user", "content": prompt}],
+        temperature=0.4, max_tokens=350, fallback=fallback,
+    )
 
     return {
         "clarification_question": clarify_text,
@@ -271,7 +294,7 @@ def node_generate_advice(state: AgentState) -> Dict[str, Any]:
     return {"final_text": "READY_FOR_PORTFOLIO_STREAM"}
 
 
-async def node_chitchat(state: AgentState) -> Dict[str, Any]:
+async def node_chitchat(state: AgentState, writer: StreamWriter) -> Dict[str, Any]:
     """Node xử lý Chào hỏi / Hỏi thăm năng lực."""
     prompt = state.get("latest_user_prompt", "")
     messages = [
@@ -286,10 +309,11 @@ async def node_chitchat(state: AgentState) -> Dict[str, Any]:
         },
         {"role": "user", "content": prompt}
     ]
-    resp = await call_gemini_chat(messages, temperature=0.5, max_tokens=200)
-    if not resp:
-        resp = "Chào bạn! Mình là AI Cố vấn Tuyển sinh GraphRAG. Mình có thể giúp bạn tìm trường đại học, phân tích điểm chuẩn theo khối thi và xây dựng chiến lược nguyện vọng tối ưu. Bạn đang quan tâm đến ngành nghề nào?"
-    return {"final_text": resp}
+    reply = await _write_gemini_answer(
+        state, writer, messages, temperature=0.5, max_tokens=200,
+        fallback="Chào bạn! Mình có thể giúp bạn tìm ngành, tra cứu trường và chuẩn bị nguyện vọng. Bạn muốn tìm hiểu điều gì?",
+    )
+    return {"final_text": reply}
 
 
 async def node_out_of_scope(state: AgentState) -> Dict[str, Any]:
@@ -298,7 +322,7 @@ async def node_out_of_scope(state: AgentState) -> Dict[str, Any]:
     return {"final_text": resp}
 
 
-async def node_lookup_info(state: AgentState) -> Dict[str, Any]:
+async def node_lookup_info(state: AgentState, writer: StreamWriter) -> Dict[str, Any]:
     """
     Node xử lý Tra cứu chuyên sâu & Tư vấn toàn diện:
     - Tra cứu chi tiết 1 trường đại học (Học phí, ngành nổi bật, môi trường học tập, cơ sở vật chất, ký túc xá).
@@ -476,25 +500,12 @@ async def node_lookup_info(state: AgentState) -> Dict[str, Any]:
         f"Câu hỏi của học sinh:\n\"{prompt}\""
     )
 
-    resp = await call_gemini_chat([
-        {"role": "system", "content": sys_prompt},
-        {"role": "user", "content": user_content}
-    ], temperature=0.35, max_tokens=1500)
-
-    if not resp:
-        if lookup_data.get("target_university"):
-            u = lookup_data["target_university"]
-            resp = f"Dạ, mình đã tra cứu dữ liệu trường **{u.get('name')}** (Mã: {u.get('code')}). Trường toạ lạc tại {u.get('city')}, học phí khoảng {u.get('avg_tuition', 0):,.0f} VNĐ/năm với các ngành đào tạo tiêu biểu. Bạn cần tìm hiểu sâu hơn về ngành học nào của trường không ạ?"
-        elif lookup_data.get("career_insight"):
-            c = lookup_data["career_insight"]
-            resp = f"Dạ, ngành nghề **{c.get('title')}** hiện có tốc độ tăng trưởng việc làm rất tốt (~{int(c.get('job_growth_rate', 0.14)*100)}%/năm) với nhiều vị trí đa dạng. Bạn có muốn mình phân tích chi tiết mức điểm chuẩn vào các trường đào tạo ngành này không?"
-        else:
-            resp = f"Chào bạn! Về câu hỏi '{prompt}', mình đã ghi nhận và đối chiếu trên hệ thống. Bạn có thể chia sẻ thêm về điểm thi dự kiến hoặc khối thi để mình định hướng sát nhất nhé!"
-
-    return {
-        "final_text": resp,
-        "clarification_question": None
-    }
+    reply = await _write_gemini_answer(
+        state, writer,
+        [{"role": "system", "content": sys_prompt}, {"role": "user", "content": user_content}],
+        temperature=0.35, max_tokens=1500,
+    )
+    return {"final_text": reply, "clarification_question": None}
 
 
 # =========================================================================
