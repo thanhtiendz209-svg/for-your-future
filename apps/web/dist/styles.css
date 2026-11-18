@@ -1242,6 +1242,20 @@ body.chat-page-active { height: 100dvh; min-height: 0; overflow: hidden; }
 .ai-beacon-short { display: none; }
 body.detail-modal-open { overflow: hidden; }
 body.detail-modal-open #btn-floating-ai { visibility: hidden; }
+.intake-step-viewport {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  margin: -6px;
+  padding: 6px;
+  overflow: hidden;
+  overflow: clip;
+}
+.intake-step-viewport > .intake-form { grid-area: 1 / 1; min-width: 0; }
+.intake-step-heading:focus { outline: none; }
+.intake-form[aria-busy="true"] button[type="submit"] { cursor: progress; }
+.intake-form button:disabled { opacity: .7; }
+
 @media (max-width: 639px) {
   html { scroll-padding-top: 76px; }
   .site-header .header-inner { padding-left: max(12px,env(safe-area-inset-left)); padding-right: max(12px,env(safe-area-inset-right)); }
@@ -1269,8 +1283,8 @@ body.detail-modal-open #btn-floating-ai { visibility: hidden; }
   .option-card { gap: 12px; min-height: 56px; }
   .option-card > span:first-child { flex: 1; min-width: 0; font-size: 15px; line-height: 1.65; }
   .option-card > span:last-child { flex-shrink: 0; }
-  #intake-form { padding: 20px 16px; }
-  #intake-form button { min-height: 46px; }
+  .intake-form { padding: 20px 16px; }
+  .intake-form button { min-height: 46px; }
   #btn-floating-ai { right: max(12px,env(safe-area-inset-right)); bottom: max(12px,env(safe-area-inset-bottom)); min-height: 48px; padding: 12px 14px; gap: 8px; box-shadow: 0 4px 14px rgb(11 58 98 / .2); }
   #btn-floating-ai > span:first-child, #btn-floating-ai .ai-beacon-label { display: none; }
   #btn-floating-ai .ai-beacon-short { display: inline; font-size: 13px; font-weight: 700; }

@@ -4946,11 +4946,15 @@ async function renderIntake(container) {
   if (!state.authToken || !state.currentUser) { window.location.hash = '#dang-nhap'; return; }
   if (state.currentUser.role === 'admin') { window.location.hash = '#quan-tri'; return; }
   const owner = state.currentUser.user_id;
+  const token = state.authToken;
+  const renderVersion = routeRenderVersion;
+  const current = () => renderVersion === routeRenderVersion && container.isConnected &&
+    window.location.hash === '#thiet-lap-ho-so' && state.currentUser?.user_id === owner && state.authToken === token;
   container.innerHTML = '<p class="p-10 text-center text-muted">Đang tải hồ sơ của bạn...</p>';
   const request = async (path, body) => {
     const response = await fetch(`/api/v1/students/${path}`, {
       method: body === undefined ? 'GET' : 'PUT',
-      headers: { Authorization: `Bearer ${state.authToken}`, 'Content-Type': 'application/json' },
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
       ...(body === undefined ? {} : { body: JSON.stringify(body) }),
     });
     const data = await response.json();
@@ -4960,14 +4964,32 @@ async function renderIntake(container) {
   let profile;
   try { profile = await request('profile'); }
   catch (error) {
+    if (!current()) return;
     container.innerHTML = '<div class="max-w-xl mx-auto p-8"><p id="intake-load-error" role="alert"></p><button id="intake-retry" class="mt-4 px-5 py-3 rounded-xl bg-navy text-paper">Thử lại</button></div>';
     container.querySelector('#intake-load-error').textContent = error.message;
     container.querySelector('#intake-retry').onclick = () => renderIntake(container);
     return;
   }
-  if (window.location.hash !== '#thiet-lap-ho-so' || state.currentUser?.user_id !== owner) return;
+  if (!current()) return;
   let step = 0;
   const labels = ['Cá nhân & Quê quán', 'Học bạ & Điểm thi', 'Tài chính & Thể lực'];
+  const drafts = new Map();
+  const motion = window.matchMedia('(prefers-reduced-motion: no-preference)');
+  let activeForm = null;
+  let sliding = false;
+  container.innerHTML = `
+    <div class="hero-wash border-b border-line">
+      <div class="max-w-3xl mx-auto px-4 py-10">
+        <p class="text-sm text-azure font-semibold">Chuẩn bị hành trình hướng nghiệp</p>
+        <h1 class="font-display text-3xl font-bold text-navy mt-2">Hãy cho chúng tôi hiểu thêm về bạn</h1>
+        <p class="mt-3 text-muted">Hoàn thiện hồ sơ trước khi khám phá bản thân qua các bài trắc nghiệm.</p>
+        <ol id="intake-steps" class="mt-6 grid gap-3 sm:grid-cols-3">${labels.map(() => '<li></li>').join('')}</ol>
+      </div>
+    </div>
+    <div class="max-w-3xl mx-auto px-4 py-8"><div class="intake-step-viewport"></div></div>
+  `;
+  const viewport = container.querySelector('.intake-step-viewport');
+  const markers = container.querySelectorAll('#intake-steps li');
   const escape = (value) => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const field = (key, title, value, type = 'text', attrs = '') => `<label class="block text-sm font-medium text-navy">${title}<input name="${key}" type="${type}" value="${escape(value)}" ${attrs} class="mt-2 w-full px-4 py-3 rounded-[14px] border border-line bg-mist text-ink focus:outline-none focus:ring-2 focus:ring-azure"></label>`;
   function finish() {
@@ -4985,45 +5007,133 @@ async function renderIntake(container) {
     sessionStorage.removeItem('fyf_after_login');
     window.location.hash = pending && /^#trac-nghiem\/[a-z0-9_-]+$/i.test(pending) ? pending : '#trac-nghiem';
   }
-  function draw() {
+  function draw(direction = 0) {
     const b = profile.background || {}, a = profile.academic || {}, h = profile.health || {};
     let fields;
     if (step === 0) fields = field('last_name','Họ và tên đệm *',profile.last_name,'text','required maxlength="100"') + field('first_name','Tên *',profile.first_name,'text','required maxlength="100"') + field('current_school','Trường THPT *',profile.current_school,'text','required maxlength="255"') + field('hometown_province','Tỉnh / Thành phố quê quán *',b.hometown_province,'text','required maxlength="100"') + `<label class="block text-sm font-medium text-navy">Khu vực ưu tiên<select name="priority_zone" class="mt-2 w-full px-4 py-3 rounded-[14px] border border-line bg-mist">${['KV1','KV2-NT','KV2','KV3'].map(z=>`<option ${b.priority_zone===z?'selected':''}>${z}</option>`).join('')}</select></label>`;
     if (step === 1) fields = field('gpa_5_semesters','Điểm trung bình học bạ 5 học kỳ *',a.gpa_5_semesters,'number','required min="0" max="10" step="any"') + `<label class="block text-sm font-medium text-navy">Hạnh kiểm lớp 12<select name="conduct_grade_12" class="mt-2 w-full px-4 py-3 rounded-[14px] border border-line bg-mist">${['Tốt','Khá','Trung bình'].map(v=>`<option ${a.conduct_grade_12===v?'selected':''}>${v}</option>`).join('')}</select></label>` + ['Toán','Vật lý','Hóa học','Tiếng Anh','Ngữ văn','Sinh học','Lịch sử','Địa lý'].map((v,i)=>field(`score_${i}`,`Điểm thi ${v}`,a.subject_scores?.[v],'number','min="0" max="10" step="any"')).join('') + field('ielts_score','IELTS (nếu có)',a.ielts_score,'number','min="0" max="9" step="0.5"') + field('dgnl_hcm_score','ĐGNL ĐHQG TP.HCM (nếu có)',a.dgnl_hcm_score,'number','min="0" max="1200" step="1"');
     if (step === 2) fields = field('max_annual_tuition','Ngân sách học phí tối đa (đồng/năm)',b.max_annual_tuition,'number','min="0" step="1"') + field('height_cm','Chiều cao (cm)',h.height_cm,'number','min="100" max="250" step="any"') + field('weight_kg','Cân nặng (kg)',h.weight_kg,'number','min="30" max="200" step="any"') + field('eye_degree_left','Độ cận mắt trái (Diop)',h.eye_degree_left,'number','min="0" max="20" step="any"') + field('eye_degree_right','Độ cận mắt phải (Diop)',h.eye_degree_right,'number','min="0" max="20" step="any"');
-    container.innerHTML = `<div class="hero-wash border-b border-line"><div class="max-w-3xl mx-auto px-4 py-10"><p class="text-sm text-azure font-semibold">Chuẩn bị hành trình hướng nghiệp</p><h1 class="font-display text-3xl font-bold text-navy mt-2">Hãy cho chúng tôi hiểu thêm về bạn</h1><p class="mt-3 text-muted">Hoàn thiện hồ sơ trước khi khám phá bản thân qua các bài trắc nghiệm.</p><ol class="mt-6 grid gap-3 sm:grid-cols-3">${labels.map((v,i)=>`<li class="p-3 rounded-xl border ${i===step?'bg-navy text-paper border-navy':'bg-card text-muted border-line'}" ${i===step?'aria-current="step"':''}>${i<step?'✓':i+1}. ${v}</li>`).join('')}</ol></div></div><div class="max-w-3xl mx-auto px-4 py-8"><form id="intake-form" class="rounded-[24px] border border-line bg-card p-6 sm:p-8 shadow-border"><p class="text-xs font-semibold text-azure">Bước ${step+1} / 3${step===2?' · Không bắt buộc':''}</p><h2 class="text-xl font-bold text-navy mt-2 mb-3">${labels[step]}</h2><p class="text-sm text-muted mb-6">${step===0?'Thông tin có dấu * là bắt buộc.':step===1?'Nhập học bạ của bạn. Điểm thi và chứng chỉ chưa có có thể để trống.':'Bạn có thể để trống từng mục hoặc bỏ qua bước này và bổ sung sau trong hồ sơ.'}</p><div class="grid gap-5 sm:grid-cols-2">${fields}</div><p id="intake-error" role="alert" class="text-sm text-rose-600 mt-4"></p><div class="mt-6 pt-5 border-t border-line flex flex-wrap gap-3">${step>0?'<button type="button" id="intake-back" class="px-5 py-3 rounded-xl border border-line text-navy">Quay lại</button>':''}${step===2?'<button type="button" id="intake-skip" class="px-5 py-3 rounded-xl border border-line text-azure">Bỏ qua và làm trắc nghiệm</button>':''}<button type="submit" class="px-5 py-3 rounded-xl bg-navy text-paper font-semibold sm:ml-auto">${step===2?'Lưu và làm trắc nghiệm':'Lưu và tiếp tục'}</button></div></form></div>`;
-    window.scrollTo({top:0,behavior:'instant'});
-    const form = container.querySelector('#intake-form');
-    const values = () => Object.fromEntries([...new FormData(form)].map(([k,v])=>[k, v.trim()]));
-    const remember = (v) => {
-      if (step===0) { Object.assign(profile,{first_name:v.first_name,last_name:v.last_name,current_school:v.current_school}); Object.assign(profile.background,{hometown_province:v.hometown_province,priority_zone:v.priority_zone}); }
-      if (step===1) Object.assign(profile.academic, academicBody(v));
-      if (step===2) { profile.background.max_annual_tuition=num(v.max_annual_tuition); Object.assign(profile.health,healthBody(v)); }
-    };
-    container.querySelector('#intake-back')?.addEventListener('click',()=>{remember(values());step--;draw();});
-    container.querySelector('#intake-skip')?.addEventListener('click',finish);
-    form.addEventListener('submit',async event=>{
+    markers.forEach((marker, index) => {
+      marker.className = `p-3 rounded-xl border ${index === step ? 'bg-navy text-paper border-navy' : 'bg-card text-muted border-line'}`;
+      marker.textContent = `${index < step ? '✓' : index + 1}. ${labels[index]}`;
+      if (index === step) marker.setAttribute('aria-current', 'step');
+      else marker.removeAttribute('aria-current');
+    });
+
+    const form = document.createElement('form');
+    form.id = 'intake-form';
+    form.className = 'intake-form rounded-[24px] border border-line bg-card p-6 sm:p-8 shadow-border';
+    form.innerHTML = `
+      <p class="text-xs font-semibold text-azure">Bước ${step + 1} / 3${step === 2 ? ' · Không bắt buộc' : ''}</p>
+      <h2 tabindex="-1" class="intake-step-heading text-xl font-bold text-navy mt-2 mb-3">${labels[step]}</h2>
+      <p class="text-sm text-muted mb-6">${step === 0 ? 'Thông tin có dấu * là bắt buộc.' : step === 1 ? 'Nhập học bạ của bạn. Điểm thi và chứng chỉ chưa có có thể để trống.' : 'Bạn có thể để trống từng mục hoặc bỏ qua bước này và bổ sung sau trong hồ sơ.'}</p>
+      <div class="grid gap-5 sm:grid-cols-2">${fields}</div>
+      <p id="intake-error" role="alert" class="text-sm text-rose-600 mt-4"></p>
+      <div class="mt-6 pt-5 border-t border-line flex flex-wrap gap-3">
+        ${step > 0 ? '<button type="button" id="intake-back" class="px-5 py-3 rounded-xl border border-line text-navy">Quay lại</button>' : ''}
+        ${step === 2 ? '<button type="button" id="intake-skip" class="px-5 py-3 rounded-xl border border-line text-azure">Bỏ qua và làm trắc nghiệm</button>' : ''}
+        <button type="submit" class="px-5 py-3 rounded-xl bg-navy text-paper font-semibold sm:ml-auto">${step === 2 ? 'Lưu và làm trắc nghiệm' : 'Lưu và tiếp tục'}</button>
+      </div>
+    `;
+    for (const [name, value] of Object.entries(drafts.get(step) || {})) {
+      const input = form.elements.namedItem(name);
+      if (input) input.value = value;
+    }
+
+    const previous = activeForm;
+    activeForm = form;
+    const animate = previous && direction && motion.matches && typeof form.animate === 'function';
+    if (animate) {
+      previous.inert = true;
+      previous.setAttribute('aria-hidden', 'true');
+      previous.removeAttribute('id');
+      previous.querySelectorAll('[id]').forEach(element => element.removeAttribute('id'));
+      viewport.append(form);
+
+      sliding = true;
+      const slide = {duration: 270, easing: 'cubic-bezier(0.22, 1, 0.36, 1)'};
+      const resting = {transform: 'translateX(0)'};
+      const outgoing = previous.animate([resting, {transform: `translateX(${-direction * 100}%)`}], slide);
+      const incoming = form.animate([{transform: `translateX(${direction * 100}%)`}, resting], slide);
+      Promise.allSettled([outgoing.finished, incoming.finished]).then(() => {
+        previous.remove();
+        sliding = false;
+      });
+    } else {
+      viewport.replaceChildren(form);
+    }
+
+    if (previous) {
+      form.querySelector('.intake-step-heading').focus({preventScroll: true});
+      const top = viewport.getBoundingClientRect().top;
+      const headerBottom = document.querySelector('.site-header')?.getBoundingClientRect().bottom || 0;
+      if (top < headerBottom + 12 || top >= window.innerHeight) {
+        window.scrollTo({top: window.scrollY + top - headerBottom - 12, behavior: motion.matches ? 'smooth' : 'instant'});
+      }
+    }
+
+    let saving = false;
+    const canNavigate = () => current() && activeForm === form && !sliding && !saving;
+    const values = () => Object.fromEntries([...new FormData(form)].map(([key, value]) => [key, value.trim()]));
+    const errorMessage = form.querySelector('#intake-error');
+    const submit = form.querySelector('button[type="submit"]');
+    const submitLabel = submit.textContent;
+
+    form.querySelector('#intake-back')?.addEventListener('click', () => {
+      if (!canNavigate()) return;
+      drafts.set(step, values());
+      step--;
+      draw(-1);
+    });
+    form.querySelector('#intake-skip')?.addEventListener('click', () => {
+      if (canNavigate()) finish();
+    });
+    form.addEventListener('submit', async event => {
       event.preventDefault();
-      const v=values();
-      if (step===0 && ['first_name','last_name','current_school','hometown_province'].some(k=>!v[k])) { container.querySelector('#intake-error').textContent='Vui lòng điền đầy đủ thông tin bắt buộc.';return; }
-      form.querySelectorAll('button').forEach(b=>b.disabled=true);
+      if (!canNavigate()) return;
+      const v = values();
+      if (step === 0 && ['first_name', 'last_name', 'current_school', 'hometown_province'].some(key => !v[key])) {
+        errorMessage.textContent = 'Vui lòng điền đầy đủ thông tin bắt buộc.';
+        return;
+      }
+      saving = true;
+      errorMessage.textContent = '';
+      submit.textContent = 'Đang lưu…';
+      form.setAttribute('aria-busy', 'true');
+      const buttons = form.querySelectorAll('button');
+      buttons.forEach(button => button.disabled = true);
       try {
-        if (step===0) {
-          profile=await request('profile',{first_name:v.first_name,last_name:v.last_name,current_school:v.current_school});
-          profile=await request('background',{hometown_province:v.hometown_province,priority_zone:v.priority_zone});
-        } else if (step===1) profile=await request('academic',academicBody(v));
-        else {
-          profile=await request('background',{max_annual_tuition:num(v.max_annual_tuition)});
-          profile=await request('health',healthBody(v));
+        if (step === 0) {
+          profile = await request('profile', {first_name: v.first_name, last_name: v.last_name, current_school: v.current_school});
+          if (!current()) return;
+          profile = await request('background', {hometown_province: v.hometown_province, priority_zone: v.priority_zone});
+        } else if (step === 1) {
+          profile = await request('academic', academicBody(v));
+        } else {
+          profile = await request('background', {max_annual_tuition: num(v.max_annual_tuition)});
+          if (!current()) return;
+          profile = await request('health', healthBody(v));
         }
-        if (window.location.hash !== '#thiet-lap-ho-so' || state.currentUser?.user_id !== owner) return;
-        if (step===2) finish(); else { step++; draw(); }
-      } catch(error) {
-        container.querySelector('#intake-error').textContent=error.message;
-        form.querySelectorAll('button').forEach(b=>b.disabled=false);
+      } catch (error) {
+        if (!current()) return;
+        errorMessage.textContent = error.message;
+        saving = false;
+        form.removeAttribute('aria-busy');
+        submit.textContent = submitLabel;
+        buttons.forEach(button => button.disabled = false);
+        return;
+      }
+      if (!current()) return;
+      drafts.delete(step);
+      if (step === 2) {
+        finish();
+      } else {
+        step++;
+        draw(1);
       }
     });
   }
+
   const num = v => v==='' ? null : Number(v);
   const academicBody = v => ({gpa_5_semesters:num(v.gpa_5_semesters),conduct_grade_12:v.conduct_grade_12,ielts_score:num(v.ielts_score),dgnl_hcm_score:num(v.dgnl_hcm_score),subject_scores:Object.fromEntries(['Toán','Vật lý','Hóa học','Tiếng Anh','Ngữ văn','Sinh học','Lịch sử','Địa lý'].flatMap((name,i)=>v[`score_${i}`]===''?[]:[[name,Number(v[`score_${i}`])]]))});
   const healthBody = v => Object.fromEntries(['height_cm','weight_kg','eye_degree_left','eye_degree_right'].map(k=>[k,num(v[k])]));
