@@ -1,0 +1,5 @@
+/foryourfuture.db
+/foryourfuture.db-*
+/.env
+/.env.*
+/tests/

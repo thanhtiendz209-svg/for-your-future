@@ -6,12 +6,14 @@ Production-ready Modular Monolith with OpenAPI Contracts, CORS, and Lifespan Man
 import time
 import logging
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Request
+from fastapi import Depends, FastAPI, Request, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from sqlalchemy.exc import InterfaceError, OperationalError, TimeoutError, UnboundExecutionError
+from sqlalchemy.orm import Session
 
 from app.core.config import settings
-from app.core.database import init_db
+from app.core.database import database_health, get_db, init_db
 from app.integrations.neo4j.client import close_driver
 from app.modules.auth.router import router as auth_router
 from app.modules.consultation.history_router import router as chat_history_router
@@ -38,8 +40,8 @@ async def lifespan(app: FastAPI):
     logger.info("Starting For Your Future API...")
     try:
         init_db()
-    except Exception as e:
-        logger.warning(f"Database init notice: {e}")
+    except Exception as error:
+        logger.warning("Database init notice (%s).", type(error).__name__)
 
     yield
 
@@ -56,6 +58,18 @@ app = FastAPI(
     openapi_url=f"{settings.API_V1_STR}/openapi.json",
     lifespan=lifespan,
 )
+
+@app.exception_handler(InterfaceError)
+@app.exception_handler(OperationalError)
+@app.exception_handler(TimeoutError)
+@app.exception_handler(UnboundExecutionError)
+async def database_unavailable(request: Request, error: Exception):
+    logger.warning("Database operation unavailable (%s).", type(error).__name__)
+    return JSONResponse(
+        status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+        content={"detail": "Cơ sở dữ liệu tạm thời không khả dụng."},
+    )
+
 
 # CORS Middleware
 app.add_middleware(
@@ -94,7 +108,10 @@ from pathlib import Path
 from fastapi.staticfiles import StaticFiles
 
 @app.get("/health", tags=["Root"])
-def health_simple():
+def health_simple(response: Response, db: Session = Depends(get_db)):
+    if database_health(db)["status"] == "unhealthy":
+        response.status_code = status.HTTP_503_SERVICE_UNAVAILABLE
+        return {"status": "degraded", "timestamp": time.time()}
     return {"status": "ok", "timestamp": time.time()}
 
 

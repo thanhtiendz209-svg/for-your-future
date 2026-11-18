@@ -2,10 +2,11 @@
 Administration Service.
 """
 
-from typing import Dict, Any
+import asyncio
+
 from sqlalchemy.orm import Session
-from sqlalchemy import text
-from app.core.config import settings
+from starlette.concurrency import run_in_threadpool
+from app.core.database import database_health
 from app.core.models_db import (
     University,
     Program,
@@ -22,29 +23,21 @@ ollama_client = OllamaClient()
 
 
 async def get_system_health(db: Session) -> SystemHealthResponse:
-    # 1. Kiểm tra Relational Database
-    db_status = {"status": "unhealthy"}
-    try:
-        db.execute(text("SELECT 1"))
-        db_status = {
-            "status": "healthy",
-            "url": settings.DATABASE_URL.split("@")[-1] if "@" in settings.DATABASE_URL else settings.DATABASE_URL,
-        }
-    except Exception as e:
-        db_status = {"status": "unhealthy", "error": str(e)}
+    db_status = await run_in_threadpool(database_health, db)
+    if db_status["status"] == "unhealthy":
+        return SystemHealthResponse(
+            status="degraded",
+            database=db_status,
+            neo4j={"status": "not_checked"},
+            ollama={"status": "not_checked"},
+        )
 
-    # 2. Kiểm tra Neo4j
-    neo4j_status = await check_neo4j_health()
-
-    # 3. Kiểm tra Ollama
-    ollama_status = await ollama_client.check_health()
-
-    overall = "healthy"
-    if db_status.get("status") != "healthy":
-        overall = "degraded"
+    neo4j_status, ollama_status = await asyncio.gather(
+        check_neo4j_health(), ollama_client.check_health()
+    )
 
     return SystemHealthResponse(
-        status=overall,
+        status="healthy",
         database=db_status,
         neo4j=neo4j_status,
         ollama=ollama_status,

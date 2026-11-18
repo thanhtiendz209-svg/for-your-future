@@ -4206,17 +4206,17 @@ function renderAdmin(container) {
       <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div class="rounded-[20px] bg-card p-5 shadow-border border border-line">
           <div class="flex items-center justify-between mb-3">
-            <span class="text-xs font-bold text-azure uppercase tracking-wider">PostgreSQL</span>
-            <span id="health-pg-badge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">Online</span>
+            <span class="text-xs font-bold text-azure uppercase tracking-wider">Cơ sở dữ liệu</span>
+            <span id="health-pg-badge" class="px-2 py-0.5 rounded-full text-[10px] font-bold text-muted">Chưa kiểm tra</span>
           </div>
-          <h3 class="font-display font-bold text-lg text-navy">Aiven Cloud DB</h3>
-          <p class="text-xs text-muted mt-1">Cổng: 26350 · SSL: require</p>
+          <h3 class="font-display font-bold text-lg text-navy">PostgreSQL / SQLite</h3>
+          <p class="text-xs text-muted mt-1" id="health-db-backend">Máy chủ sẽ báo cơ sở dữ liệu đang dùng.</p>
         </div>
 
         <div class="rounded-[20px] bg-card p-5 shadow-border border border-line">
           <div class="flex items-center justify-between mb-3">
             <span class="text-xs font-bold text-azure uppercase tracking-wider">Knowledge Graph</span>
-            <span id="health-neo4j-badge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">Online</span>
+            <span id="health-neo4j-badge" class="px-2 py-0.5 rounded-full text-[10px] font-bold text-muted">Chưa kiểm tra</span>
           </div>
           <h3 class="font-display font-bold text-lg text-navy">Neo4j Bolt</h3>
           <p class="text-xs text-muted mt-1">bolt://localhost:7687</p>
@@ -4225,7 +4225,7 @@ function renderAdmin(container) {
         <div class="rounded-[20px] bg-card p-5 shadow-border border border-line">
           <div class="flex items-center justify-between mb-3">
             <span class="text-xs font-bold text-azure uppercase tracking-wider">AI Consultation</span>
-            <span id="health-ollama-badge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">Ready</span>
+            <span id="health-ollama-badge" class="px-2 py-0.5 rounded-full text-[10px] font-bold text-muted">Chưa kiểm tra</span>
           </div>
           <h3 class="font-display font-bold text-lg text-navy">Ollama API (Local LLM)</h3>
           <p class="text-xs text-muted mt-1">Grounding: Sub-graph</p>
@@ -4253,17 +4253,36 @@ function renderAdmin(container) {
           <span class="text-paper/60 text-[11px]">API: /api/v1/admin/health</span>
         </div>
         <pre id="admin-log-output" class="text-emerald-400 overflow-x-auto leading-relaxed">
-[2026-11-10 18:30:00] For Your Future Core Modular Monolith Online.
-[PostgreSQL Engine] Pool size: 10, pre-ping: True, ssl: require.
-[Neo4j Client] bolt://localhost:7687 session pool ready.
-[GraphRAG Parser] Slot & Holland intent rules loaded.
-[Static Assets] 126 Universities loaded, 16 MBTI types verified.
-Hệ thống sẵn sàng phục vụ tư vấn tuyển sinh và trắc nghiệm hướng nghiệp.
+Bấm kiểm tra để xem trạng thái của từng dịch vụ.
         </pre>
       </div>
     </div>
   `;
   refreshIcons();
+
+  const updateHealthCards = (data = {}) => {
+    const labels = {
+      healthy: 'Hoạt động',
+      unhealthy: 'Lỗi kết nối',
+      offline: 'Ngoại tuyến',
+      not_checked: 'Chưa kiểm tra',
+    };
+    for (const [id, service] of [['pg', data.database], ['neo4j', data.neo4j], ['ollama', data.ollama]]) {
+      const badge = document.getElementById(`health-${id}-badge`);
+      if (!badge) continue;
+      const isHealthy = service?.status === 'healthy';
+      badge.textContent = labels[service?.status] || 'Chưa xác định';
+      badge.classList.toggle('bg-emerald-100', isHealthy);
+      badge.classList.toggle('text-emerald-800', isHealthy);
+      badge.classList.toggle('text-muted', !isHealthy);
+    }
+
+    const backend = document.getElementById('health-db-backend');
+    if (backend) {
+      const backendNames = {postgresql: 'PostgreSQL', sqlite: 'SQLite cục bộ'};
+      backend.textContent = backendNames[data.database?.backend] || 'Chưa xác định được cơ sở dữ liệu';
+    }
+  };
 
   const btnProbe = document.getElementById('btn-admin-probe');
   if (btnProbe) {
@@ -4272,15 +4291,17 @@ Hệ thống sẵn sàng phục vụ tư vấn tuyển sinh và trắc nghiệm 
       if (log) log.textContent = 'Đang gửi yêu cầu kiểm tra sức khỏe hệ thống đến backend...';
       try {
         const res = await fetch('/api/v1/admin/health');
-        if (res.ok) {
-          const data = await res.json();
-          if (log) log.textContent = JSON.stringify(data, null, 2);
-          showToast('Hệ thống hoạt động bình thường!', 'success');
-        } else {
-          if (log) log.textContent = `Backend phản hồi mã lỗi: ${res.status}`;
-        }
+        const data = await res.json();
+        if (!data.database) throw new Error(`HTTP ${res.status}`);
+        if (log) log.textContent = JSON.stringify(data, null, 2);
+
+        updateHealthCards(data);
+        if (!res.ok) showToast('Cơ sở dữ liệu tạm thời không khả dụng.', 'error');
+        else if (data.database.backend === 'sqlite') showToast('Đang sử dụng SQLite cục bộ.', 'info');
+        else showToast('Kết nối cơ sở dữ liệu hoạt động.', 'success');
       } catch (err) {
-        if (log) log.textContent = `Không thể kết nối API trực tiếp: ${err.message}. Đang chạy chế độ local fallback.`;
+        updateHealthCards();
+        if (log) log.textContent = `Không thể kiểm tra backend: ${err.message}.`;
       }
     });
   }
