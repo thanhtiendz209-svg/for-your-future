@@ -20,7 +20,7 @@ from app.core.models_db import (
     HealthProfile,
     StudentProfile
 )
-from app.modules.auth.service import get_current_user_optional
+from app.modules.auth.service import get_current_user
 from .models import (
     ChatPromptRequest,
     PortfolioRecommendationResponse,
@@ -94,7 +94,7 @@ def extract_user_profile_data(db: Session, user: Optional[User]) -> Optional[Dic
 )
 async def chat_recommend(
     request: ChatPromptRequest,
-    user: Optional[User] = Depends(get_current_user_optional),
+    user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """Pipeline trọn vẹn từ prompt tự do đến danh mục khuyến nghị xếp hạng (hỗ trợ gọi API JSON)"""
@@ -128,7 +128,7 @@ async def chat_recommend(
 )
 async def chat_recommend_stream(
     request: ChatPromptRequest,
-    user: Optional[User] = Depends(get_current_user_optional),
+    user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """Pipeline trọn vẹn trả về Server-Sent Events kèm intent, portfolio cards, clarification và lời tư vấn gõ chữ"""

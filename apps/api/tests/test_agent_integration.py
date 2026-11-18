@@ -86,8 +86,8 @@ async def test_agent_full_recommendation_flow():
     assert "all_candidates" in portfolio_data
 
 
-def test_api_chat_recommend_endpoint():
-    """Kiểm tra gọi trực tiếp API /api/v1/chat/recommend nhận JSON"""
+def test_api_chat_recommend_endpoint_requires_authentication():
+    """A direct recommendation request requires a valid bearer token."""
     from fastapi.testclient import TestClient
     from app.main import app
 
@@ -96,6 +96,4 @@ def test_api_chat_recommend_endpoint():
         "/api/v1/chat/recommend",
         json={"prompt": "Em 25 điểm khối A01 muốn học ngành Điện - Điện tử ở TP.HCM"}
     )
-    assert response.status_code == 200
-    data = response.json()
-    assert "portfolio" in data or "advice" in data or "clarification_question" in data
+    assert response.status_code == 401
