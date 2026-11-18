@@ -11,7 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app.core.config import settings
-from app.core.database import init_db, SessionLocal
+from app.core.database import init_db
 from app.integrations.neo4j.client import close_driver
 from app.modules.auth.router import router as auth_router
 from app.modules.consultation.history_router import router as chat_history_router
@@ -40,17 +40,6 @@ async def lifespan(app: FastAPI):
         init_db()
     except Exception as e:
         logger.warning(f"Database init notice: {e}")
-    
-    # Auto-seed basic data if DB is completely empty
-    try:
-        from app.core.seed import seed_initial_data
-        db = SessionLocal()
-        try:
-            seed_initial_data(db)
-        finally:
-            db.close()
-    except Exception as e:
-        logger.warning(f"Auto-seed notice: {e}")
 
     yield
 
