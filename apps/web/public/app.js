@@ -4767,18 +4767,26 @@ async function renderConsultation(container, param) {
     body.after(panel);
     if (follow) log.scrollTop = log.scrollHeight;
   }
+  function appendChatPortfolio(row, portfolio) {
+    if (!portfolio) return;
+    try {
+      const widget = createPortfolioWidget(portfolio.data || portfolio, setDraft);
+      if (widget) row.append(widget);
+    } catch (widgetError) {
+      console.warn('Portfolio widget render error:', widgetError);
+    }
+  }
   function appendMessage(message){
     const row=document.createElement('article');row.className=`chat-message chat-message-${message.role==='user'?'user':'assistant'}`;
     const label=document.createElement('p');label.className='chat-message-label';label.textContent=message.role==='user'?'Bạn':'Trợ lý AI';
     const body=document.createElement('div');body.className='chat-message-text';if(message.role==='assistant')renderChatText(body,message.content);else body.textContent=message.content;
     row.append(label,body);
 
-    const onAsk=setDraft;
-    const evItem=Array.isArray(message.evidence)?message.evidence.find(e=>e.type==='portfolio'):message.evidence;
-    const portData=message.portfolio||(evItem&&evItem.data)||evItem;
-    if(portData&&message.role==='assistant'){
-      const widget=createPortfolioWidget(portData.data||portData,onAsk);
-      if(widget)row.append(widget);
+    if (message.role === 'assistant') {
+      const evidence = Array.isArray(message.evidence)
+        ? message.evidence.find(item => item?.type === 'portfolio')
+        : message.evidence;
+      appendChatPortfolio(row, message.portfolio || evidence);
     }
 
     log.append(row);
@@ -4815,16 +4823,7 @@ async function renderConsultation(container, param) {
     chatRuntime.busy = true;
     error.textContent = '';
     controls();
-    let assistant = null, bubble = null, paintFrame = null, paintedLength = 0;
-    const paintAnswer = () => {
-      if (paintFrame !== null) cancelAnimationFrame(paintFrame);
-      paintFrame = null;
-      if (!current() || !bubble || !assistant.content.trim() || assistant.content.length === paintedLength) return;
-      const follow = nearChatBottom();
-      renderChatText(bubble, assistant.content);
-      paintedLength = assistant.content.length;
-      if (follow) log.scrollTop = log.scrollHeight;
-    };
+    let assistant = null, bubble = null;
     const controller = new AbortController();
     chatRuntime.controller = controller;
     let interruption = null;
@@ -4883,20 +4882,10 @@ async function renderConsultation(container, param) {
             interruption = item.reason || 'connection';
             return;
           }
-          if (item.type === 'portfolio' && item.data) {
-            assistant.portfolio = item.data;
-            try {
-              if (!bubble.parentElement.querySelector('.chat-portfolio-widget')) {
-                const widget = createPortfolioWidget(item.data, setDraft);
-                if (widget) bubble.parentElement.append(widget);
-              }
-            } catch (widgetError) {
-              console.warn('Portfolio widget render error:', widgetError);
-            }
-          }
+          if (item.type === 'portfolio' && item.data) assistant.portfolio = item.data;
           if (item.type === 'token' && typeof item.token === 'string') {
+            if (!assistant.content.trim() && item.token.trim()) thinking.textContent = 'Đang soạn câu trả lời…';
             assistant.content += item.token;
-            if (paintFrame === null) paintFrame = requestAnimationFrame(paintAnswer);
           }
         }
       };
@@ -4923,11 +4912,23 @@ async function renderConsultation(container, param) {
       if (bubble) interruption ||= controller.signal.aborted ? 'stopped' : 'connection';
       else if (current()) error.textContent = controller.signal.aborted ? 'Đã dừng phản hồi.' : requestError.message;
     } finally {
-      paintAnswer();
       if (current()) {
         chatRuntime.busy = false;
-        if (interruption && bubble) {
-          showChatRecovery(assistant, bubble, {reason: interruption, prompt, target_year: targetYear});
+        if (bubble) {
+          const follow = nearChatBottom();
+          const row = bubble.parentElement;
+          if (assistant.content.trim()) {
+            renderChatText(bubble, assistant.content);
+            bubble.classList.add('chat-answer-reveal');
+          }
+          appendChatPortfolio(row, assistant.portfolio);
+          if (interruption) {
+            showChatRecovery(assistant, bubble, {reason: interruption, prompt, target_year: targetYear});
+          }
+          if (follow) {
+            // Align the beginning of a newly displayed answer with the reading area.
+            log.scrollTop += row.getBoundingClientRect().top - log.getBoundingClientRect().top - 14;
+          }
         }
         controls();
         resizeInput();
