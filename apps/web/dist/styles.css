@@ -740,6 +740,7 @@ body.chat-page-active { height: 100dvh; min-height: 0; overflow: hidden; }
 .chat-message-user .chat-message-label { justify-content: flex-end; }
 .chat-message-user .chat-message-text { padding: 13px 20px; border-radius: 22px 22px 6px 22px; background: var(--color-mist); }
 .chat-message-assistant .chat-message-text { padding: 0; white-space: normal; }
+.chat-thinking { display: inline-block; color: var(--color-muted); font-weight: 500; }
 .chat-message-text :is(p,ul,ol,pre,blockquote,table) + :is(p,ul,ol,pre,blockquote,table) { margin-top: .85em; }
 .chat-message-text :is(h1,h2,h3,h4) { margin-block: 1.2em .65em; font-size: 1.12em; color: var(--color-ink); }
 .chat-message-text :is(ul,ol) { padding-left: 1.4em; }
@@ -823,6 +824,23 @@ body.chat-page-active { height: 100dvh; min-height: 0; overflow: hidden; }
  .chat-history-toggle, .chat-new-shortcut, .chat-suggestions button { transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease; }
  .chat-send-button:not(:disabled) { transition: background-color 160ms ease, transform 160ms ease; }
  .chat-send-button:active { transform: scale(.94); }
+ @supports ((background-clip: text) or (-webkit-background-clip: text)) {
+  .chat-thinking {
+    background-image: linear-gradient(110deg, var(--color-muted) 39%, var(--color-azure) 47%, var(--color-ink) 50%, var(--color-azure) 53%, var(--color-muted) 61%);
+    background-size: 250% 100%;
+    background-position: 100% center;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: chat-thinking-sweep 1.9s linear infinite;
+  }
+ }
+}
+@keyframes chat-thinking-sweep {
+  to { background-position: 0% center; }
+}
+@media (forced-colors: active) {
+ .chat-thinking { color: CanvasText; background: none; animation: none; }
 }
 
 /* Cross-school major lookup, reached from the highlighted action in Bộ lọc. */

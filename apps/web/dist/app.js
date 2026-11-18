@@ -4772,7 +4772,7 @@ async function renderConsultation(container, param) {
     const paintAnswer=()=>{
       if(paintFrame!==null)cancelAnimationFrame(paintFrame);
       paintFrame=null;
-      if(!current()||!bubble||!assistant?.content)return;
+      if(!current()||!bubble||!assistant?.content.trim())return;
       const nearBottom=log.scrollHeight-log.scrollTop-log.clientHeight<100;
       renderChatText(bubble,assistant.content);
       if(nearBottom)log.scrollTop=log.scrollHeight;
@@ -4783,7 +4783,14 @@ async function renderConsultation(container, param) {
       if(!chatRuntime.sessionId){const s=await(await api('',{method:'POST',body:'{}'})).json();if(!current())return;chatRuntime.sessionId=s.session_id;if(awayAt!==null)saveChatResume(owner,s.session_id,awayAt);sessions.unshift(s);drawSidebar();}
       log.querySelector('.chat-welcome')?.remove();
       const userMessage={role:'user',content:prompt};chatRuntime.messages.push(userMessage);setConversationMode();appendMessage(userMessage);input.value='';resizeInput();submitted=true;
-      assistant={role:'assistant',content:''};chatRuntime.messages.push(assistant);bubble=appendMessage({role:'assistant',content:'Đang suy nghĩ...'});log.scrollTop=log.scrollHeight;
+      assistant = {role: 'assistant', content: ''};
+      chatRuntime.messages.push(assistant);
+      bubble = appendMessage(assistant);
+      const thinking = document.createElement('span');
+      thinking.className = 'chat-thinking';
+      thinking.textContent = 'Đang suy nghĩ…';
+      bubble.append(thinking);
+      log.scrollTop = log.scrollHeight;
       const r=await api('/'+encodeURIComponent(chatRuntime.sessionId)+'/messages/stream',{method:'POST',body:JSON.stringify({prompt,target_year:Number(container.querySelector('#chat-year').value)}),signal:controller.signal});
       const reader=r.body.getReader(),decoder=new TextDecoder();let buffer='',doneSignal=false;
       const onAsk=setDraft;
@@ -4813,12 +4820,21 @@ async function renderConsultation(container, param) {
       while(true){const chunk=await reader.read();if(!current()){await reader.cancel();return;}buffer+=decoder.decode(chunk.value||new Uint8Array(),{stream:!chunk.done});const blocks=buffer.replace(/\r\n/g,'\n').split('\n\n');buffer=blocks.pop();blocks.forEach(consume);if(chunk.done)break;}
       if(buffer.trim())consume(buffer);
       paintAnswer();
-      if(!doneSignal && !assistant.content)throw new Error('Kết nối bị gián đoạn. Bạn có thể gửi lại câu hỏi.');
-      if(!assistant.content)bubble.textContent='Chưa nhận được phản hồi. Vui lòng thử lại.';
+      if (!assistant.content.trim()) {
+        if (!doneSignal) throw new Error('Kết nối bị gián đoạn. Bạn có thể gửi lại câu hỏi.');
+        bubble.textContent = 'Chưa nhận được phản hồi. Vui lòng thử lại.';
+      }
       await refreshSessions();
     }catch(e){
       paintAnswer();
-      if(current()){error.textContent=e.name==='AbortError'?'Đã dừng phản hồi.':e.message;if(!submitted)input.value=prompt;const last=log.lastElementChild?.querySelector('.chat-message-text');if(assistant&&!assistant.content&&last)last.textContent=e.name==='AbortError'?'Đã dừng phản hồi.':'Chưa nhận được phản hồi.';}
+      if (current()) {
+        const stopped = e.name === 'AbortError';
+        error.textContent = stopped ? 'Đã dừng phản hồi.' : e.message;
+        if (!submitted) input.value = prompt;
+        if (bubble && !assistant.content.trim()) {
+          bubble.textContent = stopped ? 'Đã dừng phản hồi.' : 'Chưa nhận được phản hồi.';
+        }
+      }
     }finally{if(paintFrame!==null)cancelAnimationFrame(paintFrame);if(current()){chatRuntime.busy=false;controls();resizeInput();input.focus();}if(chatRuntime.controller===controller)chatRuntime.controller=null;}
   };
   drawMessages();
