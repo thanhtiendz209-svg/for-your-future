@@ -15,14 +15,14 @@ from typing import Dict, Any, List, Optional, AsyncGenerator
 
 try:
     from .graph import career_agent_app
-    from app.modules.graphrag.llm_service import GeminiStreamInterrupted, stream_gemini_messages, stream_portfolio_tokens, with_continuation
+    from app.modules.graphrag.llm_service import GeminiStreamInterrupted, stream_gemini_messages, stream_portfolio_tokens
 except ImportError:
     try:
         from .graph import career_agent_app
-        from ..modules.graphrag.llm_service import GeminiStreamInterrupted, stream_gemini_messages, stream_portfolio_tokens, with_continuation
+        from ..modules.graphrag.llm_service import GeminiStreamInterrupted, stream_gemini_messages, stream_portfolio_tokens
     except ImportError:
         from agent.graph import career_agent_app
-        from llm_service import GeminiStreamInterrupted, stream_gemini_messages, stream_portfolio_tokens, with_continuation
+        from llm_service import GeminiStreamInterrupted, stream_gemini_messages, stream_portfolio_tokens
 
 logger = logging.getLogger("graphrag.career_service")
 
@@ -39,7 +39,6 @@ class CareerAdvisoryService:
         session_id: str = "default_session",
         history: Optional[List[Dict[str, str]]] = None,
         profile_data: Optional[Dict[str, Any]] = None,
-        continuation: Optional[str] = None,
     ) -> AsyncGenerator[Dict[str, Any], None]:
         """Forward text during graph execution and report incomplete generations."""
         graph_config = {"configurable": {"thread_id": session_id}}
@@ -49,7 +48,6 @@ class CareerAdvisoryService:
             "latest_user_prompt": prompt,
             "messages": history or [],
             "profile_data": profile_data,
-            "continuation": continuation,
         }
         logger.info("[CareerAdvisoryService] Running flow for session_id=%s", session_id)
         parts = []
@@ -85,7 +83,7 @@ class CareerAdvisoryService:
                 }}
                 yield {"type": "portfolio", "data": portfolio}
                 target_portfolio = final_state.get("portfolio_obj") or portfolio
-                tokens = stream_portfolio_tokens(target_portfolio, prompt, slots=slots, continuation=continuation)
+                tokens = stream_portfolio_tokens(target_portfolio, prompt, slots=slots)
                 async with aclosing(tokens):
                     async for token in tokens:
                         parts.append(token)
@@ -103,7 +101,7 @@ class CareerAdvisoryService:
                         )},
                         {"role": "user", "content": f"Câu hỏi của học sinh: {prompt}"},
                     ]
-                    tokens = stream_gemini_messages(with_continuation(messages, continuation), temperature=0.35, max_tokens=1000)
+                    tokens = stream_gemini_messages(messages, temperature=0.35, max_tokens=1000)
                     async with aclosing(tokens):
                         async for token in tokens:
                             parts.append(token)

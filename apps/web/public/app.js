@@ -4611,7 +4611,7 @@ async function renderConsultation(container, param) {
     container.querySelector('#chat-new').disabled=chatRuntime.busy;
     container.querySelector('#chat-new-shortcut').disabled=chatRuntime.busy;
     container.querySelector('#chat-year').disabled=chatRuntime.busy;
-    container.querySelectorAll('[data-chat-session], [data-chat-recovery]').forEach(button => button.disabled = chatRuntime.busy);
+    container.querySelectorAll('[data-chat-session]').forEach(button => button.disabled = chatRuntime.busy);
     container.querySelector('#chat-status').textContent=chatRuntime.busy?'Trợ lý đang trả lời...':'Enter để gửi · Shift + Enter để xuống dòng';
   }
   function drawSidebar(){
@@ -4729,43 +4729,14 @@ async function renderConsultation(container, param) {
   function nearChatBottom() {
     return log.scrollHeight - log.scrollTop - log.clientHeight < 100;
   }
-  function showChatRecovery(message, body, interrupted) {
-    const {reason, prompt, target_year} = interrupted;
-    const follow = nearChatBottom();
-    const hasText = Boolean(message.content.trim());
-    if (!hasText) body.replaceChildren();
-
-    const panel = document.createElement('div');
-    panel.className = 'chat-recovery';
-    const notice = document.createElement('p');
-    notice.setAttribute('role', 'status');
+  function chatFailureMessage(reason) {
     const labels = {
       stopped: 'Đã dừng phản hồi.',
-      length: 'Phản hồi chưa hoàn tất vì đã chạm giới hạn độ dài.',
-      busy: hasText ? 'Phản hồi chưa hoàn tất vì trợ lý đang bận.' : 'Trợ lý đang bận. Bạn có thể thử lại.',
+      length: 'Câu trả lời vượt giới hạn độ dài. Bạn có thể hỏi cụ thể hơn.',
+      busy: 'Trợ lý đang bận. Bạn có thể thử lại sau.',
       blocked: 'Trợ lý đã dừng phản hồi. Bạn có thể diễn đạt câu hỏi rõ hơn.',
     };
-    notice.textContent = labels[reason] || (hasText ? 'Phản hồi chưa hoàn tất.' : 'Chưa nhận được phản hồi.');
-    panel.append(notice);
-    if (prompt && reason !== 'blocked') {
-      const actions = document.createElement('div');
-      actions.className = 'chat-recovery-actions';
-      const addAction = (label, continuation, primary) => {
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.dataset.chatRecovery = '';
-        button.className = primary ? 'chat-recovery-primary' : '';
-        button.textContent = label;
-        button.disabled = chatRuntime.busy;
-        button.onclick = () => sendChatPrompt(prompt, target_year, continuation);
-        actions.append(button);
-      };
-      if (hasText) addAction('Viết tiếp', Array.from(message.content).slice(-6000).join(''), true);
-      addAction('Gửi lại', '', !hasText);
-      panel.append(actions);
-    }
-    body.after(panel);
-    if (follow) log.scrollTop = log.scrollHeight;
+    return labels[reason] || 'Kết nối bị gián đoạn. Vui lòng thử lại.';
   }
   function appendChatPortfolio(row, portfolio) {
     if (!portfolio) return;
@@ -4779,19 +4750,26 @@ async function renderConsultation(container, param) {
   function appendMessage(message){
     const row=document.createElement('article');row.className=`chat-message chat-message-${message.role==='user'?'user':'assistant'}`;
     const label=document.createElement('p');label.className='chat-message-label';label.textContent=message.role==='user'?'Bạn':'Trợ lý AI';
-    const body=document.createElement('div');body.className='chat-message-text';if(message.role==='assistant')renderChatText(body,message.content);else body.textContent=message.content;
-    row.append(label,body);
-
+    const body = document.createElement('div');
+    body.className = 'chat-message-text';
+    row.append(label, body);
     if (message.role === 'assistant') {
-      const evidence = Array.isArray(message.evidence)
-        ? message.evidence.find(item => item?.type === 'portfolio')
+      const evidence = Array.isArray(message.evidence) ? message.evidence : [];
+      const previousFailure = evidence.find(item => item?.type === 'interrupted');
+      if (previousFailure && !message.content.trim()) {
+        body.textContent = chatFailureMessage(previousFailure.reason);
+        body.classList.add('chat-message-status');
+      } else {
+        renderChatText(body, message.content);
+      }
+      const portfolio = Array.isArray(message.evidence)
+        ? evidence.find(item => item?.type === 'portfolio')
         : message.evidence;
-      appendChatPortfolio(row, message.portfolio || evidence);
+      appendChatPortfolio(row, message.portfolio || portfolio);
+    } else {
+      body.textContent = message.content;
     }
-
     log.append(row);
-    const interruption = Array.isArray(message.evidence) && message.evidence.find(item => item?.type === 'interrupted');
-    if (message.role === 'assistant' && interruption) showChatRecovery(message, body, interruption);
     return body;
   }
   function drawMessages(){
@@ -4817,13 +4795,14 @@ async function renderConsultation(container, param) {
   container.querySelector('#chat-new-shortcut').onclick=()=>container.querySelector('#chat-new').click();
   container.querySelector('#chat-stop').onclick=()=>chatRuntime.controller?.abort();
   input.addEventListener('keydown',event=>{if(event.key==='Enter'&&!event.shiftKey&&!event.isComposing){event.preventDefault();container.querySelector('#chat-form').requestSubmit();}});
-  async function sendChatPrompt(prompt, targetYear = Number(container.querySelector('#chat-year').value), continuation = '') {
+  async function sendChatPrompt(prompt) {
     if (!prompt || chatRuntime.busy) return;
     ++selection;
     chatRuntime.busy = true;
     error.textContent = '';
     controls();
-    let assistant = null, bubble = null;
+    const targetYear = Number(container.querySelector('#chat-year').value);
+    let assistant = null, bubble = null, reply = '', portfolio = null;
     const controller = new AbortController();
     chatRuntime.controller = controller;
     let interruption = null;
@@ -4839,11 +4818,11 @@ async function renderConsultation(container, param) {
         drawSidebar();
       }
       log.querySelector('.chat-welcome')?.remove();
-      const userMessage = {role: 'user', content: continuation ? 'Viết tiếp câu trả lời' : prompt};
+      const userMessage = {role: 'user', content: prompt};
       chatRuntime.messages.push(userMessage);
       setConversationMode();
       appendMessage(userMessage);
-      if (!continuation && input.value.trim() === prompt) input.value = '';
+      if (input.value.trim() === prompt) input.value = '';
       resizeInput();
 
       assistant = {role: 'assistant', content: ''};
@@ -4857,7 +4836,7 @@ async function renderConsultation(container, param) {
 
       const response = await api('/' + encodeURIComponent(chatRuntime.sessionId) + '/messages/stream', {
         method: 'POST',
-        body: JSON.stringify({prompt, target_year: targetYear, ...(continuation && {continuation})}),
+        body: JSON.stringify({prompt, target_year: targetYear}),
         signal: controller.signal,
       });
       const reader = response.body.getReader();
@@ -4882,11 +4861,9 @@ async function renderConsultation(container, param) {
             interruption = item.reason || 'connection';
             return;
           }
-          if (item.type === 'portfolio' && item.data) assistant.portfolio = item.data;
-          if (item.type === 'token' && typeof item.token === 'string') {
-            if (!assistant.content.trim() && item.token.trim()) thinking.textContent = 'Đang soạn câu trả lời…';
-            assistant.content += item.token;
-          }
+          if (item.type === 'composing') thinking.textContent = 'Đang soạn câu trả lời…';
+          if (item.type === 'portfolio' && item.data) portfolio = item.data;
+          if (item.type === 'token' && typeof item.token === 'string') reply += item.token;
         }
       };
       try {
@@ -4906,28 +4883,31 @@ async function renderConsultation(container, param) {
       } finally {
         await reader.cancel().catch(() => {});
       }
-      if (!doneSignal || !assistant.content.trim()) interruption ||= 'connection';
+      if (!doneSignal || !reply.trim()) interruption ||= 'connection';
       if (current()) refreshSessions().catch(() => {});
     } catch (requestError) {
       if (bubble) interruption ||= controller.signal.aborted ? 'stopped' : 'connection';
-      else if (current()) error.textContent = controller.signal.aborted ? 'Đã dừng phản hồi.' : requestError.message;
+      else if (current()) error.textContent = controller.signal.aborted ? chatFailureMessage('stopped') : requestError.message;
     } finally {
       if (current()) {
         chatRuntime.busy = false;
         if (bubble) {
-          const follow = nearChatBottom();
           const row = bubble.parentElement;
-          if (assistant.content.trim()) {
+          if (interruption) {
+            row.remove();
+            chatRuntime.messages.pop();
+            error.textContent = chatFailureMessage(interruption);
+          } else {
+            const follow = nearChatBottom();
+            assistant.content = reply;
+            assistant.portfolio = portfolio;
             renderChatText(bubble, assistant.content);
             bubble.classList.add('chat-answer-reveal');
-          }
-          appendChatPortfolio(row, assistant.portfolio);
-          if (interruption) {
-            showChatRecovery(assistant, bubble, {reason: interruption, prompt, target_year: targetYear});
-          }
-          if (follow) {
-            // Align the beginning of a newly displayed answer with the reading area.
-            log.scrollTop += row.getBoundingClientRect().top - log.getBoundingClientRect().top - 14;
+            appendChatPortfolio(row, portfolio);
+            if (follow) {
+              // Align the beginning of a newly displayed answer with the reading area.
+              log.scrollTop += row.getBoundingClientRect().top - log.getBoundingClientRect().top - 14;
+            }
           }
         }
         controls();

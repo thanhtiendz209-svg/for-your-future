@@ -69,7 +69,11 @@ async def test_native_fallback_streams_before_any_text(monkeypatch):
     monkeypatch.setattr(llm_service.httpx, "AsyncClient", lambda **kwargs: client)
     tokens = [
         token async for token in llm_service.stream_gemini_messages(
-            llm_service.with_continuation([{"role": "user", "content": "Tìm hiểu học phí"}], "Phần trước")
+            [
+                {"role": "user", "content": "Tìm hiểu học phí"},
+                {"role": "assistant", "content": "Phần trước"},
+                {"role": "user", "content": "Chi phí ký túc xá thì sao?"},
+            ]
         )
     ]
     assert tokens == ["Một phần", " rồi thêm"]
@@ -106,12 +110,11 @@ async def test_lookup_yields_first_text_while_gemini_is_still_generating(monkeyp
     monkeypatch.setattr(graph, "execute_query_async", query)
     monkeypatch.setattr(graph, "stream_gemini_messages", generate)
     events = CareerAdvisoryService().run_advisory_flow(
-        "Học phí Trường thử?", session_id="streaming-lookup-test", continuation="Dữ liệu đã trả",
+        "Học phí Trường thử?", session_id="streaming-lookup-test",
     )
     async with aclosing(events):
         assert await asyncio.wait_for(anext(events), 3) == {"type": "token", "token": "Thông tin "}
         assert "24680000" in observed[1]["content"]
-        assert observed[-2] == {"role": "assistant", "content": "Dữ liệu đã trả"}
         allow_finish.set()
         assert [event async for event in events] == [
             {"type": "token", "token": "học phí."},

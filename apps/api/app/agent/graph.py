@@ -32,7 +32,7 @@ try:
         PortfolioRecommendationResponse
     )
     from app.modules.graphrag.recommender import rank_and_score_programs, build_portfolio_recommendations
-    from app.modules.graphrag.llm_service import GeminiStreamInterrupted, stream_gemini_messages, with_continuation
+    from app.modules.graphrag.llm_service import GeminiStreamInterrupted, stream_gemini_messages
 except ImportError:
     try:
         from ..integrations.neo4j.client import execute_query_async
@@ -44,7 +44,7 @@ except ImportError:
             PortfolioRecommendationResponse
         )
         from ..modules.graphrag.recommender import rank_and_score_programs, build_portfolio_recommendations
-        from ..modules.graphrag.llm_service import GeminiStreamInterrupted, stream_gemini_messages, with_continuation
+        from ..modules.graphrag.llm_service import GeminiStreamInterrupted, stream_gemini_messages
     except ImportError:
         from database import execute_query_async
         from models.query_builder import CypherQueryBuilder
@@ -55,7 +55,7 @@ except ImportError:
             PortfolioRecommendationResponse
         )
         from recommender import rank_and_score_programs, build_portfolio_recommendations
-        from llm_service import GeminiStreamInterrupted, stream_gemini_messages, with_continuation
+        from llm_service import GeminiStreamInterrupted, stream_gemini_messages
 
 logger = logging.getLogger("graphrag.agent.graph")
 
@@ -111,7 +111,6 @@ async def node_extract_slots(state: AgentState) -> Dict[str, Any]:
 
 
 async def _write_gemini_answer(
-    state: AgentState,
     writer: StreamWriter,
     messages: List[Dict[str, str]],
     *,
@@ -119,16 +118,15 @@ async def _write_gemini_answer(
     max_tokens: int,
     fallback: str = "",
 ) -> str:
-    continuation = state.get("continuation")
     parts = []
     try:
         async for token in stream_gemini_messages(
-            with_continuation(messages, continuation), temperature=temperature, max_tokens=max_tokens
+            messages, temperature=temperature, max_tokens=max_tokens
         ):
             parts.append(token)
             writer({"type": "token", "token": token})
     except GeminiStreamInterrupted as error:
-        if not fallback or continuation or error.reason not in ("connection", "busy") or "".join(parts).strip():
+        if not fallback or error.reason not in ("connection", "busy") or "".join(parts).strip():
             raise
         writer({"type": "token", "token": fallback})
         return fallback
@@ -166,7 +164,7 @@ async def node_ask_clarification(state: AgentState, writer: StreamWriter) -> Dic
         fallback = f"Với mức điểm {slots.get('student_score')}, bạn dự định xét tuyển theo tổ hợp nào (ví dụ A00, A01 hoặc D01)?"
 
     clarify_text = await _write_gemini_answer(
-        state, writer, [{"role": "user", "content": prompt}],
+        writer, [{"role": "user", "content": prompt}],
         temperature=0.4, max_tokens=350, fallback=fallback,
     )
 
@@ -310,7 +308,7 @@ async def node_chitchat(state: AgentState, writer: StreamWriter) -> Dict[str, An
         {"role": "user", "content": prompt}
     ]
     reply = await _write_gemini_answer(
-        state, writer, messages, temperature=0.5, max_tokens=200,
+        writer, messages, temperature=0.5, max_tokens=200,
         fallback="Chào bạn! Mình có thể giúp bạn tìm ngành, tra cứu trường và chuẩn bị nguyện vọng. Bạn muốn tìm hiểu điều gì?",
     )
     return {"final_text": reply}
@@ -501,7 +499,7 @@ async def node_lookup_info(state: AgentState, writer: StreamWriter) -> Dict[str,
     )
 
     reply = await _write_gemini_answer(
-        state, writer,
+        writer,
         [{"role": "system", "content": sys_prompt}, {"role": "user", "content": user_content}],
         temperature=0.35, max_tokens=1500,
     )

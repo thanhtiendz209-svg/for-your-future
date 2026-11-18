@@ -41,18 +41,6 @@ class GeminiStreamInterrupted(Exception):
         self.reason = reason
 
 
-def with_continuation(
-    messages: List[Dict[str, str]], continuation: Optional[str]
-) -> List[Dict[str, str]]:
-    if not continuation:
-        return messages
-    return [
-        *messages,
-        {"role": "assistant", "content": continuation},
-        {"role": "user", "content": "Viết tiếp từ chỗ đang dở. Chỉ bổ sung phần còn thiếu."},
-    ]
-
-
 async def _gemini_sse(client, url, headers, body, *, native=False) -> AsyncGenerator[str, None]:
     has_text = False
     finished = False
@@ -409,7 +397,6 @@ async def stream_portfolio_tokens(
     portfolio: Any,
     user_prompt: str,
     slots: Optional[Dict[str, Any]] = None,
-    continuation: Optional[str] = None,
 ) -> AsyncGenerator[str, None]:
     prompt = build_portfolio_system_prompt(portfolio, user_prompt, slots=slots)
     messages = [
@@ -418,11 +405,11 @@ async def stream_portfolio_tokens(
     ]
     has_text = False
     try:
-        async for token in stream_gemini_messages(with_continuation(messages, continuation), temperature=0.3):
+        async for token in stream_gemini_messages(messages, temperature=0.3):
             has_text = has_text or bool(token.strip())
             yield token
     except GeminiStreamInterrupted as error:
-        if has_text or continuation or error.reason not in ("connection", "busy"):
+        if has_text or error.reason not in ("connection", "busy"):
             raise
         for line in _fallback_portfolio_text(portfolio, slots):
             yield line

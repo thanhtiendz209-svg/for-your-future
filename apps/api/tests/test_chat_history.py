@@ -49,7 +49,8 @@ class ChatTests(unittest.TestCase):
 
   async def reply(**kwargs):
    received.append(kwargs)
-   yield {'type': 'token', 'token': 'Kết quả **có nguồn**'}
+   yield {'type': 'token', 'token': 'Kết quả '}
+   yield {'type': 'token', 'token': '**có nguồn**'}
    yield {'type': 'done'}
 
   with patch('app.modules.consultation.history_router.career_advisory_service.run_advisory_flow', new=reply):
@@ -57,6 +58,8 @@ class ChatTests(unittest.TestCase):
     response = self.client.post(path + '/stream', json={'prompt': prompt})
     self.assertEqual(response.status_code, 200, response.text)
     self.assertIn('Kết quả **có nguồn**', response.text)
+    self.assertEqual(response.text.count('"type": "token"'), 1)
+    self.assertIn('"type": "composing"', response.text)
     self.assertIn('[DONE]', response.text)
 
   self.assertEqual(received[-1]['profile_data']['student_id'], 'alice')
@@ -65,56 +68,39 @@ class ChatTests(unittest.TestCase):
   rows = self.client.get(path).json()
   self.assertEqual(len(rows), 6)
   self.assertEqual(rows[-1]['content'], 'Kết quả **có nguồn**')
- def test_interrupted_reply_is_saved_and_can_be_continued(self):
-  sid = self.create()
-  path = f'/api/v1/chat/sessions/{sid}/messages'
+ def test_interruption_preserves_the_question_without_publishing_a_draft(self):
+  path = f'/api/v1/chat/sessions/{self.create()}/messages'
   prompt = 'Học phí ngành công nghệ thông tin là bao nhiêu?'
   partial = 'Phần tư vấn đang dở'
-  received = []
 
   async def reply(**kwargs):
-   received.append(kwargs)
-   if kwargs['continuation']:
-    yield {'type': 'token', 'token': 'Phần tư vấn tiếp theo'}
-    yield {'type': 'done'}
-   else:
-    yield {'type': 'token', 'token': partial}
-    yield {'type': 'interrupted', 'reason': 'length'}
+   yield {'type': 'token', 'token': partial}
+   yield {'type': 'interrupted', 'reason': 'length'}
 
   with patch('app.modules.consultation.history_router.career_advisory_service.run_advisory_flow', new=reply):
    response = self.client.post(path + '/stream', json={'prompt': prompt, 'target_year': 2027})
-   self.assertEqual(response.status_code, 200)
-   self.assertIn(partial, response.text)
-   self.assertIn('"reason": "length"', response.text)
-   self.assertNotIn('[DONE]', response.text)
-   saved = self.client.get(path).json()[-1]
-   self.assertEqual(saved['content'], partial)
-   self.assertEqual(saved['evidence'], [{
-    'type': 'interrupted', 'reason': 'length', 'prompt': prompt, 'target_year': 2027,
-   }])
+  self.assertEqual(response.status_code, 200)
+  self.assertIn('"type": "composing"', response.text)
+  self.assertIn('"reason": "length"', response.text)
+  self.assertNotIn(partial, response.text)
+  self.assertNotIn('[DONE]', response.text)
+  rows = self.client.get(path).json()
+  self.assertEqual([(message['role'], message['content']) for message in rows], [('user', prompt)])
 
-   response = self.client.post(path + '/stream', json={'prompt': prompt, 'target_year': 2027, 'continuation': partial})
-   self.assertIn('[DONE]', response.text)
-   self.assertEqual(received[-1]['prompt'], prompt)
-   self.assertEqual(received[-1]['continuation'], partial)
-   self.assertIn({'role': 'assistant', 'content': partial}, received[-1]['history'])
-   rows = self.client.get(path).json()
-   self.assertEqual(rows[1]['content'], partial)
-   self.assertEqual(rows[2]['content'], 'Viết tiếp câu trả lời')
-   self.assertEqual(rows[3]['content'], 'Phần tư vấn tiếp theo')
-   self.assertEqual(rows[3]['evidence'], [])
-
- def test_missing_completion_does_not_publish_done(self):
+ def test_missing_completion_does_not_publish_a_reply(self):
   path = f'/api/v1/chat/sessions/{self.create()}/messages'
+  prompt = 'Cho tôi hỏi về học phí'
 
   async def reply(**kwargs):
    yield {'type': 'token', 'token': 'Một phần dữ liệu'}
 
   with patch('app.modules.consultation.history_router.career_advisory_service.run_advisory_flow', new=reply):
-   response = self.client.post(path + '/stream', json={'prompt': 'Cho tôi hỏi về học phí'})
+   response = self.client.post(path + '/stream', json={'prompt': prompt})
   self.assertIn('"reason": "connection"', response.text)
+  self.assertNotIn('Một phần dữ liệu', response.text)
   self.assertNotIn('[DONE]', response.text)
-  self.assertEqual(self.client.get(path).json()[-1]['content'], 'Một phần dữ liệu')
+  rows = self.client.get(path).json()
+  self.assertEqual([(message['role'], message['content']) for message in rows], [('user', prompt)])
 
  def test_followup_overrides_city_and_keeps_prior_score(self):
   from app.modules.graphrag.profile_context import build_profile_intent
