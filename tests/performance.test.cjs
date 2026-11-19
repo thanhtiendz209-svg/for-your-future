@@ -17,7 +17,9 @@ test('home skips large datasets; concurrent requests share work and loaded data 
   assert.ok(requests.every(url => !/school_details|riasec_combinations/.test(url)));
   assert.equal(app.run("routeDataFiles('home').length"), 0);
   assert.equal(app.run("routeDataFiles('tra-cuu-nganh')[0][0]"), 'schoolDetails');
+  app.run("state.results.riasec={code:'IRC'}");
   assert.equal(app.run("routeDataFiles('ket-qua','riasec')[0][0]"), 'riasecCombinations');
+  assert.equal(app.run("routeDataFiles('ket-qua','riasec').length"), 1);
   await app.run("Promise.all([loadStaticData('schoolDetails','school_details.json'),loadStaticData('schoolDetails','school_details.json')])");
   assert.equal(requests.filter(url => url.includes('school_details')).length, 1);
   assert.equal(app.run("routeDataFiles('tra-cuu-nganh').length"), 0);

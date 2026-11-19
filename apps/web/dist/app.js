@@ -104,12 +104,9 @@ async function loadAllData() {
   const results = await Promise.allSettled(core.map(([key, file]) => loadStaticData(key, file)));
   results.forEach(result => { if (result.status === 'rejected') console.error('Lỗi khi tải dữ liệu tĩnh:', result.reason); });
 }
-function isSchoolFitResult(base, param) {
-  return base === 'ket-qua' && (!param || param === 'riasec') && Boolean(state.results.riasec);
-}
 function routeDataFiles(base, param) {
   const files = [];
-  if (['huong-nghiep', 'tra-cuu-nganh', 'truong-dai-hoc', 'so-sanh'].includes(base) || isSchoolFitResult(base, param)) {
+  if (['huong-nghiep', 'tra-cuu-nganh', 'truong-dai-hoc', 'so-sanh'].includes(base)) {
     files.push(['schoolDetails', 'school_details.json']);
   }
   if ((base === 'home' && state.activePersonalityTab === 'riasec') || base === 'nhom-tinh-cach' || (base === 'ket-qua' && (!param || param === 'riasec'))) {
@@ -238,7 +235,7 @@ async function renderRoute() {
   if(base!=='tu-van'){chatRuntime.onLeave?.();chatRuntime.onLeave=null;chatRuntime.controller?.abort();chatRuntime.cleanup?.();chatRuntime.cleanup=null;++chatRuntime.version;}
   const param = parts[1] || null;
 
-  const needsSchoolFit = isSchoolFitResult(base, param) || base === 'tra-cuu-nganh' ||
+  const needsSchoolFit = base === 'tra-cuu-nganh' ||
     base === 'huong-nghiep' || (base === 'truong-dai-hoc' && !param?.startsWith('uni-'));
   const profileRequest = needsSchoolFit ? loadSchoolFitProfile() : null;
   const requiredFiles = routeDataFiles(base, param);
@@ -301,7 +298,7 @@ async function renderRoute() {
       renderCareers(container, param);
       break;
     case 'tra-cuu-nganh':
-      renderMajorLookup(container);
+      renderMajorLookup(container, param);
       break;
     case 'truong-dai-hoc':
       if (param && param.startsWith('uni-')) {
@@ -3015,8 +3012,8 @@ function renderQuizResult(container, quizId) {
           return '';
         })()}
 
-        <section id="school-fit-recommendations" class="space-y-4">
-          ${renderSchoolRecommendations()}
+        <section class="space-y-4" aria-labelledby="major-fit-title">
+          ${renderMajorRecommendations()}
         </section>
         <div>
           <!-- RIASEC Note Box -->
@@ -3027,7 +3024,6 @@ function renderQuizResult(container, quizId) {
         </div>
       </div>
     `;
-    attachSchoolRecommendations(container.querySelector('#school-fit-recommendations'));
     refreshIcons();
     return;
   }
@@ -3538,6 +3534,7 @@ const SCHOOL_FIT_SUBJECTS = {
  D01: ['Toán','Ngữ văn','Tiếng Anh'],
 };
 const SCHOOL_FIT_CAREERS = [
+ ['business', /^thuong mai dien tu\b/],
  ['education', /\b(su pham|giao duc|cong tac xa hoi|ngon ngu|viet nam hoc|xa hoi hoc|dong phuong hoc|khu vuc hoc)\b/],
  ['it', /\b(cong nghe thong tin|khoa hoc may tinh|may tinh|an toan thong tin|phan mem|tri tue nhan tao|khoa hoc du lieu|he thong thong tin|mang may tinh|an ninh mang|tin hoc)\b/],
  ['health', /\b(y khoa|y hoc|suc khoe|duoc|dieu duong|rang ham mat|ho sinh|xet nghiem y|phuc hoi chuc nang|dinh duong|y te|nhan khoa|thu y|tam ly hoc)\b/],
@@ -3602,12 +3599,13 @@ function schoolFitInterest() {
   return [id, Math.min(100, Math.round(similarity * 100))];
  }));
 }
+function majorCareerGroup(name) {
+ const key = majorKey(name);
+ return SCHOOL_FIT_CAREERS.find(([, criterion]) => criterion.test(key))?.[0];
+}
 function programFit(p, interest) {
  if (!interest) return null;
- if (!programCareerCache.has(p)) {
-  const name = majorKey(p.name);
-  programCareerCache.set(p, SCHOOL_FIT_CAREERS.find(([, criterion]) => criterion.test(name))?.[0]);
- }
+ if (!programCareerCache.has(p)) programCareerCache.set(p, majorCareerGroup(p.name));
  return interest.get(programCareerCache.get(p)) ?? null;
 }
 
@@ -3704,60 +3702,81 @@ function attachSchoolFitControls(root, update) {
 function schoolFitReferenceMarkup(references) {
  return references.map(({label,score,threshold,scale,reaches}) => `<p class="text-xs text-muted">${label} ${score}/${scale} · ${reaches?'đạt hoặc cao hơn':'thấp hơn'} mốc ${threshold}/${scale} (2026).${scale===30?' Cần kiểm tra tổ hợp áp dụng tại trường.':''}</p>`).join('');
 }
-function renderSchoolRecommendations() {
- const context = schoolFitContext(), esc = universityEscape;
- const detailsById = new Map(state.schoolDetails.map(detail => [detail.id, detail]));
- const rows = context.interest ? state.universities.map(u =>
-  bestSchoolFit(u, detailsById.get(u.id)?.programs || [], context, {min:50})
- ).filter(Boolean).sort(compareSchoolFit).slice(0,5) : [];
- return `<h3 class="font-display text-2xl font-bold text-navy mb-2">Trường phù hợp với bạn</h3>
- <p class="text-sm text-muted">Mỗi trường hiển thị một chương trình gợi ý. Phần trăm thể hiện độ tương đồng sở thích RIASEC. Nơi muốn học và mốc điểm tham chiếu được dùng để xếp thứ tự riêng.</p>
- ${schoolFitControls('recommend-fit', context)}
- <div class="school-fit-list" aria-live="polite">
- ${rows.map(({u,p,fit,local,references}) => `<details name="school-fit-recommendations" class="school-fit-card">
-  <summary>
-   ${schoolLogoMarkup(u)}
-   <span class="school-fit-name"><strong>${esc(u.name)}</strong><span>${esc(cleanMajorLabel(p.name))}</span></span>
-   <span class="school-fit-percentage">${fit}% <span>phù hợp</span></span>
-   <span class="school-fit-action"><span class="school-fit-open-label">Xem ngành</span><span class="school-fit-close-label">Thu gọn</span><span aria-hidden="true">⌄</span></span>
-  </summary>
-  <div class="school-fit-detail">
-   <p class="text-sm text-navy font-semibold">${esc(cleanMajorLabel(p.name))}${p.code?' · '+esc(p.code):''}</p>
-   <p class="text-xs text-muted">${esc(u.provinceNew || '')}${local ? ' · Khớp nơi muốn học' : ''}</p>
-   ${schoolFitReferenceMarkup(references) || '<p class="text-xs text-muted">Chưa có cặp điểm hồ sơ và điểm tuyển sinh cùng phương thức để đối chiếu.</p>'}
-   ${p.admissions.length ? `<ul class="school-fit-admissions">${p.admissions.map(a => `<li><span>${esc(a.method)}</span>${admissionScoreMarkup(a)}</li>`).join('')}</ul>` : '<p class="text-xs text-muted">Chưa có điểm tuyển sinh cho chương trình này.</p>'}
-   <p class="text-xs text-muted">${p.tuition_annual == null ? 'Chưa có học phí riêng của chương trình.' : 'Học phí chương trình: '+formatVND(p.tuition_annual)+'/năm.'}</p>
-   <a class="text-sm font-semibold text-azure" href="${schoolProgramHref(u,p)}">Xem chương trình trên trang trường →</a>
-  </div>
- </details>`).join('') || '<p class="text-sm text-muted">Chưa có chương trình phù hợp với dữ liệu và bộ lọc hiện tại.</p>'}
- </div>
- <a class="text-sm font-semibold text-azure" href="#tra-cuu-nganh">Tra cứu thêm ngành và trường →</a>`;
+function recommendMajors() {
+ const interest = schoolFitInterest();
+ if (!interest) return [];
+
+ const catalog = universityMajorCatalog();
+ const groupNames = new Map(state.careers.map(career => [career.id, career.name]));
+ groupNames.set('education', 'Ngôn ngữ và giáo dục');
+ groupNames.set('health', 'Y tế và tâm lý');
+ const ranked = [];
+ for (const [key, name] of catalog.labels) {
+  const group = majorCareerGroup(name);
+  const fit = interest.get(group);
+  if (fit >= 50) ranked.push({key, name, group, fit, groupName: groupNames.get(group)});
+ }
+ ranked.sort((a, b) => b.fit - a.fit ||
+  catalog.schoolCounts.get(b.key) - catalog.schoolCounts.get(a.key) ||
+  a.name.localeCompare(b.name, 'vi'));
+
+ const choices = [];
+ const countsByGroup = new Map();
+ for (const item of ranked) {
+  const count = countsByGroup.get(item.group) || 0;
+  if (count >= 2) continue;
+  choices.push(item);
+  countsByGroup.set(item.group, count + 1);
+  if (choices.length === 5) break;
+ }
+ return choices;
 }
-function attachSchoolRecommendations(root) {
- if (!root) return;
- attachSchoolFitControls(root, focusKey => {
-  root.innerHTML = renderSchoolRecommendations();
-  attachSchoolRecommendations(root);
-  (document.getElementById(focusKey) || root.querySelector('[data-school-fit="scoreOnly"]'))?.focus({preventScroll:true});
- });
+
+function renderMajorRecommendations() {
+ const esc = universityEscape;
+ const majors = recommendMajors();
+ return `<h3 id="major-fit-title" class="font-display text-2xl font-bold text-navy">Ngành học phù hợp với bạn</h3>
+ <p class="text-sm text-muted leading-relaxed">Gợi ý dựa trên độ tương đồng giữa điểm sở thích RIASEC của bạn và lĩnh vực của từng ngành.</p>
+ ${majors.length ? `<ul class="major-fit-list">
+  ${majors.map(({key, name, fit, groupName}) => `<li class="major-fit-card">
+   <div class="major-fit-name">
+    <h4>${esc(name)}</h4>
+    <p class="text-xs text-muted">Lĩnh vực ${esc(groupName)}</p>
+   </div>
+   <span class="major-fit-percentage">${fit}% <span>tương đồng</span></span>
+   <a class="major-fit-link text-sm font-semibold text-azure" href="#tra-cuu-nganh/${encodeURIComponent(key)}">Xem trường đào tạo <span aria-hidden="true">→</span></a>
+  </li>`).join('')}
+ </ul>` : '<p class="text-sm text-muted">Chưa có đủ dữ liệu để gợi ý ngành theo kết quả này.</p>'}
+ <a class="text-sm font-semibold text-azure" href="#tra-cuu-nganh">Tra cứu tất cả ngành →</a>`;
 }
 
 // Clean presentation-only annotations; keep source program names and intrinsic numbers intact.
 function cleanMajorLabel(name) {
  return String(name||'').normalize('NFC').replace(/^\s*(?:\(\d+\)|\d+[.)])\s*/,'').replace(/\(\s*\*+\s*\)|\*+/g,'').replace(/\s+/g,' ').trim();
 }
-function majorKey(name) {return universityText(cleanMajorLabel(name).replace(/&/g,' và '));}
+function majorKey(name) {
+ return universityText(cleanMajorLabel(name).replace(/&/g,' và ')).replace(/\blogistic\b/g, 'logistics');
+}
 let majorCatalogCache=null;
 function universityMajorCatalog() {
  if(majorCatalogCache?.source===state.universities)return majorCatalogCache;
- const groups=new Map(),codes=new Set();
- for(const u of state.universities)for(const m of (u.majorItems?.length?u.majorItems:(u.majors||[]).map(name=>({name})))) {
-  const label=cleanMajorLabel(m.name),key=majorKey(label);if(!key)continue;
-  if(!groups.has(key))groups.set(key,new Map());const labels=groups.get(key);labels.set(label,(labels.get(label)||0)+1);
-  if(m.code)codes.add(universityText(m.code));
+ const groups=new Map(),codes=new Set(),schoolCounts=new Map();
+ for (const university of state.universities) {
+  const entries = university.majorItems?.length ? university.majorItems : (university.majors || []).map(name => ({name}));
+  const seen = new Set();
+  for (const entry of entries) {
+   const label = cleanMajorLabel(entry.name), key = majorKey(label);
+   if (!key) continue;
+   if (!groups.has(key)) groups.set(key, new Map());
+   const labels = groups.get(key);
+   labels.set(label, (labels.get(label) || 0) + 1);
+   if (entry.code) codes.add(universityText(entry.code));
+   seen.add(key);
+  }
+  for (const key of seen) schoolCounts.set(key, (schoolCounts.get(key) || 0) + 1);
  }
  const labels=new Map([...groups].map(([key,variants])=>[key,[...variants].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0],'vi'))[0][0]]));
- return majorCatalogCache={source:state.universities,labels,codes,names:[...labels.values()].sort((a,b)=>a.localeCompare(b,'vi'))};
+ return majorCatalogCache={source:state.universities,labels,codes,schoolCounts,names:[...labels.values()].sort((a,b)=>a.localeCompare(b,'vi'))};
 }
 function matchesSelectedMajor(program, query=state.uniFilter.major) {
  if(!query?.trim())return true;
@@ -3848,9 +3867,26 @@ function attachMajorLookupPagination() {
   };
  });
 }
-function renderMajorLookup(container) {
+function majorFromLookupPath(param) {
+ if (!param) return undefined;
+ try { return universityMajorCatalog().labels.get(decodeURIComponent(param)); }
+ catch { return undefined; }
+}
+function renderMajorLookup(container, param) {
+ const major = majorFromLookupPath(param);
+ if (major) {
+  state.uniFilter = {...UNIVERSITY_FILTER_DEFAULTS, major};
+  state.majorLookupPage = 0;
+ }
  container.innerHTML=`<section class="hero-wash border-b border-line"><div class="max-w-6xl mx-auto px-4 sm:px-6 py-10"><a href="#huong-nghiep" class="text-sm text-azure font-semibold">← Bộ lọc trường</a><p class="mt-5 text-xs font-semibold uppercase tracking-widest text-azure">So sánh theo ngành</p><h1 class="mt-2 font-display text-3xl font-bold text-navy">Tra cứu ngành & điểm của từng trường</h1><p class="mt-3 text-muted max-w-2xl">Mỗi ngành được gom thành một khối. Nhấn vào ngành bạn quan tâm để xem các trường đào tạo, điểm xét tuyển và học phí; có thể tìm tên ngành không dấu hoặc lọc theo tỉnh thành.</p></div></section><div class="max-w-6xl mx-auto px-4 sm:px-6 py-8">${renderUniversityExplorerHtml()}</div>`;
  attachUniversityExplorerEvents();refreshIcons();
+ if (major) {
+  const group = container.querySelector('.major-group');
+  if (group) {
+   group.open = true;
+   group.scrollIntoView({block: 'start', behavior: 'instant'});
+  }
+ }
 }
 
 let universityOptionsCache = null;

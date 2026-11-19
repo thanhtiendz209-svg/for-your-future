@@ -107,7 +107,7 @@ test('major blocks collect all school programs exactly once and start collapsed'
  assert.ok(a.run('renderMajorLookupResults()').includes('Không tìm thấy ngành'));
 });
 
-test('personalized recommendations and lookup use the same program and comparable scores',()=>{
+test('personalized lookup filters the matching program with comparable scores',()=>{
  const a=app();
  a.run(`state.results.riasec={code:'IRC'};
   state.currentUser={user_id:'example'};state.authToken='example-token';
@@ -115,10 +115,6 @@ test('personalized recommendations and lookup use the same program and comparabl
    profile:{target_year:2026,background:{hometown_province:'TP HCM'},academic:{subject_scores:{'Toán':8,'Vật lý':9,'Hóa học':9}}}};
  `);
  assert.equal(a.run('schoolFitContext().tests[0].score'),26);
- const html=a.run('renderSchoolRecommendations()');
- assert.equal((html.match(/name="school-fit-recommendations"/g)||[]).length,5);
- assert.ok(html.includes('Khớp nơi muốn học'));
- assert.ok(html.includes('Cần kiểm tra tổ hợp áp dụng tại trường'));
  a.ids({personal:'Bật',major:'Công nghệ thông tin',fitMin:'≥80%'});
  assert.ok(a.run('majorLookupRows().length>0'));
  assert.ok(a.run('majorLookupRows().every(row=>row.fit>=80&&row.references.some(r=>r.reaches&&r.threshold<=26))'));
@@ -126,6 +122,34 @@ test('personalized recommendations and lookup use the same program and comparabl
  a.run("state.currentUser={user_id:'different-account'}");
  assert.equal(a.run('schoolFitContext().tests.length'),0);
  assert.equal(a.run('schoolFitContext().provinceKey'),'');
+});
+
+test('RIASEC recommends distinct catalogue majors and links to the exact lookup group',()=>{
+ const a=app();
+ assert.equal(a.run('recommendMajors().length'),0);
+ a.run("state.results.riasec={code:'IRC'}");
+ const technical=Array.from(a.run('recommendMajors().map(item=>item.name)'));
+ assert.equal(technical.length,5);
+ assert.ok(technical.includes('Công nghệ thông tin'));
+ const html=a.run('renderMajorRecommendations()');
+ assert.doesNotMatch(html,/Trường phù hợp với bạn|#truong-dai-hoc\//);
+ const href=html.match(/href="#tra-cuu-nganh\/([^"]+)"/)[1];
+ a.ctx.lookupParam=href;
+ assert.equal(a.run('majorFromLookupPath(lookupParam)'),technical[0]);
+ assert.equal(a.run("majorFromLookupPath('%E0%A4%A')"),undefined);
+ const group=a.ids({major:technical[0]});
+ assert.ok(group.length>0);
+ assert.ok(a.run('majorLookupGroups().length===1'));
+
+ a.run("state.results.riasec={code:'ASE'}");
+ const creative=Array.from(a.run('recommendMajors().map(item=>item.name)'));
+ assert.ok(creative.includes('Marketing'));
+ assert.notDeepEqual(technical,creative);
+ a.run("state.results.riasec={code:'CSE'}");
+ const counts=Object.values(a.run("Object.fromEntries(recommendMajors().map(row=>[row.group,recommendMajors().filter(item=>item.group===row.group).length]))"));
+ assert.ok(counts.every(count=>count<=2));
+ assert.equal(a.run("majorKey('Logistic và quản lý chuỗi cung ứng')"),a.run("majorKey('Logistics và Quản lý chuỗi cung ứng')"));
+ assert.equal(a.run("majorCareerGroup('Thương mại điện tử')"),'business');
 });
 
 test('school logos use verified local assets and preserve the old badge if absent',()=>{

@@ -1324,72 +1324,42 @@ body.detail-modal-open #btn-floating-ai { visibility: hidden; }
 .school-logo img { width: 100%; height: 100%; object-fit: contain; }
 .school-logo-heading { display: flex; align-items: center; gap: .75rem; }
 .major-lookup-table .school-logo { width: 2rem; height: 2rem; border-radius: .5rem; }
-.school-fit-list { display: grid; gap: .75rem; }
-.school-fit-card {
-  border: 1px solid var(--color-line);
-  background: var(--color-card);
-  border-radius: 1.15rem;
-  overflow: hidden;
-}
-.school-fit-card > summary {
+/* RIASEC suggestions link directly to the matching major in admissions. */
+.major-fit-list { display: grid; gap: .65rem; }
+.major-fit-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: .4rem 1rem;
   align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  gap: .55rem .75rem;
-  min-height: 4rem;
-  padding: .8rem 1rem;
-  cursor: pointer;
-  list-style: none;
+  padding: .65rem 1rem;
+  border: 1px solid var(--color-line);
+  border-radius: 1rem;
+  background: var(--color-card);
 }
-.school-fit-card > summary::-webkit-details-marker { display: none; }
-.school-fit-card > summary:focus-visible { outline: 2px solid var(--color-azure); outline-offset: -3px; }
-.school-fit-name { display: grid; gap: .2rem; flex: 1 1 12rem; min-width: 0; color: var(--color-ink); }
-.school-fit-name > span { color: var(--color-muted); font-size: .85rem; }
-.school-fit-percentage {
-  flex: 0 0 auto;
-  border-radius: .7rem;
+.major-fit-name { display: grid; gap: .2rem; min-width: 0; }
+.major-fit-name h4 { font-weight: 700; color: var(--color-ink); overflow-wrap: anywhere; }
+.major-fit-percentage {
+  display: inline-grid;
+  text-align: center;
+  padding: .35rem .6rem;
+  border-radius: .65rem;
   background: var(--color-ice);
   color: var(--color-ink);
   font-weight: 700;
-  padding: .4rem .6rem;
+  font-variant-numeric: tabular-nums;
 }
-.school-fit-percentage > span { font-size: .75rem; font-weight: 600; }
-.school-fit-action { display: inline-flex; gap: .4rem; align-items: center; color: var(--color-azure); font-size: .85rem; font-weight: 650; }
-.school-fit-close-label, .school-fit-card[open] .school-fit-open-label { display: none; }
-.school-fit-card[open] .school-fit-close-label { display: inline; }
-.school-fit-card[open] .school-fit-action [aria-hidden] { transform: rotate(180deg); }
-.school-fit-detail {
-  display: grid;
-  gap: .65rem;
-  padding: .9rem 1rem 1rem;
-  border-top: 1px solid var(--color-line);
+.major-fit-percentage span { font-size: .7rem; font-weight: 500; }
+.major-fit-link { display: inline-flex; min-height: 44px; align-items: center; gap: .35rem; }
+.major-fit-link:hover { text-decoration: underline; text-underline-offset: .18em; }
+@media (max-width: 39rem) {
+  .major-fit-card { grid-template-columns: minmax(0, 1fr) auto; padding: .65rem .8rem .25rem; }
+  .major-fit-link { grid-column: 1 / -1; width: fit-content; }
 }
-.school-fit-admissions {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
-  gap: .5rem;
-}
-.school-fit-admissions li {
-  display: grid;
-  gap: .2rem;
-  padding: .55rem .7rem;
-  border-radius: .65rem;
-  background: var(--color-mist);
-  color: var(--color-ink);
-  font-size: .8rem;
-  overflow-wrap: anywhere;
-}
-.school-fit-admissions li span { color: var(--color-muted); }
-.school-fit-admissions li strong { white-space: pre-line; }
 .school-fit-controls { display: grid; gap: .65rem; }
 .school-fit-check { display: flex; align-items: flex-start; gap: .55rem; }
 .school-fit-check input { flex: 0 0 auto; margin-top: .18rem; accent-color: var(--color-azure); }
 .school-fit-explorer-label { display: grid; gap: .25rem; margin-top: .4rem; }
 .school-program[data-target-program] { scroll-margin-top: 6rem; }
-@media (max-width: 38rem) {
-  .school-fit-name { flex-basis: calc(100% - 4rem); }
-  .school-fit-action { margin-inline-start: auto; }
-}
 
 /* Press feedback is reserved for enabled buttons. */
 :is(

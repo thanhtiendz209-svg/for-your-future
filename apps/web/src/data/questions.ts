@@ -361,7 +361,7 @@ export const BIGFIVE_QUESTIONS: Question[] = [
   { id: "b19", text: "Tôi vẫn nghĩ được việc khi áp lực tăng.", options: scale5("N", true) },
   { id: "b20", text: "Tâm trạng tôi đổi khá rõ trong ngày.", options: scale5("N") },
   { id: "b21", text: "Tôi hay thử món, nơi, cách làm chưa quen.", options: scale5("O") },
-  { id: "b22", text: "Tôi hoàn tất việc nhàm nếu đã hứa.", options: scale5("C") },
+  { id: "b22", text: "Tôi vẫn hoàn thành công việc đã hứa, kể cả khi công việc đó nhàm chán.", options: scale5("C") },
   { id: "b23", text: "Sau một buổi đông người tôi thường còn muốn gặp tiếp.", options: scale5("E") },
   { id: "b24", text: "Tôi tránh tranh cãi dù nghĩ mình đúng, nếu sợ mất hòa khí.", options: scale5("A") },
   { id: "b25", text: "Một lời chê có thể ở lại trong đầu tôi khá lâu.", options: scale5("N") },
