@@ -1229,9 +1229,6 @@ video {
 .border-amber-500\/30 {
   border-color: rgb(245 158 11 / 0.3);
 }
-.border-azure {
-  border-color: var(--color-azure);
-}
 .border-card {
   border-color: var(--color-card);
 }
@@ -1829,9 +1826,6 @@ video {
 }
 .opacity-0 {
   opacity: 0;
-}
-.opacity-40 {
-  opacity: 0.4;
 }
 .opacity-75 {
   opacity: 0.75;

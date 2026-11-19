@@ -64,3 +64,24 @@ test('assessment synchronization sends current account token and preserves faile
   await assert.rejects(vm.runInContext('syncAccountAssessments()',sandbox));
   assert.ok(JSON.parse(storage.get('fyf_pending_assessments_account-a')).riasec);
 });
+
+test('quiz drafts stay scoped to the active quiz and account', async () => {
+  const {sandbox} = setup(200, 'valid');
+  sandbox.container = {};
+  vm.runInContext(`
+    state.questions.riasec = [{text:'RIASEC one'},{text:'RIASEC two'}];
+    state.questions.mbti = [{text:'MBTI one'},{text:'MBTI two'}];
+    state.currentUser = {user_id:'first'};
+  `, sandbox);
+  await vm.runInContext("renderQuizPlayer(container, 'riasec')", sandbox);
+  vm.runInContext('state.quizAttempt.index=1; state.quizAttempt.answers[0]=2;', sandbox);
+  await vm.runInContext("renderQuizPlayer(container, 'riasec')", sandbox);
+  assert.match(sandbox.container.innerHTML, /RIASEC two/);
+  sandbox.window.location.hash = '#trac-nghiem/mbti';
+  await vm.runInContext("renderQuizPlayer(container, 'mbti')", sandbox);
+  assert.match(sandbox.container.innerHTML, /MBTI one/);
+  assert.equal(vm.runInContext('state.quizAttempt.answers[0]', sandbox), -1);
+  vm.runInContext("state.quizAttempt.answers[0]=1; state.currentUser={user_id:'second'};", sandbox);
+  await vm.runInContext("renderQuizPlayer(container, 'mbti')", sandbox);
+  assert.equal(vm.runInContext('state.quizAttempt.answers[0]', sandbox), -1);
+});
