@@ -1,6 +1,7 @@
 [
   {
     "id": "uni-001",
+    "schoolLogo": "/school-logos/uni-001.webp",
     "shortName": "HUST",
     "location": "Hà Nội",
     "region": "Miền Bắc",
@@ -440,6 +441,7 @@
   },
   {
     "id": "uni-002",
+    "schoolLogo": "/school-logos/uni-002.webp",
     "shortName": "NEU",
     "location": "Hà Nội",
     "region": "Miền Bắc",
@@ -1065,6 +1067,7 @@
   },
   {
     "id": "uni-003",
+    "schoolLogo": "/school-logos/uni-003.webp",
     "shortName": "FTU",
     "location": "Hà Nội",
     "region": "Miền Bắc",
@@ -1246,6 +1249,7 @@
   },
   {
     "id": "uni-004",
+    "schoolLogo": "/school-logos/uni-004.webp",
     "shortName": "TMU",
     "location": "Hà Nội",
     "region": "Miền Bắc",
@@ -1507,6 +1511,7 @@
   },
   {
     "id": "uni-005",
+    "schoolLogo": "/school-logos/uni-005.webp",
     "shortName": "HLU",
     "location": "Hà Nội",
     "region": "Miền Bắc",
@@ -1576,6 +1581,7 @@
   },
   {
     "id": "uni-006",
+    "schoolLogo": "/school-logos/uni-006.webp",
     "shortName": "VNU-HUS",
     "location": "Hà Nội",
     "region": "Miền Bắc",
@@ -1787,6 +1793,7 @@
   },
   {
     "id": "uni-007",
+    "schoolLogo": "/school-logos/uni-007.webp",
     "shortName": "VNU-UET",
     "location": "Hà Nội",
     "region": "Miền Bắc",
@@ -1950,6 +1957,7 @@
   },
   {
     "id": "uni-008",
+    "schoolLogo": "/school-logos/uni-008.webp",
     "shortName": "VNU-UEB",
     "location": "Hà Nội",
     "region": "Miền Bắc",
@@ -2027,6 +2035,7 @@
   },
   {
     "id": "uni-009",
+    "schoolLogo": "/school-logos/uni-009.webp",
     "shortName": "VNU-USSH",
     "location": "Hà Nội",
     "region": "Miền Bắc",
@@ -2242,6 +2251,7 @@
   },
   {
     "id": "uni-010",
+    "schoolLogo": "/school-logos/uni-010.webp",
     "shortName": "VNU-ULIS",
     "location": "Hà Nội",
     "region": "Miền Bắc",
@@ -2518,6 +2528,7 @@
   },
   {
     "id": "uni-012",
+    "schoolLogo": "/school-logos/uni-012.webp",
     "shortName": "HUCE",
     "location": "Hà Nội",
     "region": "Miền Bắc",
@@ -2822,6 +2833,7 @@
   },
   {
     "id": "uni-013",
+    "schoolLogo": "/school-logos/uni-013.webp",
     "shortName": "HAU",
     "location": "Hà Nội",
     "region": "Miền Bắc",
@@ -3032,6 +3044,7 @@
   },
   {
     "id": "uni-014",
+    "schoolLogo": "/school-logos/uni-014.webp",
     "shortName": "TLU",
     "location": "Hà Nội",
     "region": "Miền Bắc",
@@ -3331,6 +3344,7 @@
   },
   {
     "id": "uni-015",
+    "schoolLogo": "/school-logos/uni-015.webp",
     "shortName": "HUMG",
     "location": "Hà Nội",
     "region": "Miền Bắc",
@@ -3692,6 +3706,7 @@
   },
   {
     "id": "uni-016",
+    "schoolLogo": "/school-logos/uni-016.webp",
     "shortName": "EPU",
     "location": "Hà Nội",
     "region": "Miền Bắc",
@@ -3961,6 +3976,7 @@
   },
   {
     "id": "uni-017",
+    "schoolLogo": "/school-logos/uni-017.webp",
     "shortName": "HaUI",
     "location": "Hà Nội",
     "region": "Miền Bắc",
@@ -4354,6 +4370,7 @@
   },
   {
     "id": "uni-018",
+    "schoolLogo": "/school-logos/uni-018.webp",
     "shortName": "PTIT",
     "location": "Hà Nội",
     "region": "Miền Bắc",
@@ -4585,6 +4602,7 @@
   },
   {
     "id": "uni-019",
+    "schoolLogo": "/school-logos/uni-019.webp",
     "shortName": "KMA",
     "location": "Hà Nội",
     "region": "Miền Bắc",
@@ -4656,6 +4674,7 @@
   },
   {
     "id": "uni-020",
+    "schoolLogo": "/school-logos/uni-020.webp",
     "shortName": "AOF",
     "location": "Hà Nội",
     "region": "Miền Bắc",
@@ -4879,6 +4898,7 @@
   },
   {
     "id": "uni-021",
+    "schoolLogo": "/school-logos/uni-021.webp",
     "shortName": "BA",
     "location": "Hà Nội",
     "region": "Miền Bắc",
@@ -5094,6 +5114,7 @@
   },
   {
     "id": "uni-022",
+    "schoolLogo": "/school-logos/uni-022.webp",
     "shortName": "DAV",
     "location": "Hà Nội",
     "region": "Miền Bắc",
@@ -5203,6 +5224,7 @@
   },
   {
     "id": "uni-023",
+    "schoolLogo": "/school-logos/uni-023.webp",
     "shortName": "HMU",
     "location": "Hà Nội",
     "region": "Miền Bắc",
@@ -5364,6 +5386,7 @@
   },
   {
     "id": "uni-024",
+    "schoolLogo": "/school-logos/uni-024.webp",
     "shortName": "HUP",
     "location": "Hà Nội",
     "region": "Miền Bắc",
@@ -5431,6 +5454,7 @@
   },
   {
     "id": "uni-025",
+    "schoolLogo": "/school-logos/uni-025.webp",
     "shortName": "HUPH",
     "location": "Hà Nội",
     "region": "Miền Bắc",
@@ -5675,6 +5699,7 @@
   },
   {
     "id": "uni-027",
+    "schoolLogo": "/school-logos/uni-027.webp",
     "shortName": "HOU",
     "location": "Hà Nội",
     "region": "Miền Bắc",
@@ -5852,6 +5877,7 @@
   },
   {
     "id": "uni-028",
+    "schoolLogo": "/school-logos/uni-028.webp",
     "shortName": "ULSA",
     "location": "Hà Nội",
     "region": "Miền Bắc",
@@ -6063,6 +6089,7 @@
   },
   {
     "id": "uni-029",
+    "schoolLogo": "/school-logos/uni-029.webp",
     "shortName": "UTC",
     "location": "Hà Nội",
     "region": "Miền Bắc",
@@ -6496,6 +6523,7 @@
   },
   {
     "id": "uni-030",
+    "schoolLogo": "/school-logos/uni-030.webp",
     "shortName": "USTH",
     "location": "Hà Nội",
     "region": "Miền Bắc",
@@ -6641,6 +6669,7 @@
   },
   {
     "id": "uni-031",
+    "schoolLogo": "/school-logos/uni-031.webp",
     "shortName": "Phenikaa",
     "location": "Hà Nội",
     "region": "Miền Bắc",
@@ -7156,6 +7185,7 @@
   },
   {
     "id": "uni-032",
+    "schoolLogo": "/school-logos/uni-032.webp",
     "shortName": "TL",
     "location": "Hà Nội",
     "region": "Miền Bắc",
@@ -7343,6 +7373,7 @@
   },
   {
     "id": "uni-033",
+    "schoolLogo": "/school-logos/uni-033.webp",
     "shortName": "CMC",
     "location": "Hà Nội",
     "region": "Miền Bắc",
@@ -7487,6 +7518,7 @@
   },
   {
     "id": "uni-034",
+    "schoolLogo": "/school-logos/uni-034.webp",
     "shortName": "DNU",
     "location": "Hà Nội",
     "region": "Miền Bắc",
@@ -7746,6 +7778,7 @@
   },
   {
     "id": "uni-035",
+    "schoolLogo": "/school-logos/uni-035.webp",
     "shortName": "HUBT",
     "location": "Hà Nội",
     "region": "Miền Bắc",
@@ -7951,6 +7984,7 @@
   },
   {
     "id": "uni-036",
+    "schoolLogo": "/school-logos/uni-036.webp",
     "shortName": "CVH",
     "location": "Hà Nội",
     "region": "Miền Bắc",
@@ -8124,6 +8158,7 @@
   },
   {
     "id": "uni-037",
+    "schoolLogo": "/school-logos/uni-037.webp",
     "shortName": "TUEBA",
     "location": "Khác",
     "region": "Miền Bắc",
@@ -8325,6 +8360,7 @@
   },
   {
     "id": "uni-038",
+    "schoolLogo": "/school-logos/uni-038.webp",
     "shortName": "ICTU",
     "location": "Khác",
     "region": "Miền Bắc",
@@ -8546,6 +8582,7 @@
   },
   {
     "id": "uni-039",
+    "schoolLogo": "/school-logos/uni-039.webp",
     "shortName": "TNUT",
     "location": "Khác",
     "region": "Miền Bắc",
@@ -8763,6 +8800,7 @@
   },
   {
     "id": "uni-040",
+    "schoolLogo": "/school-logos/uni-040.webp",
     "shortName": "TUAF",
     "location": "Khác",
     "region": "Miền Bắc",
@@ -8936,6 +8974,7 @@
   },
   {
     "id": "uni-041",
+    "schoolLogo": "/school-logos/uni-041.webp",
     "shortName": "TUMP",
     "location": "Khác",
     "region": "Miền Bắc",
@@ -9035,6 +9074,7 @@
   },
   {
     "id": "uni-042",
+    "schoolLogo": "/school-logos/uni-042.webp",
     "shortName": "TNUE",
     "location": "Khác",
     "region": "Miền Bắc",
@@ -9203,6 +9243,7 @@
   },
   {
     "id": "uni-043",
+    "schoolLogo": "/school-logos/uni-043.webp",
     "shortName": "HP",
     "location": "Khác",
     "region": "Miền Bắc",
@@ -9468,6 +9509,7 @@
   },
   {
     "id": "uni-044",
+    "schoolLogo": "/school-logos/uni-044.webp",
     "shortName": "VMU",
     "location": "Khác",
     "region": "Miền Bắc",
@@ -9807,6 +9849,7 @@
   },
   {
     "id": "uni-045",
+    "schoolLogo": "/school-logos/uni-045.webp",
     "shortName": "KYHD",
     "location": "Khác",
     "region": "Miền Bắc",
@@ -9882,6 +9925,7 @@
   },
   {
     "id": "uni-046",
+    "schoolLogo": "/school-logos/uni-046.webp",
     "shortName": "UTEHY",
     "location": "Khác",
     "region": "Miền Bắc",
@@ -10101,6 +10145,7 @@
   },
   {
     "id": "uni-047",
+    "schoolLogo": "/school-logos/uni-047.webp",
     "shortName": "Vinh",
     "location": "Khác",
     "region": "Miền Trung",
@@ -10542,6 +10587,7 @@
   },
   {
     "id": "uni-048",
+    "schoolLogo": "/school-logos/uni-048.webp",
     "shortName": "DUT",
     "location": "Đà Nẵng",
     "region": "Miền Trung",
@@ -10870,6 +10916,7 @@
   },
   {
     "id": "uni-049",
+    "schoolLogo": "/school-logos/uni-049.webp",
     "shortName": "DUE",
     "location": "Đà Nẵng",
     "region": "Miền Trung",
@@ -11097,6 +11144,7 @@
   },
   {
     "id": "uni-050",
+    "schoolLogo": "/school-logos/uni-050.webp",
     "shortName": "SĐN",
     "location": "Đà Nẵng",
     "region": "Miền Trung",
@@ -11336,6 +11384,7 @@
   },
   {
     "id": "uni-051",
+    "schoolLogo": "/school-logos/uni-051.webp",
     "shortName": "YDĐN",
     "location": "Đà Nẵng",
     "region": "Miền Trung",
@@ -11575,6 +11624,7 @@
   },
   {
     "id": "uni-053",
+    "schoolLogo": "/school-logos/uni-053.webp",
     "shortName": "DTU",
     "location": "Đà Nẵng",
     "region": "Miền Trung",
@@ -12015,6 +12065,7 @@
   },
   {
     "id": "uni-054",
+    "schoolLogo": "/school-logos/uni-054.webp",
     "shortName": "ĐÁ",
     "location": "Đà Nẵng",
     "region": "Miền Trung",
@@ -12701,6 +12752,7 @@
   },
   {
     "id": "uni-055",
+    "schoolLogo": "/school-logos/uni-055.webp",
     "shortName": "KH",
     "location": "Khác",
     "region": "Miền Trung",
@@ -12917,6 +12969,7 @@
   },
   {
     "id": "uni-056",
+    "schoolLogo": "/school-logos/uni-056.webp",
     "shortName": "KH",
     "location": "Khác",
     "region": "Miền Trung",
@@ -13087,6 +13140,7 @@
   },
   {
     "id": "uni-057",
+    "schoolLogo": "/school-logos/uni-057.webp",
     "shortName": "LH",
     "location": "Khác",
     "region": "Miền Trung",
@@ -13138,6 +13192,7 @@
   },
   {
     "id": "uni-058",
+    "schoolLogo": "/school-logos/uni-058.webp",
     "shortName": "SH",
     "location": "Khác",
     "region": "Miền Trung",
@@ -13440,6 +13495,7 @@
   },
   {
     "id": "uni-060",
+    "schoolLogo": "/school-logos/uni-060.webp",
     "shortName": "NH",
     "location": "Khác",
     "region": "Miền Trung",
@@ -13512,6 +13568,7 @@
   },
   {
     "id": "uni-061",
+    "schoolLogo": "/school-logos/uni-061.webp",
     "shortName": "DH",
     "location": "Khác",
     "region": "Miền Trung",
@@ -13597,6 +13654,7 @@
   },
   {
     "id": "uni-062",
+    "schoolLogo": "/school-logos/uni-062.webp",
     "shortName": "NLH",
     "location": "Khác",
     "region": "Miền Trung",
@@ -13754,6 +13812,7 @@
   },
   {
     "id": "uni-063",
+    "schoolLogo": "/school-logos/uni-063.webp",
     "shortName": "NT",
     "location": "Khác",
     "region": "Miền Trung",
@@ -14053,6 +14112,7 @@
   },
   {
     "id": "uni-064",
+    "schoolLogo": "/school-logos/uni-064.webp",
     "shortName": "QN",
     "location": "Khác",
     "region": "Miền Trung",
@@ -14433,6 +14493,7 @@
   },
   {
     "id": "uni-065",
+    "schoolLogo": "/school-logos/uni-065.webp",
     "shortName": "ĐL",
     "location": "Khác",
     "region": "Miền Trung",
@@ -14722,6 +14783,7 @@
   },
   {
     "id": "uni-066",
+    "schoolLogo": "/school-logos/uni-066.webp",
     "shortName": "TN",
     "location": "Khác",
     "region": "Miền Trung",
@@ -14989,6 +15051,7 @@
   },
   {
     "id": "uni-067",
+    "schoolLogo": "/school-logos/uni-067.webp",
     "shortName": "HĐ",
     "location": "Khác",
     "region": "Miền Trung",
@@ -15390,6 +15453,7 @@
   },
   {
     "id": "uni-068",
+    "schoolLogo": "/school-logos/uni-068.webp",
     "shortName": "HCMUT",
     "location": "TP.HCM",
     "region": "Miền Nam",
@@ -15590,6 +15654,7 @@
   },
   {
     "id": "uni-069",
+    "schoolLogo": "/school-logos/uni-069.webp",
     "shortName": "HCMUS",
     "location": "TP.HCM",
     "region": "Miền Nam",
@@ -15740,6 +15805,7 @@
   },
   {
     "id": "uni-070",
+    "schoolLogo": "/school-logos/uni-070.webp",
     "shortName": "UIT",
     "location": "TP.HCM",
     "region": "Miền Nam",
@@ -15840,6 +15906,7 @@
   },
   {
     "id": "uni-071",
+    "schoolLogo": "/school-logos/uni-071.webp",
     "shortName": "UEL",
     "location": "TP.HCM",
     "region": "Miền Nam",
@@ -16025,6 +16092,7 @@
   },
   {
     "id": "uni-072",
+    "schoolLogo": "/school-logos/uni-072.webp",
     "shortName": "IU",
     "location": "TP.HCM",
     "region": "Miền Nam",
@@ -16183,6 +16251,7 @@
   },
   {
     "id": "uni-073",
+    "schoolLogo": "/school-logos/uni-073.webp",
     "shortName": "KXNĐT",
     "location": "TP.HCM",
     "region": "Miền Nam",
@@ -16437,6 +16506,7 @@
   },
   {
     "id": "uni-074",
+    "schoolLogo": "/school-logos/uni-074.webp",
     "shortName": "UEH",
     "location": "TP.HCM",
     "region": "Miền Nam",
@@ -16789,6 +16859,7 @@
   },
   {
     "id": "uni-075",
+    "schoolLogo": "/school-logos/uni-075.webp",
     "shortName": "TDTU",
     "location": "TP.HCM",
     "region": "Miền Nam",
@@ -17175,6 +17246,7 @@
   },
   {
     "id": "uni-076",
+    "schoolLogo": "/school-logos/uni-076.webp",
     "shortName": "HCMUE",
     "location": "TP.HCM",
     "region": "Miền Nam",
@@ -17501,6 +17573,7 @@
   },
   {
     "id": "uni-077",
+    "schoolLogo": "/school-logos/uni-077.webp",
     "shortName": "HCMUTE",
     "location": "TP.HCM",
     "region": "Miền Nam",
@@ -17838,6 +17911,7 @@
   },
   {
     "id": "uni-078",
+    "schoolLogo": "/school-logos/uni-078.webp",
     "shortName": "IUH",
     "location": "TP.HCM",
     "region": "Miền Nam",
@@ -18141,6 +18215,7 @@
   },
   {
     "id": "uni-079",
+    "schoolLogo": "/school-logos/uni-079.webp",
     "shortName": "HUIT",
     "location": "TP.HCM",
     "region": "Miền Nam",
@@ -18430,6 +18505,7 @@
   },
   {
     "id": "uni-080",
+    "schoolLogo": "/school-logos/uni-080.webp",
     "shortName": "UTH",
     "location": "TP.HCM",
     "region": "Miền Nam",
@@ -18658,6 +18734,7 @@
   },
   {
     "id": "uni-081",
+    "schoolLogo": "/school-logos/uni-081.webp",
     "shortName": "OU",
     "location": "TP.HCM",
     "region": "Miền Nam",
@@ -18965,6 +19042,7 @@
   },
   {
     "id": "uni-082",
+    "schoolLogo": "/school-logos/uni-082.webp",
     "shortName": "UFM",
     "location": "TP.HCM",
     "region": "Miền Nam",
@@ -19164,6 +19242,7 @@
   },
   {
     "id": "uni-083",
+    "schoolLogo": "/school-logos/uni-083.webp",
     "shortName": "HUB",
     "location": "TP.HCM",
     "region": "Miền Nam",
@@ -19413,6 +19492,7 @@
   },
   {
     "id": "uni-084",
+    "schoolLogo": "/school-logos/uni-084.webp",
     "shortName": "ULAW",
     "location": "TP.HCM",
     "region": "Miền Nam",
@@ -19528,6 +19608,7 @@
   },
   {
     "id": "uni-085",
+    "schoolLogo": "/school-logos/uni-085.webp",
     "shortName": "UAH",
     "location": "TP.HCM",
     "region": "Miền Nam",
@@ -19666,6 +19747,7 @@
   },
   {
     "id": "uni-086",
+    "schoolLogo": "/school-logos/uni-086.webp",
     "shortName": "MT",
     "location": "TP.HCM",
     "region": "Miền Nam",
@@ -19736,6 +19818,7 @@
   },
   {
     "id": "uni-087",
+    "schoolLogo": "/school-logos/uni-087.webp",
     "shortName": "VT",
     "location": "TP.HCM",
     "region": "Miền Nam",
@@ -20015,6 +20098,7 @@
   },
   {
     "id": "uni-089",
+    "schoolLogo": "/school-logos/uni-089.webp",
     "shortName": "YPNT",
     "location": "TP.HCM",
     "region": "Miền Nam",
@@ -20138,6 +20222,7 @@
   },
   {
     "id": "uni-090",
+    "schoolLogo": "/school-logos/uni-090.webp",
     "shortName": "NLU",
     "location": "TP.HCM",
     "region": "Miền Nam",
@@ -20672,6 +20757,7 @@
   },
   {
     "id": "uni-092",
+    "schoolLogo": "/school-logos/uni-092.webp",
     "shortName": "HUTECH",
     "location": "TP.HCM",
     "region": "Miền Nam",
@@ -21117,6 +21203,7 @@
   },
   {
     "id": "uni-093",
+    "schoolLogo": "/school-logos/uni-093.webp",
     "shortName": "UEF",
     "location": "TP.HCM",
     "region": "Miền Nam",
@@ -21412,6 +21499,7 @@
   },
   {
     "id": "uni-094",
+    "schoolLogo": "/school-logos/uni-094.webp",
     "shortName": "HS",
     "location": "TP.HCM",
     "region": "Miền Nam",
@@ -21655,6 +21743,7 @@
   },
   {
     "id": "uni-095",
+    "schoolLogo": "/school-logos/uni-095.webp",
     "shortName": "NTT",
     "location": "TP.HCM",
     "region": "Miền Nam",
@@ -22061,6 +22150,7 @@
   },
   {
     "id": "uni-096",
+    "schoolLogo": "/school-logos/uni-096.webp",
     "shortName": "VL",
     "location": "TP.HCM",
     "region": "Miền Nam",
@@ -22488,6 +22578,7 @@
   },
   {
     "id": "uni-097",
+    "schoolLogo": "/school-logos/uni-097.webp",
     "shortName": "LH",
     "location": "Khác",
     "region": "Miền Nam",
@@ -22709,6 +22800,7 @@
   },
   {
     "id": "uni-098",
+    "schoolLogo": "/school-logos/uni-098.webp",
     "shortName": "VGU",
     "location": "TP.HCM",
     "region": "Miền Nam",
@@ -22828,6 +22920,7 @@
   },
   {
     "id": "uni-099",
+    "schoolLogo": "/school-logos/uni-099.webp",
     "shortName": "TDM",
     "location": "TP.HCM",
     "region": "Miền Nam",
@@ -23177,6 +23270,7 @@
   },
   {
     "id": "uni-100",
+    "schoolLogo": "/school-logos/uni-100.webp",
     "shortName": "CTU",
     "location": "Khác",
     "region": "Miền Nam",
@@ -23878,6 +23972,7 @@
   },
   {
     "id": "uni-101",
+    "schoolLogo": "/school-logos/uni-101.webp",
     "shortName": "MTA",
     "location": "Hà Nội",
     "region": "Miền Bắc",
@@ -24019,6 +24114,7 @@
   },
   {
     "id": "uni-102",
+    "schoolLogo": "/school-logos/uni-102.webp",
     "shortName": "YQH",
     "location": "Hà Nội",
     "region": "Miền Bắc",
@@ -24204,6 +24300,7 @@
   },
   {
     "id": "uni-104",
+    "schoolLogo": "/school-logos/uni-104.webp",
     "shortName": "BPH",
     "location": "Hà Nội",
     "region": "Miền Bắc",
@@ -24486,6 +24583,7 @@
   },
   {
     "id": "uni-107",
+    "schoolLogo": "/school-logos/uni-107.webp",
     "shortName": "HQH",
     "location": "Khác",
     "region": "Miền Trung",
@@ -25039,6 +25137,7 @@
   },
   {
     "id": "uni-116",
+    "schoolLogo": "/school-logos/uni-116.webp",
     "shortName": "STT",
     "location": "Khác",
     "region": "Miền Trung",
@@ -25216,6 +25315,7 @@
   },
   {
     "id": "uni-119",
+    "schoolLogo": "/school-logos/uni-119.webp",
     "shortName": "ANH",
     "location": "Hà Nội",
     "region": "Miền Bắc",
@@ -25305,6 +25405,7 @@
   },
   {
     "id": "uni-120",
+    "schoolLogo": "/school-logos/uni-120.webp",
     "shortName": "CSH",
     "location": "Hà Nội",
     "region": "Miền Bắc",
@@ -25357,6 +25458,7 @@
   },
   {
     "id": "uni-121",
+    "schoolLogo": "/school-logos/uni-121.webp",
     "shortName": "CC",
     "location": "Hà Nội",
     "region": "Miền Bắc",
@@ -25507,6 +25609,7 @@
   },
   {
     "id": "uni-123",
+    "schoolLogo": "/school-logos/uni-123.webp",
     "shortName": "ANS",
     "location": "TP.HCM",
     "region": "Miền Nam",
@@ -25557,6 +25660,7 @@
   },
   {
     "id": "uni-124",
+    "schoolLogo": "/school-logos/uni-124.webp",
     "shortName": "CSS",
     "location": "TP.HCM",
     "region": "Miền Nam",
@@ -25609,6 +25713,7 @@
   },
   {
     "id": "uni-125",
+    "schoolLogo": "/school-logos/uni-125.webp",
     "shortName": "PCH",
     "location": "Hà Nội",
     "region": "Miền Bắc",

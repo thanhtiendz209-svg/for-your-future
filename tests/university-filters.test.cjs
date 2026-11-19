@@ -7,8 +7,9 @@ function app() {
  const ctx={window:{location:{hash:'#truong-dai-hoc'},addEventListener(){}},localStorage:{getItem:()=>null},console};
  vm.createContext(ctx);vm.runInContext(source,ctx);
  ctx.unis=JSON.parse(fs.readFileSync('apps/web/public/data/universities.json','utf8'));
+ ctx.careers=JSON.parse(fs.readFileSync('apps/web/public/data/careers.json','utf8'));
  ctx.details=JSON.parse(fs.readFileSync('apps/web/public/data/school_details.json','utf8'));
- vm.runInContext('state.universities=unis;state.schoolDetails=details;state.uniFilter={...UNIVERSITY_FILTER_DEFAULTS}',ctx);
+ vm.runInContext('state.universities=unis;state.schoolDetails=details;state.careers=careers;state.uniFilter={...UNIVERSITY_FILTER_DEFAULTS}',ctx);
  return {ctx,run:s=>vm.runInContext(s,ctx),ids:(f={})=>{ctx.f=f;return Array.from(vm.runInContext('state.uniFilter={...UNIVERSITY_FILTER_DEFAULTS,...f};filterUniversities().map(u=>u.id)',ctx));}};
 }
 test('accentless school, major, old and new province queries match accented queries',()=>{
@@ -104,4 +105,34 @@ test('major blocks collect all school programs exactly once and start collapsed'
  assert.ok(a.run('renderMajorLookupGroupRows(majorLookupGroups()[0],1)').includes('data-major-program-page="0"'));
  a.ids({major:'khong co nganh nay'});
  assert.ok(a.run('renderMajorLookupResults()').includes('Không tìm thấy ngành'));
+});
+
+test('personalized recommendations and lookup use the same program and comparable scores',()=>{
+ const a=app();
+ a.run(`state.results.riasec={code:'IRC'};
+  state.currentUser={user_id:'example'};state.authToken='example-token';
+  schoolFitSession={owner:'example',token:'example-token',province:'',combination:'A00',scoreOnly:true,
+   profile:{target_year:2026,background:{hometown_province:'TP HCM'},academic:{subject_scores:{'Toán':8,'Vật lý':9,'Hóa học':9}}}};
+ `);
+ assert.equal(a.run('schoolFitContext().tests[0].score'),26);
+ const html=a.run('renderSchoolRecommendations()');
+ assert.equal((html.match(/name="school-fit-recommendations"/g)||[]).length,5);
+ assert.ok(html.includes('Khớp nơi muốn học'));
+ assert.ok(html.includes('Cần kiểm tra tổ hợp áp dụng tại trường'));
+ a.ids({personal:'Bật',major:'Công nghệ thông tin',fitMin:'≥80%'});
+ assert.ok(a.run('majorLookupRows().length>0'));
+ assert.ok(a.run('majorLookupRows().every(row=>row.fit>=80&&row.references.some(r=>r.reaches&&r.threshold<=26))'));
+ assert.equal(a.run("programScoreReferences({admissions:[{method:'Học bạ 2026',scale:30,value:20},{method:'Điểm THPT 2026',scale:40,value:20}]},schoolFitContext()).length"),0);
+ a.run("state.currentUser={user_id:'different-account'}");
+ assert.equal(a.run('schoolFitContext().tests.length'),0);
+ assert.equal(a.run('schoolFitContext().provinceKey'),'');
+});
+
+test('school logos use verified local assets and preserve the old badge if absent',()=>{
+ const a=app();
+ const schools=a.ctx.unis.filter(u=>u.schoolLogo);
+ assert.ok(schools.length>0&&schools.length<a.ctx.unis.length);
+ for(const school of schools) assert.ok(fs.existsSync('apps/web/dist'+school.schoolLogo),school.id);
+ assert.ok(a.run("schoolLogoMarkup(state.universities[0], 'badge')").includes('/school-logos/uni-001.webp'));
+ assert.equal(a.run("schoolLogoMarkup({}, 'badge')"),'badge');
 });
