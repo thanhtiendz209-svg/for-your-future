@@ -48,21 +48,31 @@ def catalog_rows(schools, logos):
                 "duration_years": None,
             })
             for index, admission in enumerate(program["admissions"]):
+                published = admission.get("published")
+                score_details = {
+                    "raw": admission["raw"],
+                    "scale_provided": admission["scale"],
+                    "sheet": school["sheet"],
+                    "row": program["row"],
+                    "revision": school["revision"],
+                }
+                if published:
+                    score_details.update(
+                        raw=f'{published["score"]:g}/{published["scale"]}'
+                        + (" · Quy đổi theo công bố của trường" if published["scale"] == 30 else ""),
+                        scale_provided=published["scale"],
+                        published_score=published["score"],
+                        workbook_raw=admission["raw"],
+                    )
                 criteria.append({
                     "criteria_id": f"{program['programId']}-{index}",
                     "program_id": program["programId"],
                     "year": 2026,
                     "method": admission["method"],
                     "benchmark_score": admission["value"],
-                    "score_scale": admission["scale"] or 30,
-                    "source_url": school["scoreSource"],
-                    "special_conditions": json.dumps({
-                        "raw": admission["raw"],
-                        "scale_provided": admission["scale"],
-                        "sheet": school["sheet"],
-                        "row": program["row"],
-                        "revision": school["revision"],
-                    }, ensure_ascii=False),
+                    "score_scale": score_details["scale_provided"] or 30,
+                    "source_url": published["sourceUrl"] if published else school["scoreSource"],
+                    "special_conditions": json.dumps(score_details, ensure_ascii=False),
                 })
     return {University: universities, Program: programs, AdmissionCriteria: criteria}
 

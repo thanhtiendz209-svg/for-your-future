@@ -136,3 +136,19 @@ test('school logos use verified local assets and preserve the old badge if absen
  assert.ok(a.run("schoolLogoMarkup(state.universities[0], 'badge')").includes('/school-logos/uni-001.webp'));
  assert.equal(a.run("schoolLogoMarkup({}, 'badge')"),'badge');
 });
+
+test('the V-SAT filter includes direct and combined methods and shows the published score scale',()=>{
+ const a=app();
+ const ids=a.ids({method:'V-SAT (tất cả)'});
+ assert.equal(ids.length,22);
+ assert.ok(ids.includes('uni-021'));
+ assert.ok(ids.includes('uni-100'));
+ assert.ok(!ids.includes('uni-001'));
+ assert.ok(a.run('majorLookupRows().every(row=>row.p.admissions.some(x=>isVsatMethod(x.method)))'));
+ a.ids({method:'V-SAT (tất cả)',major:'Công nghệ thông tin'});
+ const html=a.run("renderMajorLookupGroupRows(majorLookupGroups()[0])");
+ assert.match(html,/23,73\/30/);
+ assert.match(html,/Điểm trúng tuyển sau quy đổi/);
+ assert.match(html,/tuyensinh\.ctu\.edu\.vn/);
+ assert.doesNotMatch(html,/Điểm THPT 2026/);
+});

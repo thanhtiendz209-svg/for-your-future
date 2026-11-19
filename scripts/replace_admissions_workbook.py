@@ -1,6 +1,7 @@
 """Import the supplied workbook verbatim; metadata retains IDs/location/personality only."""
 from pathlib import Path
 import json,re,hashlib,openpyxl
+from apply_vsat_sources import SOURCES as VSAT_SOURCES, update_vsat_cutoffs
 ROOT=Path(__file__).resolve().parents[1]
 SOURCE=ROOT/'data/raw/diem_va_hoc_phi_2026_20261114.xlsx'
 PUBLIC=ROOT/'apps/web/public'
@@ -55,12 +56,13 @@ def build():
         sd={k:meta.get(k) for k in ['id','shortName','region','provinceNew','provinceOld','focusRiasec','category']}
         sd.update(name=sheet['A1'].value,website=url(14),admissionsUrl=url(15),scoreSource=url(16),tuition=tuition,programs=programs,methods=methods,sheet=sheet.title,updatedAt='2026-11-14',revision=hashlib.sha256(SOURCE.read_bytes()).hexdigest(),sourceFile='Điểm và học phí.xlsx')
         details.append(sd)
-        u={k:meta.get(k) for k in ['id','shortName','location','region','provinceNew','provinceOld','logo','category','focusRiasec']}
+        u={k:meta.get(k) for k in ['id','shortName','location','region','provinceNew','provinceOld','logo','schoolLogo','category','focusRiasec']}
         u.update(name=sd['name'],website=sd['website'],admissionsUrl=sd['admissionsUrl'],majors=list(dict.fromkeys(p['name'] for p in programs)),majorItems=[{'code':p['code'],'name':p['name']} for p in programs],programs=[],tuition=tuition['min'],admissionScores={},admissionMethods=methods,lastUpdated='2026-11-14',admissions2026={'year':2026,'thptValues':thpt,'methods':methods,'programCount':len(programs)},dataNote='Dữ liệu thay thế từ Điểm và học phí.xlsx · 14/11/2026')
         unis.append(u)
     for sheet in book.worksheets[126:]:
         audit.append({'sheet':sheet.title,'rows':[[c.value for c in r] for r in sheet.iter_rows()]})
     assert len(details)==126 and all(d['programs'] for d in details)
+    update_vsat_cutoffs(details, json.loads(VSAT_SOURCES.read_bytes()))
     for folder in [PUBLIC/'data',ROOT/'apps/web/dist/data',ROOT/'data/staging']:
         folder.mkdir(parents=True,exist_ok=True)
         for name,data in [('universities.json',unis),('school_details.json',details),('admissions_review.json',audit)]:
