@@ -1276,7 +1276,7 @@ function renderTypeGridContent() {
           ${list
             .map(
               (r, index) => `
-            <article class="personality-showcase-card group" tabindex="0" role="button" aria-label="Xem chi tiết ${universityEscape(r.name)}" onclick="viewRiasecDetail('${r.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();viewRiasecDetail('${r.id}')}">
+            <article data-no-press-feedback class="personality-showcase-card group" tabindex="0" role="button" aria-label="Xem chi tiết ${universityEscape(r.name)}" onclick="viewRiasecDetail('${r.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();viewRiasecDetail('${r.id}')}">
               <!-- Khung hình ảnh động lớn -->
               <div class="personality-showcase-art">
                 <img src="/riasec/animated/RIASEC_${r.id}_animated.svg" alt="${universityEscape(r.name)} — Nhóm ${r.id}" loading="${index < 3 ? 'eager' : 'lazy'}" decoding="async" width="400" height="440" class="personality-showcase-image">
@@ -1362,7 +1362,7 @@ function renderTypeGridContent() {
       ${list
         .map(
           (p, index) => `
-        <article class="personality-showcase-card group" tabindex="0" role="button" aria-label="Xem chi tiết ${universityEscape(p.name)}" onclick="viewMbtiDetail('${p.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();viewMbtiDetail('${p.id}')}">
+        <article data-no-press-feedback class="personality-showcase-card group" tabindex="0" role="button" aria-label="Xem chi tiết ${universityEscape(p.name)}" onclick="viewMbtiDetail('${p.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();viewMbtiDetail('${p.id}')}">
           <!-- Khung hình ảnh động lớn, nền gradient nhẹ -->
           <div class="personality-showcase-art">
             <img
@@ -1954,7 +1954,7 @@ function renderRiasecCombsCardsHTML() {
       const lead = (c.code || 'R')[0];
       const leadTitle = leadNames[lead] || ('Nhóm ' + lead);
       return `
-    <article class="flex h-full flex-col justify-between rounded-[24px] bg-card p-5 shadow-border hover:-translate-y-1.5 hover:shadow-border-hover transition duration-200 border border-line/70 cursor-pointer group" onclick="viewRiasecCombinationDetail('${c.code}')">
+    <article data-no-press-feedback class="flex h-full flex-col justify-between rounded-[24px] bg-card p-5 shadow-border hover:-translate-y-1.5 hover:shadow-border-hover transition duration-200 border border-line/70 cursor-pointer group" onclick="viewRiasecCombinationDetail('${c.code}')">
       <div>
         <!-- 3 biểu tượng RIASEC: Chữ đứng đầu to nhất, 2 chữ còn lại nhỏ hơn (như hình mẫu) -->
         <div class="mb-3.5">

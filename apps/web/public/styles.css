@@ -1395,7 +1395,7 @@ body.detail-modal-open #btn-floating-ai { visibility: hidden; }
 :is(
   [data-fyf-pressed],
   :where(button, a[href], summary, select, [role="button"], [role="tab"]):active
-):not(:disabled, [aria-disabled="true"], .option-card) {
+):not(:disabled, [aria-disabled="true"], .option-card, [data-no-press-feedback]) {
   outline: 2px solid color-mix(in srgb, var(--color-azure) 78%, transparent);
   outline-offset: 2px;
   box-shadow:
@@ -1409,7 +1409,7 @@ body.detail-modal-open #btn-floating-ai { visibility: hidden; }
     46% { scale: .985; }
   }
 
-  [data-fyf-pressed]:not(input, select) {
+  [data-fyf-pressed]:not(input, select, [data-no-press-feedback]) {
     animation: fyf-press-in 150ms var(--ease-smooth-out) both;
   }
 }

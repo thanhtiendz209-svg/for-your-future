@@ -16,7 +16,7 @@
 
   function showPress(event, pointerId) {
     const control = event.target.closest?.(controls);
-    if (!control || control.matches(':disabled, .option-card, .university-card-actions') || control.closest('[aria-disabled="true"]')) return;
+    if (!control || control.matches(':disabled, .option-card, .university-card-actions, [data-no-press-feedback]') || control.closest('[aria-disabled="true"]')) return;
 
     clearPress();
     control.setAttribute('data-fyf-pressed', '');
