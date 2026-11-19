@@ -1279,7 +1279,7 @@ function renderTypeGridContent() {
             <article class="personality-showcase-card group" tabindex="0" role="button" aria-label="Xem chi tiết ${universityEscape(r.name)}" onclick="viewRiasecDetail('${r.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();viewRiasecDetail('${r.id}')}">
               <!-- Khung hình ảnh động lớn -->
               <div class="personality-showcase-art">
-                <img src="/riasec/animated/RIASEC_${r.id}_animated.svg" alt="${universityEscape(r.name)} — Nhóm ${r.id}" loading="${index < 3 ? 'eager' : 'lazy'}" decoding="async" width="400" height="440" class="personality-showcase-image" onerror="this.src='/riasec/${r.id}.webp'">
+                <img src="/riasec/animated/RIASEC_${r.id}_animated.svg" alt="${universityEscape(r.name)} — Nhóm ${r.id}" loading="${index < 3 ? 'eager' : 'lazy'}" decoding="async" width="400" height="440" class="personality-showcase-image">
               </div>
               <!-- Nội dung bên dưới -->
               <div class="personality-showcase-copy">
@@ -1424,7 +1424,7 @@ function renderRiasecTripletImages(code, sizeMode = 'normal') {
         <!-- Chữ đứng đầu to nhất có khung viền nổi bật -->
         <div class="flex flex-col items-center">
           <div class="rounded-[22px] bg-card ring-3 ring-azure p-2 shadow-md overflow-hidden flex items-center justify-center">
-            <img loading="lazy" decoding="async" width="400" height="440" src="/riasec/animated/RIASEC_${lead}_animated.svg" alt="Nhóm ${lead}" class="size-24 sm:size-28 object-contain" onerror="this.src='/riasec/${lead}.webp'">
+            <img loading="lazy" decoding="async" width="400" height="440" src="/riasec/animated/RIASEC_${lead}_animated.svg" alt="Nhóm ${lead}" class="size-24 sm:size-28 object-contain">
           </div>
           <span class="mt-2 text-sm sm:text-base font-extrabold text-azure tracking-tight">Nhóm ${lead}</span>
           <span class="text-[11px] font-semibold text-muted">${leadNames[lead] || ''}</span>
@@ -1433,7 +1433,7 @@ function renderRiasecTripletImages(code, sizeMode = 'normal') {
         <!-- Chữ thứ hai nhỏ hơn -->
         <div class="flex flex-col items-center opacity-90 hover:opacity-100 transition">
           <div class="rounded-[18px] bg-card border border-line p-1.5 shadow-xs overflow-hidden flex items-center justify-center">
-            <img loading="lazy" decoding="async" width="400" height="440" src="/riasec/animated/RIASEC_${sub1}_animated.svg" alt="Nhóm ${sub1}" class="size-16 sm:size-18 object-contain" onerror="this.src='/riasec/${sub1}.webp'">
+            <img loading="lazy" decoding="async" width="400" height="440" src="/riasec/animated/RIASEC_${sub1}_animated.svg" alt="Nhóm ${sub1}" class="size-16 sm:size-18 object-contain">
           </div>
           <span class="mt-1.5 text-xs sm:text-sm font-bold text-navy">Nhóm ${sub1}</span>
           <span class="text-[10px] font-medium text-muted">${leadNames[sub1] || ''}</span>
@@ -1442,7 +1442,7 @@ function renderRiasecTripletImages(code, sizeMode = 'normal') {
         <!-- Chữ thứ ba nhỏ hơn -->
         <div class="flex flex-col items-center opacity-90 hover:opacity-100 transition">
           <div class="rounded-[18px] bg-card border border-line p-1.5 shadow-xs overflow-hidden flex items-center justify-center">
-            <img loading="lazy" decoding="async" width="400" height="440" src="/riasec/animated/RIASEC_${sub2}_animated.svg" alt="Nhóm ${sub2}" class="size-16 sm:size-18 object-contain" onerror="this.src='/riasec/${sub2}.webp'">
+            <img loading="lazy" decoding="async" width="400" height="440" src="/riasec/animated/RIASEC_${sub2}_animated.svg" alt="Nhóm ${sub2}" class="size-16 sm:size-18 object-contain">
           </div>
           <span class="mt-1.5 text-xs sm:text-sm font-bold text-navy">Nhóm ${sub2}</span>
           <span class="text-[10px] font-medium text-muted">${leadNames[sub2] || ''}</span>
@@ -1457,7 +1457,7 @@ function renderRiasecTripletImages(code, sizeMode = 'normal') {
       <!-- Chữ đứng đầu to nhất -->
       <div class="flex flex-col items-center">
         <div class="rounded-[16px] bg-card ring-2 ring-azure p-1 shadow-sm overflow-hidden flex items-center justify-center">
-          <img loading="lazy" decoding="async" width="400" height="440" src="/riasec/animated/RIASEC_${lead}_animated.svg" alt="Nhóm ${lead}" class="size-14 sm:size-16 object-contain" onerror="this.src='/riasec/${lead}.webp'">
+          <img loading="lazy" decoding="async" width="400" height="440" src="/riasec/animated/RIASEC_${lead}_animated.svg" alt="Nhóm ${lead}" class="size-14 sm:size-16 object-contain">
         </div>
         <span class="mt-1 text-xs font-black text-azure">Nhóm ${lead}</span>
       </div>
@@ -1465,7 +1465,7 @@ function renderRiasecTripletImages(code, sizeMode = 'normal') {
       <!-- Chữ thứ hai -->
       <div class="flex flex-col items-center opacity-90">
         <div class="rounded-[12px] bg-card border border-line/80 p-0.5 shadow-xs overflow-hidden flex items-center justify-center">
-          <img loading="lazy" decoding="async" width="400" height="440" src="/riasec/animated/RIASEC_${sub1}_animated.svg" alt="Nhóm ${sub1}" class="size-9 sm:size-10 object-contain" onerror="this.src='/riasec/${sub1}.webp'">
+          <img loading="lazy" decoding="async" width="400" height="440" src="/riasec/animated/RIASEC_${sub1}_animated.svg" alt="Nhóm ${sub1}" class="size-9 sm:size-10 object-contain">
         </div>
         <span class="mt-0.5 text-[10px] font-bold text-muted">Nhóm ${sub1}</span>
       </div>
@@ -1473,7 +1473,7 @@ function renderRiasecTripletImages(code, sizeMode = 'normal') {
       <!-- Chữ thứ ba -->
       <div class="flex flex-col items-center opacity-90">
         <div class="rounded-[12px] bg-card border border-line/80 p-0.5 shadow-xs overflow-hidden flex items-center justify-center">
-          <img loading="lazy" decoding="async" width="400" height="440" src="/riasec/animated/RIASEC_${sub2}_animated.svg" alt="Nhóm ${sub2}" class="size-9 sm:size-10 object-contain" onerror="this.src='/riasec/${sub2}.webp'">
+          <img loading="lazy" decoding="async" width="400" height="440" src="/riasec/animated/RIASEC_${sub2}_animated.svg" alt="Nhóm ${sub2}" class="size-9 sm:size-10 object-contain">
         </div>
         <span class="mt-0.5 text-[10px] font-bold text-muted">Nhóm ${sub2}</span>
       </div>
@@ -1597,7 +1597,7 @@ function renderRiasecCombinationContent(comb) {
             <div class="flex flex-col md:flex-row items-center md:items-start gap-5 p-5 rounded-[22px] bg-mist/60 border border-line">
               <!-- Hình tượng trưng to lên -->
               <div class="relative shrink-0 flex flex-col items-center">
-                <img src="/riasec/animated/RIASEC_${f.letter}_animated.svg" alt="${f.letter}" class="size-24 sm:size-28 rounded-[22px] bg-card p-2 shadow-md border-2 border-azure/40 object-contain" onerror="this.src='/riasec/${f.letter}.webp'">
+                <img src="/riasec/animated/RIASEC_${f.letter}_animated.svg" alt="${f.letter}" class="size-24 sm:size-28 rounded-[22px] bg-card p-2 shadow-md border-2 border-azure/40 object-contain">
                 <span class="mt-2 text-xs font-black text-azure uppercase tracking-wider">Nhóm ${f.letter}</span>
               </div>
               <div class="flex-1 text-center md:text-left">
@@ -1636,7 +1636,7 @@ function renderRiasecCombinationContent(comb) {
           ${facets.map((f, idx) => `
             <div class="p-5 sm:p-6 rounded-[22px] bg-card border border-line shadow-xs">
               <div class="flex flex-col sm:flex-row items-center sm:items-start gap-4 mb-4 pb-4 border-b border-line/60">
-                <img src="/riasec/animated/RIASEC_${f.letter}_animated.svg" alt="${f.letter}" class="size-20 rounded-[18px] bg-ice p-1.5 shadow-sm border border-azure/30 shrink-0" onerror="this.src='/riasec/${f.letter}.webp'">
+                <img src="/riasec/animated/RIASEC_${f.letter}_animated.svg" alt="${f.letter}" class="size-20 rounded-[18px] bg-ice p-1.5 shadow-sm border border-azure/30 shrink-0">
                 <div class="flex-1 text-center sm:text-left">
                   <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-azure/15 text-azure mb-1">
                     Nhóm ${f.letter} · ${idx === 0 ? 'Chủ đạo' : 'Bổ trợ'}
@@ -2052,7 +2052,7 @@ window.viewRiasecDetail = function (id) {
   if (!item) return;
   openDetailModal(`
     <div class="flex items-center gap-4 mb-4">
-      <img src="/riasec/animated/RIASEC_${item.id}_animated.svg" alt="${item.id}" class="size-16 rounded-[16px] bg-ice object-contain p-1 shadow-border" onerror="this.src='/riasec/animated/${item.id}.svg'">
+      <img src="/riasec/animated/RIASEC_${item.id}_animated.svg" alt="${item.id}" class="size-16 rounded-[16px] bg-ice object-contain p-1 shadow-border">
       <div>
         <h3 class="font-display text-2xl font-bold text-navy">${item.id} · ${item.name}</h3>
         <p class="text-sm font-semibold text-azure mt-1">"${item.slogan}"</p>
@@ -2742,7 +2742,7 @@ function renderQuizResult(container, quizId) {
     const topLetters = code.slice(0, 3).split('');
     const topLetterImages = topLetters.map((l, idx) => `
       <div class="flex flex-col items-center">
-        <img src="/riasec/animated/RIASEC_${l}_animated.svg" alt="${l}" class="${idx === 0 ? 'size-24 sm:size-28 ring-2 ring-azure' : 'size-16 sm:size-20 opacity-90'} rounded-[18px] bg-card p-1.5 shadow-border object-contain" onerror="this.src='/riasec/animated/${l}.svg'">
+        <img src="/riasec/animated/RIASEC_${l}_animated.svg" alt="${l}" class="${idx === 0 ? 'size-24 sm:size-28 ring-2 ring-azure' : 'size-16 sm:size-20 opacity-90'} rounded-[18px] bg-card p-1.5 shadow-border object-contain">
         <span class="mt-1.5 text-xs font-bold ${idx === 0 ? 'text-azure' : 'text-muted'}">Nhóm ${l}</span>
       </div>
     `).join('');

@@ -46,3 +46,20 @@ test('slow university route cannot overwrite a newer home route', async () => {
   await app.run('renderRoute()'); release(); await pending;
   assert.equal(container.innerHTML, 'HOME');
 });
+
+test('RIASEC illustrations use the new animated artwork in the deployable site', () => {
+  const app = setup();
+  const images = [...app.run("renderRiasecTripletImages('CSI', 'large')").matchAll(/<img[^>]+>/g)];
+  assert.equal(images.length, 3);
+  for (const [index, letter] of [...'CSI'].entries()) {
+    assert.ok(images[index][0].includes(`src="/riasec/animated/RIASEC_${letter}_animated.svg"`));
+    assert.doesNotMatch(images[index][0], /onerror|\.webp/);
+  }
+  for (const letter of 'RIASEC') {
+    const filename = `riasec/animated/RIASEC_${letter}_animated.svg`;
+    const source = fs.readFileSync(`apps/web/public/${filename}`);
+    assert.match(source.toString(), /@keyframes/);
+    assert.deepEqual(fs.readFileSync(`apps/web/dist/${filename}`), source);
+    assert.deepEqual(fs.readFileSync(`apps/web/dist/riasec/animated/${letter}.svg`), source);
+  }
+});
