@@ -140,6 +140,10 @@ test('school logos use verified local assets and preserve the old badge if absen
 test('the V-SAT filter includes direct and combined methods and shows the published score scale',()=>{
  const a=app();
  const ids=a.ids({method:'V-SAT (tất cả)'});
+ const filters=a.run('renderUniversityFilterPanel()');
+ assert.match(filters,/id="ue-method"/);
+ assert.equal((filters.match(/<option value="V-SAT \(tất cả\)"/g)||[]).length,1);
+ assert.doesNotMatch(filters,/data-filter="method"|Có xét V-SAT/);
  assert.equal(ids.length,22);
  assert.ok(ids.includes('uni-021'));
  assert.ok(ids.includes('uni-100'));

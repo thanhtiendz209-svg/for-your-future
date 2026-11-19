@@ -1,9 +1,5 @@
 (() => {
-  const controls = [
-    'button', 'a[href]', 'summary', 'select', '[role="button"]', '[role="tab"]',
-    'input:is([type="button"], [type="submit"], [type="reset"], [type="radio"], [type="checkbox"])',
-    'article[onclick]', '.faq-row[onclick]', '.university-card-actions',
-  ].join(',');
+  const buttons = 'button, input:is([type="button"], [type="submit"], [type="reset"])';
   const feedbackTime = 155;
   let currentPress;
 
@@ -15,8 +11,8 @@
   }
 
   function showPress(event, pointerId) {
-    const control = event.target.closest?.(controls);
-    if (!control || control.matches(':disabled, .option-card, .university-card-actions, [data-no-press-feedback]') || control.closest('[aria-disabled="true"]')) return;
+    const control = event.target.closest?.(buttons);
+    if (!control || control.matches(':disabled, .option-card') || control.closest('[aria-disabled="true"]')) return;
 
     clearPress();
     control.setAttribute('data-fyf-pressed', '');

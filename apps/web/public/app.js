@@ -1276,7 +1276,7 @@ function renderTypeGridContent() {
           ${list
             .map(
               (r, index) => `
-            <article data-no-press-feedback class="personality-showcase-card group" tabindex="0" role="button" aria-label="Xem chi tiết ${universityEscape(r.name)}" onclick="viewRiasecDetail('${r.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();viewRiasecDetail('${r.id}')}">
+            <article class="personality-showcase-card group" tabindex="0" role="button" aria-label="Xem chi tiết ${universityEscape(r.name)}" onclick="viewRiasecDetail('${r.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();viewRiasecDetail('${r.id}')}">
               <!-- Khung hình ảnh động lớn -->
               <div class="personality-showcase-art">
                 <img src="/riasec/animated/RIASEC_${r.id}_animated.svg" alt="${universityEscape(r.name)} — Nhóm ${r.id}" loading="${index < 3 ? 'eager' : 'lazy'}" decoding="async" width="400" height="440" class="personality-showcase-image">
@@ -1362,7 +1362,7 @@ function renderTypeGridContent() {
       ${list
         .map(
           (p, index) => `
-        <article data-no-press-feedback class="personality-showcase-card group" tabindex="0" role="button" aria-label="Xem chi tiết ${universityEscape(p.name)}" onclick="viewMbtiDetail('${p.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();viewMbtiDetail('${p.id}')}">
+        <article class="personality-showcase-card group" tabindex="0" role="button" aria-label="Xem chi tiết ${universityEscape(p.name)}" onclick="viewMbtiDetail('${p.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();viewMbtiDetail('${p.id}')}">
           <!-- Khung hình ảnh động lớn, nền gradient nhẹ -->
           <div class="personality-showcase-art">
             <img
@@ -1954,7 +1954,7 @@ function renderRiasecCombsCardsHTML() {
       const lead = (c.code || 'R')[0];
       const leadTitle = leadNames[lead] || ('Nhóm ' + lead);
       return `
-    <article data-no-press-feedback class="flex h-full flex-col justify-between rounded-[24px] bg-card p-5 shadow-border hover:-translate-y-1.5 hover:shadow-border-hover transition duration-200 border border-line/70 cursor-pointer group" onclick="viewRiasecCombinationDetail('${c.code}')">
+    <article class="flex h-full flex-col justify-between rounded-[24px] bg-card p-5 shadow-border hover:-translate-y-1.5 hover:shadow-border-hover transition duration-200 border border-line/70 cursor-pointer group" onclick="viewRiasecCombinationDetail('${c.code}')">
       <div>
         <!-- 3 biểu tượng RIASEC: Chữ đứng đầu to nhất, 2 chữ còn lại nhỏ hơn (như hình mẫu) -->
         <div class="mb-3.5">
@@ -3924,7 +3924,6 @@ function renderUniversityFilterPanel() {
  ${row('Học phí',chips('tuition',['Tất cả','Dưới 20 triệu','20–40 triệu','40–60 triệu','Trên 60 triệu']))}
  ${row('Điểm trúng tuyển THPT /30',chips('score',['Tất cả','Dưới 20','20–24','24–27','Trên 27']))}
  <p class="text-xs text-muted leading-relaxed">Lọc trường có ít nhất một điểm trúng tuyển THPT trong khoảng đã chọn. Không gộp điểm sàn, phương thức khác hoặc ước tính; xem điều kiện của từng ngành trong trang trường.</p>
- ${row('V-SAT',chips('method',[['Tất cả','Mọi phương thức'],[VSAT_FILTER,'Có xét V-SAT']]))}
  ${row('Theo hồ sơ của bạn',chips('personal',['Tắt','Bật']))}
  ${f.personal==='Bật'?`<p class="text-xs text-muted">Ưu tiên nơi muốn học và đối chiếu điểm cùng phương thức. Phần trăm thể hiện độ tương đồng sở thích RIASEC của từng ngành.</p>${schoolFitControls('ue-fit', schoolFitContext())||'<p class="text-xs text-muted">Đăng nhập và cập nhật hồ sơ để dùng điểm thi và quê quán.</p>'}`:''}
  ${row('Mức phù hợp RIASEC',chips('fitMin',['Tất cả','≥80%','≥70%','≥60%']))}
@@ -3973,14 +3972,6 @@ function attachUniversityExplorerEvents() {
  }));
  root.querySelectorAll('[data-select]').forEach(select=>select.addEventListener('change',()=>{
   state.uniFilter[select.dataset.select]=select.value;
-  if(select.dataset.select==='method')root.querySelectorAll('[data-filter="method"]').forEach(button=>{
-   const selected=button.dataset.value===select.value;
-   button.setAttribute('aria-pressed',selected);
-   button.classList.toggle('bg-navy',selected);
-   button.classList.toggle('text-paper',selected);
-   button.classList.toggle('bg-mist',!selected);
-   button.classList.toggle('text-muted',!selected);
-  });
   root.querySelectorAll('[data-filter="provinceNew"]').forEach(b=>{const selected=b.dataset.value===state.uniFilter.provinceNew;b.setAttribute('aria-pressed',selected);b.className=`ue-filter-chip ${selected?'bg-navy text-paper':'bg-mist text-muted'}`});
   updateResults();
  }));
