@@ -1324,20 +1324,28 @@ body.detail-modal-open #btn-floating-ai { visibility: hidden; }
 .school-logo img { width: 100%; height: 100%; object-fit: contain; }
 .school-logo-heading { display: flex; align-items: center; gap: .75rem; }
 .major-lookup-table .school-logo { width: 2rem; height: 2rem; border-radius: .5rem; }
-/* RIASEC suggestions link directly to the matching major in admissions. */
+/* RIASEC recommendations expand in place to show admissions. */
 .major-fit-list { display: grid; gap: .65rem; }
 .major-fit-card {
+  min-width: 0;
+  border: 1px solid var(--color-line);
+  border-radius: 1rem;
+  background: var(--color-card);
+}
+.major-fit-card > summary {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto auto;
   gap: .4rem 1rem;
   align-items: center;
   padding: .65rem 1rem;
-  border: 1px solid var(--color-line);
-  border-radius: 1rem;
-  background: var(--color-card);
+  border-radius: inherit;
+  cursor: pointer;
+  list-style: none;
 }
+.major-fit-card > summary::-webkit-details-marker { display: none; }
+.major-fit-card > summary:focus-visible { outline: 2px solid var(--color-azure); outline-offset: -3px; }
 .major-fit-name { display: grid; gap: .2rem; min-width: 0; }
-.major-fit-name h4 { font-weight: 700; color: var(--color-ink); overflow-wrap: anywhere; }
+.major-fit-name strong { font-weight: 700; color: var(--color-ink); overflow-wrap: anywhere; }
 .major-fit-percentage {
   display: inline-grid;
   text-align: center;
@@ -1349,11 +1357,18 @@ body.detail-modal-open #btn-floating-ai { visibility: hidden; }
   font-variant-numeric: tabular-nums;
 }
 .major-fit-percentage span { font-size: .7rem; font-weight: 500; }
-.major-fit-link { display: inline-flex; min-height: 44px; align-items: center; gap: .35rem; }
-.major-fit-link:hover { text-decoration: underline; text-underline-offset: .18em; }
+.major-fit-action, .major-fit-more { display: inline-flex; min-height: 44px; align-items: center; gap: .35rem; }
+.major-fit-action { color: var(--color-azure); font-size: .85rem; font-weight: 650; }
+.major-fit-close-label, .major-fit-card[open] .major-fit-open-label { display: none; }
+.major-fit-card[open] .major-fit-close-label { display: inline; }
+.major-fit-card[open] .major-fit-chevron { transform: rotate(180deg); }
+.major-fit-content { display: grid; gap: .5rem; padding: .8rem 1rem 1rem; border-top: 1px solid var(--color-line); min-width: 0; }
+.major-fit-content > div { min-width: 0; }
+.major-fit-more:hover { text-decoration: underline; text-underline-offset: .18em; }
 @media (max-width: 39rem) {
-  .major-fit-card { grid-template-columns: minmax(0, 1fr) auto; padding: .65rem .8rem .25rem; }
-  .major-fit-link { grid-column: 1 / -1; width: fit-content; }
+  .major-fit-card > summary { grid-template-columns: minmax(0, 1fr) auto; padding: .65rem .8rem .25rem; }
+  .major-fit-action { grid-column: 1 / -1; }
+  .major-fit-content { padding-inline: .8rem; }
 }
 .school-fit-controls { display: grid; gap: .65rem; }
 .school-fit-check { display: flex; align-items: flex-start; gap: .55rem; }

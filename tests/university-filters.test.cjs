@@ -124,7 +124,7 @@ test('personalized lookup filters the matching program with comparable scores',(
  assert.equal(a.run('schoolFitContext().provinceKey'),'');
 });
 
-test('RIASEC recommends distinct catalogue majors and links to the exact lookup group',()=>{
+test('RIASEC recommends distinct majors and expands the exact admissions group',()=>{
  const a=app();
  assert.equal(a.run('recommendMajors().length'),0);
  a.run("state.results.riasec={code:'IRC'}");
@@ -133,13 +133,19 @@ test('RIASEC recommends distinct catalogue majors and links to the exact lookup 
  assert.ok(technical.includes('Công nghệ thông tin'));
  const html=a.run('renderMajorRecommendations()');
  assert.doesNotMatch(html,/Trường phù hợp với bạn|#truong-dai-hoc\//);
- const href=html.match(/href="#tra-cuu-nganh\/([^"]+)"/)[1];
- a.ctx.lookupParam=href;
- assert.equal(a.run('majorFromLookupPath(lookupParam)'),technical[0]);
- assert.equal(a.run("majorFromLookupPath('%E0%A4%A')"),undefined);
- const group=a.ids({major:technical[0]});
- assert.ok(group.length>0);
- assert.ok(a.run('majorLookupGroups().length===1'));
+ assert.equal((html.match(/<details class="major-fit-card"/g)||[]).length,5);
+ assert.match(html,/href="#huong-nghiep">Xem thêm các trường và ngành/);
+ assert.doesNotMatch(html,/<details[^>]*\sopen[ >]/);
+ a.ctx.majorName=technical[0];
+ a.ids({method:'V-SAT (tất cả)',major:'Y khoa',personal:'Bật'});
+ const inline=a.run('recommendedMajorGroup(majorKey(majorName))');
+ assert.equal(inline.name,technical[0]);
+ assert.ok(inline.rows.length>6);
+ assert.ok(inline.rows.every(({p})=>a.run('majorKey(majorName)')===a.run(`majorKey(${JSON.stringify(p.name)})`)));
+ const table=a.run("renderMajorLookupGroupRows(recommendedMajorGroup(majorKey(majorName)),0,{size:6,method:'Tất cả',personal:false})");
+ assert.match(table,/Điểm THPT 2026/);
+ assert.equal((table.match(/<tr>/g)||[]).length,7);
+ assert.match(table,/data-major-program-page="1"/);
 
  a.run("state.results.riasec={code:'ASE'}");
  const creative=Array.from(a.run('recommendMajors().map(item=>item.name)'));

@@ -3024,6 +3024,7 @@ function renderQuizResult(container, quizId) {
         </div>
       </div>
     `;
+    attachMajorRecommendations(container);
     refreshIcons();
     return;
   }
@@ -3738,16 +3739,67 @@ function renderMajorRecommendations() {
  return `<h3 id="major-fit-title" class="font-display text-2xl font-bold text-navy">Ngành học phù hợp với bạn</h3>
  <p class="text-sm text-muted leading-relaxed">Gợi ý dựa trên độ tương đồng giữa điểm sở thích RIASEC của bạn và lĩnh vực của từng ngành.</p>
  ${majors.length ? `<ul class="major-fit-list">
-  ${majors.map(({key, name, fit, groupName}) => `<li class="major-fit-card">
-   <div class="major-fit-name">
-    <h4>${esc(name)}</h4>
-    <p class="text-xs text-muted">Lĩnh vực ${esc(groupName)}</p>
-   </div>
-   <span class="major-fit-percentage">${fit}% <span>tương đồng</span></span>
-   <a class="major-fit-link text-sm font-semibold text-azure" href="#tra-cuu-nganh/${encodeURIComponent(key)}">Xem trường đào tạo <span aria-hidden="true">→</span></a>
+  ${majors.map(({key, name, fit, groupName}) => `<li>
+   <details class="major-fit-card" name="major-recommendations" data-recommended-major="${esc(key)}">
+    <summary>
+     <span class="major-fit-name">
+      <strong>${esc(name)}</strong>
+      <span class="text-xs text-muted">Lĩnh vực ${esc(groupName)}</span>
+     </span>
+     <span class="major-fit-percentage">${fit}% <span>tương đồng</span></span>
+     <span class="major-fit-action">
+      <span class="major-fit-open-label">Xem trường đào tạo</span>
+      <span class="major-fit-close-label">Thu gọn</span>
+      <span class="major-fit-chevron" aria-hidden="true">⌄</span>
+     </span>
+    </summary>
+    <div class="major-fit-content" data-major-fit-content></div>
+   </details>
   </li>`).join('')}
  </ul>` : '<p class="text-sm text-muted">Chưa có đủ dữ liệu để gợi ý ngành theo kết quả này.</p>'}
- <a class="text-sm font-semibold text-azure" href="#tra-cuu-nganh">Tra cứu tất cả ngành →</a>`;
+ <a class="major-fit-more text-sm font-semibold text-azure" href="#huong-nghiep">Xem thêm các trường và ngành <span aria-hidden="true">→</span></a>`;
+}
+
+function recommendedMajorGroup(key) {
+ const name = universityMajorCatalog().labels.get(key);
+ const rows = schoolProgramRows(state.universities, p => majorKey(p.name) === key);
+ return {name, rows};
+}
+
+function attachMajorRecommendations(container) {
+ container.querySelectorAll('[data-recommended-major]').forEach(detail => {
+  const content = detail.querySelector('[data-major-fit-content]');
+  let loading = false, rendered = false;
+  async function showSchools() {
+   if (loading || rendered) return;
+   loading = true;
+   content.setAttribute('aria-busy', 'true');
+   content.innerHTML = '<p class="text-sm text-muted" role="status">Đang tải các trường đào tạo…</p>';
+   try {
+    await loadStaticData('schoolDetails', 'school_details.json');
+    if (!detail.isConnected) return;
+    const group = recommendedMajorGroup(detail.dataset.recommendedMajor);
+    if (group.rows.length) {
+     const count = new Set(group.rows.map(row => row.u.id)).size;
+     content.innerHTML = `<p class="text-xs text-muted">${count} trường · ${group.rows.length} chương trình</p><div data-major-fit-table></div>`;
+     attachMajorProgramTable(detail, content.querySelector('[data-major-fit-table]'), group, {size:6, method:'Tất cả', personal:false});
+    } else {
+     content.innerHTML = '<p class="text-sm text-muted">Chưa có dữ liệu tuyển sinh cho ngành này.</p>';
+    }
+    rendered = true;
+   } catch {
+    if (!detail.isConnected) return;
+    content.innerHTML = '<p class="text-sm text-muted" role="status">Chưa tải được dữ liệu tuyển sinh.</p><button type="button" class="min-h-11 text-sm font-semibold text-azure">Thử lại</button>';
+    content.querySelector('button').addEventListener('click', showSchools);
+   } finally {
+    loading = false;
+    content.removeAttribute('aria-busy');
+   }
+  }
+  detail.addEventListener('toggle', () => {
+   if (detail.open) showSchools();
+  });
+ });
 }
 
 // Clean presentation-only annotations; keep source program names and intrinsic numbers intact.
@@ -3800,18 +3852,21 @@ function matchesProgramFilters(p) {
  if(f.score!=='Tất cả'&&!(p.admissions||[]).some(a=>a.method==='Điểm THPT 2026'&&a.scale===30&&a.value!=null&&(f.score==='Dưới 20'?a.value<20:f.score==='20–24'?a.value>=20&&a.value<24:f.score==='24–27'?a.value>=24&&a.value<=27:a.value>27)))return false;
  return true;
 }
+function schoolProgramRows(universities, includesProgram) {
+ const details = new Map(state.schoolDetails.map(sd => [sd.id, sd]));
+ return universities.flatMap(u => {
+  const sd = details.get(u.id);
+  return sd ? sd.programs.filter(includesProgram).map(p => ({u, sd, p})) : [];
+ });
+}
 function majorLookupRows() {
  const f={...UNIVERSITY_FILTER_DEFAULTS,...state.uniFilter};
  const personal=f.personal==='Bật', context=schoolFitContext();
  if(!personal)context.scoreOnly=false;
  const minimum=f.fitMin==='Tất cả'?null:Number(f.fitMin.replace(/\D/g,''));
- const details=new Map(state.schoolDetails.map(sd=>[sd.id,sd]));
- const rows=filterUniversities().flatMap(u=>{
-  const sd=details.get(u.id);if(!sd)return [];
-  return sd.programs.filter(matchesProgramFilters).map(p=>({...schoolFitRow(u,p,context),sd})).filter(row=>
-   (!context.scoreOnly||schoolFitRank(row)===2)&&(minimum===null||(row.fit!==null&&row.fit>=minimum))
-  );
- });
+ const rows=schoolProgramRows(filterUniversities(), matchesProgramFilters)
+  .map(({u, sd, p}) => ({...schoolFitRow(u,p,context),sd}))
+  .filter(row => (!context.scoreOnly||schoolFitRank(row)===2)&&(minimum===null||(row.fit!==null&&row.fit>=minimum)));
  return personal?rows.sort(compareSchoolFit):rows;
 }
 function majorLookupGroups() {
@@ -3823,14 +3878,14 @@ function majorLookupGroups() {
  }
  return state.uniFilter.personal==='Bật'?[...groups.values()]:[...groups.values()].sort((a,b)=>a.name.localeCompare(b.name,'vi'));
 }
-function renderMajorLookupGroupRows(group,page=0) {
- const size=20,pages=Math.max(1,Math.ceil(group.rows.length/size));
+function renderMajorLookupGroupRows(group, page=0, {size=20, method=state.uniFilter.method, personal=state.uniFilter.personal==='Bật'}={}) {
+ const pages=Math.max(1,Math.ceil(group.rows.length/size));
  page=Math.max(0,Math.min(page,pages-1));
  const items=group.rows.slice(page*size,(page+1)*size),esc=universityEscape;
  return `<div class="major-lookup-table-wrap"><table class="major-lookup-table"><caption class="sr-only">Điểm xét tuyển và học phí ngành ${esc(group.name)} theo trường</caption><thead><tr><th>Trường & chương trình</th><th>Điểm theo phương thức</th><th>Học phí / năm</th></tr></thead><tbody>${items.map(({u,sd,p,fit,local,references})=>{
-  const values=p.admissions.filter(a=>matchesAdmissionMethod(a.method,state.uniFilter.method));
+  const values=p.admissions.filter(a=>matchesAdmissionMethod(a.method,method));
   const fee=p.tuition_annual!=null?formatVND(p.tuition_annual):sd.tuition.min!=null?[sd.tuition.min,sd.tuition.max??sd.tuition.min].map(formatVND).filter((v,i,a)=>i===0||v!==a[0]).join(' – '):'Chưa có dữ liệu';
-  return `<tr><td><div class="school-logo-heading">${schoolLogoMarkup(u)}<a href="${schoolProgramHref(u,p)}" class="text-azure font-semibold">${esc(u.name)} ↗</a></div><p class="text-xs text-muted mt-1">${esc(u.provinceNew||'')}${u.provinceOld!==u.provinceNew?' · cũ: '+esc(u.provinceOld):''}</p><h3 class="text-sm font-semibold text-navy mt-3">${esc(cleanMajorLabel(p.name))}</h3><p class="text-xs text-muted mt-1">Mã: ${esc(p.code||'Chưa cung cấp')} · ${esc(p.type)}</p>${state.uniFilter.personal==='Bật'?schoolFitLabelMarkup({fit,local,references}):''}</td><td>${values.map(a=>`<div class="major-lookup-score"><span>${esc(a.method)}</span>${admissionScoreMarkup(a)}</div>`).join('')||'<span class="text-muted">Chưa có điểm</span>'}</td><td><strong class="text-navy">${fee}</strong><p class="text-xs text-muted mt-2">${p.tuition_annual!=null?'Học phí riêng của chương trình':'Khoảng học phí cấp trường; cần đối chiếu chương trình cụ thể.'}</p><a href="${schoolProgramHref(u,p)}" class="text-xs text-azure inline-block mt-3">Chi tiết & nguồn dữ liệu →</a></td></tr>`;
+  return `<tr><td><div class="school-logo-heading">${schoolLogoMarkup(u)}<a href="${schoolProgramHref(u,p)}" class="text-azure font-semibold">${esc(u.name)} ↗</a></div><p class="text-xs text-muted mt-1">${esc(u.provinceNew||'')}${u.provinceOld!==u.provinceNew?' · cũ: '+esc(u.provinceOld):''}</p><h3 class="text-sm font-semibold text-navy mt-3">${esc(cleanMajorLabel(p.name))}</h3><p class="text-xs text-muted mt-1">Mã: ${esc(p.code||'Chưa cung cấp')} · ${esc(p.type)}</p>${personal?schoolFitLabelMarkup({fit,local,references}):''}</td><td>${values.map(a=>`<div class="major-lookup-score"><span>${esc(a.method)}</span>${admissionScoreMarkup(a)}</div>`).join('')||'<span class="text-muted">Chưa có điểm</span>'}</td><td><strong class="text-navy">${fee}</strong><p class="text-xs text-muted mt-2">${p.tuition_annual!=null?'Học phí riêng của chương trình':'Khoảng học phí cấp trường; cần đối chiếu chương trình cụ thể.'}</p><a href="${schoolProgramHref(u,p)}" class="text-xs text-azure inline-block mt-3">Chi tiết & nguồn dữ liệu →</a></td></tr>`;
  }).join('')}</tbody></table></div>${pages>1?`<div class="major-lookup-pagination"><button type="button" data-major-program-page="${page-1}" ${page===0?'disabled':''}>← Trang trước</button><span role="status">${page*size+1}–${Math.min((page+1)*size,group.rows.length)} / ${group.rows.length} chương trình</span><button type="button" data-major-program-page="${page+1}" ${page+1>=pages?'disabled':''}>Trang sau →</button></div>`:''}`;
 }
 function renderMajorLookupGroupSummary(group) {
@@ -3846,6 +3901,18 @@ function renderMajorLookupResults() {
  const schoolCount=new Set(groups.flatMap(g=>g.rows.map(r=>r.u.id))).size;
  return `<div class="major-lookup-summary"><div><h2 class="text-lg font-bold text-navy">Ngành đào tạo</h2><p class="text-sm text-muted mt-1" role="status">${groups.length} ngành tại ${schoolCount} trường khớp bộ lọc</p><p class="text-sm text-muted mt-2">Nhấn vào một ngành để xem điểm xét tuyển và học phí tại các trường.</p></div></div><div class="major-group-list">${groups.slice(page*size,(page+1)*size).map(g=>`<details class="major-group" data-major-key="${esc(g.key)}">${renderMajorLookupGroupSummary(g)}<div class="major-group-content"></div></details>`).join('')||'<p class="text-muted py-6">Không tìm thấy ngành phù hợp. Hãy đổi từ khóa hoặc xóa bớt bộ lọc.</p>'}</div>${pages>1?`<div class="major-lookup-pagination"><button type="button" data-major-page="${page-1}" ${page===0?'disabled':''}>← Trang trước</button><span>Trang ${page+1} / ${pages} · ${groups.length} ngành</span><button type="button" data-major-page="${page+1}" ${page+1>=pages?'disabled':''}>Trang sau →</button></div>`:''}`;
 }
+function attachMajorProgramTable(detail, content, group, options) {
+ const showPage = page => {
+  content.innerHTML = renderMajorLookupGroupRows(group, page, options);
+  content.querySelectorAll('[data-major-program-page]').forEach(button => {
+   button.onclick = () => {
+    showPage(Number(button.dataset.majorProgramPage));
+    detail.scrollIntoView({block:'start',behavior:'instant'});
+   };
+  });
+ };
+ showPage(0);
+}
 function attachMajorLookupPagination() {
  const root=document.querySelector('#ue-major-results');if(!root)return;
  root.querySelectorAll('[data-major-page]').forEach(b=>b.onclick=()=>{
@@ -3854,16 +3921,10 @@ function attachMajorLookupPagination() {
  const groups=majorLookupRenderedGroups;
  root.querySelectorAll('.major-group').forEach(detail=>{
   const content=detail.querySelector('.major-group-content'),group=groups.get(detail.dataset.majorKey);
-  const showPage=(page)=>{
-   content.innerHTML=renderMajorLookupGroupRows(group,page);
-   content.querySelectorAll('[data-major-program-page]').forEach(b=>b.onclick=()=>{
-    showPage(Number(b.dataset.majorProgramPage));detail.scrollIntoView({block:'start',behavior:'instant'});
-   });
-  };
   detail.ontoggle=()=>{
    if(!detail.open)return;
    root.querySelectorAll('.major-group[open]').forEach(other=>{if(other!==detail)other.open=false;});
-   if(!content.childElementCount)showPage(0);
+   if(!content.childElementCount)attachMajorProgramTable(detail,content,group);
   };
  });
 }
