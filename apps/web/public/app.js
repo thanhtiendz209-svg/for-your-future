@@ -1128,11 +1128,11 @@ function renderHome(container) {
 
         <div class="faq-row px-5 sm:px-6 py-4 cursor-pointer" onclick="toggleFaq(this)">
           <div class="flex items-center justify-between font-display text-base font-semibold text-navy">
-            <span>Có cần tài khoản không? Dữ liệu nằm đâu?</span>
+            <span>Có cần tài khoản không? Dữ liệu nằm ở đâu?</span>
             <i data-lucide="chevron-down" class="size-4 text-muted transition-transform"></i>
           </div>
           <div class="faq-answer hidden mt-2 text-sm leading-relaxed text-muted">
-            Không bắt buộc. Câu trả lời và kết quả lưu trên thiết bị của bạn. Bạn có thể xem lại kết quả bất cứ lúc nào trong mục Hồ sơ.
+            Có. Bạn cần tạo tài khoản và đăng nhập để làm bài trắc nghiệm. Thông tin hồ sơ và kết quả trắc nghiệm được lưu trong cơ sở dữ liệu của For Your Future, gắn với tài khoản của bạn. Bạn có thể đăng nhập trên thiết bị khác và xem lại kết quả trong mục Hồ sơ.
           </div>
         </div>
 
