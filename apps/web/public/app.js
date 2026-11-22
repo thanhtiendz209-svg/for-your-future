@@ -1132,7 +1132,7 @@ function renderHome(container) {
             <i data-lucide="chevron-down" class="size-4 text-muted transition-transform"></i>
           </div>
           <div class="faq-answer hidden mt-2 text-sm leading-relaxed text-muted">
-            Có. Bạn cần tạo tài khoản và đăng nhập để làm bài trắc nghiệm. Thông tin hồ sơ và kết quả trắc nghiệm được lưu trong cơ sở dữ liệu của For Your Future, gắn với tài khoản của bạn. Bạn có thể đăng nhập trên thiết bị khác và xem lại kết quả trong mục Hồ sơ.
+            Có. Bạn cần tạo tài khoản và đăng nhập để làm bài trắc nghiệm. Thông tin hồ sơ và kết quả trắc nghiệm được lưu trong cơ sở dữ liệu của For Your Future, gắn với tài khoản của bạn. Bạn có thể xem các kết quả đã đồng bộ trong mục Hồ sơ.
           </div>
         </div>
 
