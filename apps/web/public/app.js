@@ -935,7 +935,7 @@ function renderHome(container) {
         <div class="max-w-xl">
           <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-xs font-semibold uppercase tracking-wider text-cyan-soft mb-3">
             <i data-lucide="sparkles" class="size-3.5 text-cyan"></i>
-            GraphRAG + Ollama API (qwen2.5:7b)
+            Google Gemini Flash-Lite
           </div>
           <h2 class="font-display text-xl sm:text-2xl font-bold tracking-tight text-white">
             Nhận chiến lược phân bổ nguyện vọng Reach – Target – Safe
@@ -4687,7 +4687,7 @@ function renderAdmin(container) {
         <p class="text-xs font-semibold uppercase tracking-[0.18em] text-azure">Quản trị & Giám sát</p>
         <h1 class="mt-2 font-display text-3xl sm:text-4xl font-semibold text-navy">Bảng điều khiển & Giám sát hệ thống</h1>
         <p class="mt-3 max-w-2xl text-muted text-sm sm:text-base leading-relaxed">
-          Kiểm tra trực tiếp kết nối CSDL PostgreSQL (Aiven Cloud SSL), Knowledge Graph Neo4j, và Ollama LLM Engine theo kiến trúc Zero-Hallucination.
+          Kiểm tra kết nối PostgreSQL và Neo4j, đồng thời xem mô hình đang dùng cho trợ lý hướng nghiệp.
         </p>
         <button id="btn-admin-probe" class="mt-6 px-5 py-2.5 rounded-[12px] bg-navy text-paper font-semibold text-xs shadow-border hover:bg-navy-deep cta-glow transition flex items-center gap-2">
           <i data-lucide="activity" class="size-4 text-cyan-soft"></i>
@@ -4719,11 +4719,10 @@ function renderAdmin(container) {
 
         <div class="rounded-[20px] bg-card p-5 shadow-border border border-line">
           <div class="flex items-center justify-between mb-3">
-            <span class="text-xs font-bold text-azure uppercase tracking-wider">AI Consultation</span>
-            <span id="health-ollama-badge" class="px-2 py-0.5 rounded-full text-[10px] font-bold text-muted">Chưa kiểm tra</span>
+            <span class="text-xs font-bold text-azure uppercase tracking-wider">Tư vấn AI</span>
           </div>
-          <h3 class="font-display font-bold text-lg text-navy">Ollama API (Local LLM)</h3>
-          <p class="text-xs text-muted mt-1">Grounding: Sub-graph</p>
+          <h3 class="font-display font-bold text-lg text-navy">Google Gemini Flash-Lite</h3>
+          <p class="text-xs text-muted mt-1">Mô hình tạo phản hồi cho trợ lý hướng nghiệp.</p>
         </div>
 
         <div class="rounded-[20px] bg-card p-5 shadow-border border border-line">
@@ -4762,7 +4761,7 @@ Bấm kiểm tra để xem trạng thái của từng dịch vụ.
       offline: 'Ngoại tuyến',
       not_checked: 'Chưa kiểm tra',
     };
-    for (const [id, service] of [['pg', data.database], ['neo4j', data.neo4j], ['ollama', data.ollama]]) {
+    for (const [id, service] of [['pg', data.database], ['neo4j', data.neo4j]]) {
       const badge = document.getElementById(`health-${id}-badge`);
       if (!badge) continue;
       const isHealthy = service?.status === 'healthy';
@@ -4788,7 +4787,10 @@ Bấm kiểm tra để xem trạng thái của từng dịch vụ.
         const res = await fetch('/api/v1/admin/health');
         const data = await res.json();
         if (!data.database) throw new Error(`HTTP ${res.status}`);
-        if (log) log.textContent = JSON.stringify(data, null, 2);
+        if (log) {
+          const {status, database, neo4j} = data;
+          log.textContent = JSON.stringify({status, database, neo4j}, null, 2);
+        }
 
         updateHealthCards(data);
         if (!res.ok) showToast('Cơ sở dữ liệu tạm thời không khả dụng.', 'error');
