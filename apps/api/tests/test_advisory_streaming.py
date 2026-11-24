@@ -124,6 +124,83 @@ async def test_chat_retry_prefers_native_protocol(monkeypatch):
 
 
 @pytest.mark.asyncio
+async def test_complete_response_uses_native_json_and_skips_thought(monkeypatch):
+    requests = []
+
+    def reply(request):
+        requests.append(request)
+        return httpx.Response(200, json={"candidates": [{
+            "finishReason": "STOP",
+            "content": {"parts": [
+                {"text": "Không hiển thị", "thought": True},
+                {"text": "Trả lời "},
+                {"text": "đầy đủ."},
+            ]},
+        }]})
+
+    client = httpx.AsyncClient(transport=httpx.MockTransport(reply))
+    monkeypatch.setattr(llm_service.httpx, "AsyncClient", lambda **kwargs: client)
+    tokens = llm_service.stream_gemini_messages(
+        [{"role": "user", "content": "Tìm hiểu xét tuyển"}], complete_response=True,
+    )
+    assert [token async for token in tokens] == ["Trả lời đầy đủ."]
+    assert len(requests) == 1 and requests[0].url.path.endswith(":generateContent")
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("backup_finished", [True, False])
+async def test_complete_response_never_yields_partial_attempts(monkeypatch, backup_finished):
+    paths = []
+
+    def reply(request):
+        paths.append(request.url.path)
+        if len(paths) == 1:
+            return httpx.Response(200, json={"candidates": [{
+                "finishReason": "MAX_TOKENS",
+                "content": {"parts": [{"text": "Câu trả lời dang dở"}]},
+            }]})
+        frames = [
+            sse({"choices": [{"delta": {"content": "Kết quả "}}]}),
+            sse({"choices": [{"delta": {"content": "đầy đủ."}}]}),
+        ]
+        if backup_finished:
+            frames.append(sse({"choices": [{"delta": {}, "finish_reason": "stop"}]}))
+        return httpx.Response(200, stream=GeminiChunks(*frames))
+
+    client = httpx.AsyncClient(transport=httpx.MockTransport(reply))
+    monkeypatch.setattr(llm_service.httpx, "AsyncClient", lambda **kwargs: client)
+    tokens = llm_service.stream_gemini_messages(
+        [{"role": "user", "content": "So sánh các trường"}], complete_response=True,
+    )
+    async with aclosing(tokens):
+        if backup_finished:
+            assert [token async for token in tokens] == ["Kết quả đầy đủ."]
+        else:
+            with pytest.raises(llm_service.GeminiStreamInterrupted, match="connection"):
+                await anext(tokens)
+    assert len(paths) == 2 and paths[-1].endswith("/chat/completions")
+
+
+@pytest.mark.asyncio
+async def test_complete_response_does_not_retry_a_safety_block(monkeypatch):
+    paths = []
+
+    def reply(request):
+        paths.append(request.url.path)
+        return httpx.Response(200, json={"promptFeedback": {"blockReason": "SAFETY"}})
+
+    client = httpx.AsyncClient(transport=httpx.MockTransport(reply))
+    monkeypatch.setattr(llm_service.httpx, "AsyncClient", lambda **kwargs: client)
+    tokens = llm_service.stream_gemini_messages(
+        [{"role": "user", "content": "Câu hỏi bị chặn"}], complete_response=True,
+    )
+    async with aclosing(tokens):
+        with pytest.raises(llm_service.GeminiStreamInterrupted, match="blocked"):
+            await anext(tokens)
+    assert len(paths) == 1
+
+
+@pytest.mark.asyncio
 async def test_empty_recommendations_report_missing_matches_without_streaming_gemini(monkeypatch):
     from app.agent import service
 

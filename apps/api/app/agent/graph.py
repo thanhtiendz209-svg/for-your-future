@@ -10,6 +10,7 @@ from typing import Dict, Any, List, Optional
 from langgraph.graph import StateGraph, END
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.types import StreamWriter
+from app.modules.graphrag.lookup_fallback import build_lookup_fallback
 
 from .state import AgentState
 from .intent_classifier import classify_intent
@@ -118,11 +119,13 @@ async def _write_gemini_answer(
     max_tokens: int,
     fallback: str = "",
     prefer_native: bool = False,
+    complete_response: bool = False,
 ) -> str:
     parts = []
     try:
         async for token in stream_gemini_messages(
-            messages, temperature=temperature, max_tokens=max_tokens, prefer_native=prefer_native
+            messages, temperature=temperature, max_tokens=max_tokens,
+            prefer_native=prefer_native, complete_response=complete_response,
         ):
             parts.append(token)
             writer({"type": "token", "token": token})
@@ -168,6 +171,7 @@ async def node_ask_clarification(state: AgentState, writer: StreamWriter) -> Dic
         writer, [{"role": "user", "content": prompt}],
         temperature=0.4, max_tokens=350, fallback=fallback,
         prefer_native=state.get("prefer_native", False),
+        complete_response=state.get("complete_response", False),
     )
 
     return {
@@ -313,6 +317,7 @@ async def node_chitchat(state: AgentState, writer: StreamWriter) -> Dict[str, An
         writer, messages, temperature=0.5, max_tokens=200,
         fallback="Chào bạn! Mình có thể giúp bạn tìm ngành, tra cứu trường và chuẩn bị nguyện vọng. Bạn muốn tìm hiểu điều gì?",
         prefer_native=state.get("prefer_native", False),
+        complete_response=state.get("complete_response", False),
     )
     return {"final_text": reply}
 
@@ -501,12 +506,21 @@ async def node_lookup_info(state: AgentState, writer: StreamWriter) -> Dict[str,
         f"Câu hỏi của học sinh:\n\"{prompt}\""
     )
 
-    reply = await _write_gemini_answer(
-        writer,
-        [{"role": "system", "content": sys_prompt}, {"role": "user", "content": user_content}],
-        temperature=0.35, max_tokens=1500,
-        prefer_native=state.get("prefer_native", False),
-    )
+    complete_response = state.get("complete_response", False)
+    try:
+        reply = await _write_gemini_answer(
+            writer,
+            [{"role": "system", "content": sys_prompt}, {"role": "user", "content": user_content}],
+            temperature=0.35, max_tokens=1500,
+            prefer_native=state.get("prefer_native", False), complete_response=complete_response,
+        )
+    except GeminiStreamInterrupted as error:
+        if not complete_response or error.reason not in ("busy", "timeout", "connection", "length"):
+            raise
+        reply = build_lookup_fallback(
+            lookup_data, university_requested=bool(uni_code or uni_name), major_requested=bool(major_kws),
+        )
+        logger.info("Recovered interrupted lookup with retrieved data: reason=%s", error.reason)
     return {"final_text": reply, "clarification_question": None}
 
 

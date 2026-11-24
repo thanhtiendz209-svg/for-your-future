@@ -1,7 +1,9 @@
 """Account-owned conversations, reusing the existing grounded recommendation stream."""
+import asyncio
 import json
 from contextlib import aclosing
 from uuid import UUID, uuid4
+from anyio import CancelScope
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
@@ -17,6 +19,58 @@ from app.modules.graphrag.router import extract_user_profile_data
 
 logger = logging.getLogger("graphrag.history_router")
 router=APIRouter(prefix='/chat/sessions',tags=['Chat history'])
+SSE_KEEPALIVE_SECONDS = 8.0
+
+
+class AccountChatResponse(StreamingResponse):
+    async def stream_response(self, send):
+        try:
+            await super().stream_response(send)
+        finally:
+            # A disconnect can interrupt the send of an already-yielded frame.
+            with CancelScope(shield=True):
+                await self.body_iterator.aclose()
+
+
+async def advisory_items_with_keepalive(flow):
+    items = asyncio.Queue(maxsize=1)
+
+    async def consume():
+        try:
+            async with aclosing(flow):
+                async for item in flow:
+                    await items.put(item)
+        except Exception as error:
+            await items.put(error)
+        else:
+            await items.put(None)
+
+    # Run the upstream iterator in one task so streaming contexts stay in their owning task.
+    producer = asyncio.create_task(consume())
+    loop = asyncio.get_running_loop()
+    heartbeat_at = loop.time() + SSE_KEEPALIVE_SECONDS
+    try:
+        while True:
+            remaining = heartbeat_at - loop.time()
+            if remaining <= 0:
+                yield None
+                heartbeat_at = loop.time() + SSE_KEEPALIVE_SECONDS
+                continue
+            try:
+                item = await asyncio.wait_for(items.get(), timeout=remaining)
+            except asyncio.TimeoutError:
+                if producer.done():
+                    producer.result()
+                continue
+            if item is None:
+                return
+            if isinstance(item, Exception):
+                raise item
+            yield item
+    finally:
+        producer.cancel()
+        with CancelScope(shield=True):
+            await asyncio.gather(producer, return_exceptions=True)
 
 class MessageRequest(BaseModel):
     prompt: str=Field(...,min_length=1,max_length=6000)
@@ -132,9 +186,13 @@ async def send(sid: str, req: MessageRequest, user=Depends(get_current_user), db
                     history=history_data + [{'role': 'user', 'content': prompt}],
                     profile_data=profile_data,
                     prefer_native=prefer_native,
+                    complete_response=True,
                 )
-                async with aclosing(flow):
-                    async for item in flow:
+                async with aclosing(advisory_items_with_keepalive(flow)) as items:
+                    async for item in items:
+                        if item is None:
+                            yield ': keepalive\n\n'
+                            continue
                         kind = item.get('type')
                         if kind == 'token':
                             parts.append(item['token'])
@@ -192,7 +250,7 @@ async def send(sid: str, req: MessageRequest, user=Depends(get_current_user), db
         for frame in completed_events(answer, details):
             yield frame
 
-    return StreamingResponse(
+    return AccountChatResponse(
         events(), media_type='text/event-stream',
         headers={'Cache-Control': 'no-cache, no-transform', 'X-Accel-Buffering': 'no'},
     )
