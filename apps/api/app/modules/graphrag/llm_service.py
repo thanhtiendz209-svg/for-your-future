@@ -8,6 +8,7 @@ import os
 import json
 import asyncio
 import logging
+from contextlib import aclosing
 from typing import AsyncGenerator, List, Optional, Dict, Any
 import httpx
 from app.core.config import settings
@@ -31,6 +32,9 @@ logger = logging.getLogger("graphrag.llm")
 GEMINI_API_KEY: str = settings.GEMINI_API_KEY
 GEMINI_MODEL: str = settings.GEMINI_MODEL
 GEMINI_OPENAI_URL: str = settings.GEMINI_OPENAI_BASE_URL.rstrip("/") + "/chat/completions"
+
+BLOCKED_FINISH_REASONS = {"content_filter", "SAFETY", "RECITATION", "BLOCKLIST", "PROHIBITED_CONTENT", "SPII"}
+RETRYABLE_GENERATION_ERRORS = {"connection", "busy", "timeout", "length"}
 
 
 class GeminiStreamInterrupted(Exception):
@@ -93,7 +97,7 @@ async def _gemini_sse(client, url, headers, body, *, native=False) -> AsyncGener
                 if finish in ("stop", "STOP"):
                     finished = True
                     break
-                if finish in ("content_filter", "SAFETY", "RECITATION", "BLOCKLIST", "PROHIBITED_CONTENT", "SPII"):
+                if isinstance(finish, str) and finish in BLOCKED_FINISH_REASONS:
                     raise GeminiStreamInterrupted("blocked")
                 if finish and finish != "FINISH_REASON_UNSPECIFIED":
                     safe_finish = finish if isinstance(finish, str) and len(finish) <= 48 and finish.replace("_", "").isalnum() else "unknown"
@@ -115,12 +119,64 @@ async def _gemini_sse(client, url, headers, body, *, native=False) -> AsyncGener
         raise GeminiStreamInterrupted("connection")
 
 
+async def _read_complete_native_answer(client, url, headers, body) -> str:
+    response = await client.post(url, headers=headers, json=body)
+    if response.status_code in (429, 503):
+        raise GeminiStreamInterrupted("busy")
+    response.raise_for_status()
+    data = response.json()
+    if error := data.get("error"):
+        raise GeminiStreamInterrupted("busy" if error.get("code") in (429, 503) else "connection")
+    if (data.get("promptFeedback") or {}).get("blockReason"):
+        raise GeminiStreamInterrupted("blocked")
+    candidates = data.get("candidates") or []
+    if not candidates:
+        raise GeminiStreamInterrupted("connection")
+    candidate = candidates[0]
+    finish = candidate.get("finishReason")
+    if finish == "MAX_TOKENS":
+        raise GeminiStreamInterrupted("length")
+    if isinstance(finish, str) and finish in BLOCKED_FINISH_REASONS:
+        raise GeminiStreamInterrupted("blocked")
+    text = "".join(part.get("text") or "" for part in (candidate.get("content") or {}).get("parts", [])
+                   if not part.get("thought"))
+    if finish != "STOP" or not text.strip():
+        raise GeminiStreamInterrupted("connection")
+    return text
+
+
+async def _complete_gemini_response(client, compatibility_body, native_body) -> str:
+    # The site already displays a whole answer. Keep partial attempts internal.
+    for native, seconds in ((True, 24), (False, 18)):
+        protocol = "native JSON" if native else "compatibility SSE"
+        try:
+            async with asyncio.timeout(seconds):
+                if native:
+                    url = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent"
+                    return await _read_complete_native_answer(client, url, {"x-goog-api-key": GEMINI_API_KEY}, native_body)
+                headers = {"Authorization": f"Bearer {GEMINI_API_KEY}"}
+                async with aclosing(_gemini_sse(client, GEMINI_OPENAI_URL, headers, compatibility_body)) as stream:
+                    return "".join([part async for part in stream])
+        except GeminiStreamInterrupted as error:
+            reason = error.reason
+        except (TimeoutError, httpx.TimeoutException):
+            reason = "timeout"
+        except (ValueError, AttributeError, TypeError, httpx.HTTPError):
+            reason = "connection"
+        logger.warning("Gemini complete answer interrupted via %s: reason=%s", protocol, reason)
+        if not native or reason not in RETRYABLE_GENERATION_ERRORS:
+            raise GeminiStreamInterrupted(reason)
+        if reason == "busy":
+            await asyncio.sleep(0.8)
+
+
 async def stream_gemini_messages(
     messages: List[Dict[str, str]],
     temperature: float = 0.3,
     max_tokens: int = 1500,
     *,
     prefer_native: bool = False,
+    complete_response: bool = False,
 ) -> AsyncGenerator[str, None]:
     """Switch protocols at most once, before any visible text has been sent."""
     compatibility_body = {
@@ -144,6 +200,10 @@ async def stream_gemini_messages(
     system = "\n".join(message["content"] for message in messages if message["role"] == "system")
     if system:
         native_body["systemInstruction"] = {"parts": [{"text": system}]}
+    if complete_response:
+        async with httpx.AsyncClient(timeout=httpx.Timeout(25.0, connect=8.0)) as client:
+            yield await _complete_gemini_response(client, compatibility_body, native_body)
+        return
     attempts = [
         (GEMINI_OPENAI_URL, {"Authorization": f"Bearer {GEMINI_API_KEY}"}, compatibility_body, False),
         (native_url, {"x-goog-api-key": GEMINI_API_KEY}, native_body, True),
@@ -425,6 +485,7 @@ async def stream_portfolio_tokens(
     slots: Optional[Dict[str, Any]] = None,
     *,
     prefer_native: bool = False,
+    complete_response: bool = False,
 ) -> AsyncGenerator[str, None]:
     prompt = build_portfolio_system_prompt(portfolio, user_prompt, slots=slots)
     messages = [
@@ -433,7 +494,9 @@ async def stream_portfolio_tokens(
     ]
     has_text = False
     try:
-        async for token in stream_gemini_messages(messages, temperature=0.3, prefer_native=prefer_native):
+        async for token in stream_gemini_messages(
+            messages, temperature=0.3, prefer_native=prefer_native, complete_response=complete_response,
+        ):
             has_text = has_text or bool(token.strip())
             yield token
     except GeminiStreamInterrupted as error:

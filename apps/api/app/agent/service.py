@@ -41,6 +41,7 @@ class CareerAdvisoryService:
         profile_data: Optional[Dict[str, Any]] = None,
         *,
         prefer_native: bool = False,
+        complete_response: bool = False,
     ) -> AsyncGenerator[Dict[str, Any], None]:
         """Forward text during graph execution and report incomplete generations."""
         graph_config = {"configurable": {"thread_id": session_id}}
@@ -51,6 +52,7 @@ class CareerAdvisoryService:
             "messages": history or [],
             "profile_data": profile_data,
             "prefer_native": prefer_native,
+            "complete_response": complete_response,
         }
         logger.info("[CareerAdvisoryService] Running flow for session_id=%s", session_id)
         parts = []
@@ -86,7 +88,9 @@ class CareerAdvisoryService:
                 }}
                 yield {"type": "portfolio", "data": portfolio}
                 target_portfolio = final_state.get("portfolio_obj") or portfolio
-                tokens = stream_portfolio_tokens(target_portfolio, prompt, slots=slots, prefer_native=prefer_native)
+                tokens = stream_portfolio_tokens(
+                    target_portfolio, prompt, slots=slots, prefer_native=prefer_native, complete_response=complete_response,
+                )
                 async with aclosing(tokens):
                     async for token in tokens:
                         parts.append(token)
@@ -121,7 +125,10 @@ class CareerAdvisoryService:
                         )},
                         {"role": "user", "content": f"Câu hỏi của học sinh: {prompt}"},
                     ]
-                    tokens = stream_gemini_messages(messages, temperature=0.35, max_tokens=1000, prefer_native=prefer_native)
+                    tokens = stream_gemini_messages(
+                        messages, temperature=0.35, max_tokens=1000,
+                        prefer_native=prefer_native, complete_response=complete_response,
+                    )
                     async with aclosing(tokens):
                         async for token in tokens:
                             parts.append(token)
