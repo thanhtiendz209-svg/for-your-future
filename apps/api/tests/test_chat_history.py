@@ -148,6 +148,33 @@ class ChatTests(unittest.TestCase):
   self.assertIn('[DONE]', self.client.post(path, json={'prompt': 'Hello'}).text)
   self.assertEqual(self.client.post(path, json=body).status_code, 409)
 
+ def test_interrupted_portfolio_returns_verified_programs_as_one_saved_answer(self):
+  path = f'/api/v1/chat/sessions/{self.create()}/messages'
+  program = {
+   'program_name': 'Ngành có dữ liệu',
+   'university_name': 'Trường có dữ liệu',
+   'admission_score': 26.5,
+   'score_margin': 0.5,
+  }
+  portfolio = {'type': 'portfolio', 'data': {'reach': [], 'target': [program], 'safe': []}}
+
+  async def flow(**kwargs):
+   yield {'type': 'intent', 'data': {'student_score': 27, 'subject_group': 'A00'}}
+   yield portfolio
+   yield {'type': 'token', 'token': 'Nội dung dở dang'}
+   yield {'type': 'interrupted', 'reason': 'busy'}
+
+  with patch('app.modules.consultation.history_router.career_advisory_service.run_advisory_flow', new=flow):
+   response = self.client.post(path + '/stream', json={'prompt': '27 điểm A00 nên học ngành nào?'})
+  self.assertIn('[DONE]', response.text)
+  self.assertEqual(response.text.count('"type": "token"'), 1)
+  self.assertNotIn('Nội dung dở dang', response.text)
+  messages = self.client.get(path).json()
+  self.assertEqual([message['role'] for message in messages], ['user', 'assistant'])
+  self.assertIn('Ngành có dữ liệu', messages[-1]['content'])
+  self.assertIn('27 điểm tổ hợp A00', messages[-1]['content'])
+  self.assertEqual(messages[-1]['evidence'], [portfolio])
+
  def test_followup_overrides_city_and_keeps_prior_score(self):
   from app.modules.graphrag.profile_context import build_profile_intent
   p=SimpleNamespace(academic={'subject_scores':{}},background={},health={},gender='Other',latest_riasec={'result_code':'RIA'},latest_mbti=None)
