@@ -5009,7 +5009,12 @@ async function renderConsultation(container, param) {
   const current=()=>version===chatRuntime.version&&state.currentUser?.user_id===owner&&state.authToken===token&&container.isConnected&&window.location.hash.startsWith('#tu-van');
   const api=async(path,options={})=>{
     const r=await fetch('/api/v1/chat/sessions'+path,{...options,headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`}});
-    if(!r.ok){const error=await r.json().catch(()=>({}));throw new Error(typeof error.detail==='string'?error.detail:'Không thể tải cuộc trò chuyện. Vui lòng thử lại.');}
+    if(!r.ok){
+      const error=await r.json().catch(()=>({}));
+      const failure=new Error(typeof error.detail==='string'?error.detail:'Không thể tải cuộc trò chuyện. Vui lòng thử lại.');
+      failure.status=r.status;
+      throw failure;
+    }
     return r;
   };
   const rawName=state.currentUser.first_name||state.currentUser.name||state.currentUser.full_name||'';
@@ -5259,7 +5264,9 @@ async function renderConsultation(container, param) {
       stopped: 'Đã dừng phản hồi.',
       length: 'Câu trả lời vượt giới hạn độ dài. Bạn có thể hỏi cụ thể hơn.',
       busy: 'Trợ lý đang bận. Bạn có thể thử lại sau.',
+      timeout: 'Trợ lý mất quá nhiều thời gian để phản hồi. Bạn có thể thử lại.',
       blocked: 'Trợ lý đã dừng phản hồi. Bạn có thể diễn đạt câu hỏi rõ hơn.',
+      superseded: 'Cuộc trò chuyện đã thay đổi. Hãy mở lại lịch sử để đồng bộ.',
     };
     return labels[reason] || 'Kết nối bị gián đoạn. Vui lòng thử lại.';
   }
@@ -5297,6 +5304,21 @@ async function renderConsultation(container, param) {
     log.append(row);
     return body;
   }
+  function updateChatRetryButton() {
+    log.querySelector('.chat-retry-button')?.remove();
+    const question = chatRuntime.messages.at(-1);
+    const row = log.lastElementChild;
+    if (chatRuntime.busy || question?.role !== 'user' || !question.message_id || !row?.classList.contains('chat-message-user')) return;
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'chat-retry-button';
+    button.title = 'Thử lại';
+    button.setAttribute('aria-label', 'Thử lại câu hỏi này');
+    button.innerHTML = '<i data-lucide="rotate-ccw" aria-hidden="true"></i>';
+    button.addEventListener('click', () => sendChatPrompt(question.content, question));
+    row.append(button);
+    refreshIcons();
+  }
   function drawMessages(){
     log.replaceChildren();
     setConversationMode();
@@ -5304,6 +5326,7 @@ async function renderConsultation(container, param) {
       log.innerHTML=`<div class="chat-welcome"><span class="chat-welcome-icon" aria-hidden="true"><i data-lucide="compass" class="size-6"></i></span><p class="chat-welcome-greeting">${greetingName?`Chào ${esc(greetingName)},`:'Chào bạn,'}</p><h2>Hôm nay, bạn muốn khám phá điều gì?</h2><p class="chat-welcome-description">Cùng bạn tìm ngành phù hợp, chọn trường và chuẩn bị cho hướng đi tiếp theo.</p></div>`;
       refreshIcons();
     }else chatRuntime.messages.forEach(appendMessage);
+    updateChatRetryButton();
     resizeInput();
     log.scrollTop=log.scrollHeight;
   }
@@ -5320,13 +5343,15 @@ async function renderConsultation(container, param) {
   container.querySelector('#chat-new-shortcut').onclick=()=>container.querySelector('#chat-new').click();
   container.querySelector('#chat-stop').onclick=()=>chatRuntime.controller?.abort();
   input.addEventListener('keydown',event=>{if(event.key==='Enter'&&!event.shiftKey&&!event.isComposing){event.preventDefault();container.querySelector('#chat-form').requestSubmit();}});
-  async function sendChatPrompt(prompt) {
+  async function sendChatPrompt(prompt, retryQuestion = null) {
     if (!prompt || chatRuntime.busy) return;
+    if (retryQuestion && (!chatRuntime.sessionId || chatRuntime.messages.at(-1) !== retryQuestion)) return;
     ++selection;
     chatRuntime.busy = true;
     error.textContent = '';
+    updateChatRetryButton();
     controls();
-    const targetYear = Number(container.querySelector('#chat-year').value);
+    const targetYear = retryQuestion?.target_year ?? Number(container.querySelector('#chat-year').value);
     let assistant = null, bubble = null, reply = '', portfolio = null;
     const controller = new AbortController();
     chatRuntime.controller = controller;
@@ -5343,11 +5368,13 @@ async function renderConsultation(container, param) {
         drawSidebar();
       }
       log.querySelector('.chat-welcome')?.remove();
-      const userMessage = {role: 'user', content: prompt};
-      chatRuntime.messages.push(userMessage);
-      setConversationMode();
-      appendMessage(userMessage);
-      if (input.value.trim() === prompt) input.value = '';
+      const userMessage = retryQuestion || {role: 'user', content: prompt, message_id: crypto.randomUUID(), target_year: targetYear};
+      if (!retryQuestion) {
+        chatRuntime.messages.push(userMessage);
+        setConversationMode();
+        appendMessage(userMessage);
+        if (input.value.trim() === prompt) input.value = '';
+      }
       resizeInput();
 
       assistant = {role: 'assistant', content: ''};
@@ -5361,7 +5388,7 @@ async function renderConsultation(container, param) {
 
       const response = await api('/' + encodeURIComponent(chatRuntime.sessionId) + '/messages/stream', {
         method: 'POST',
-        body: JSON.stringify({prompt, target_year: targetYear}),
+        body: JSON.stringify({prompt, target_year: targetYear, message_id: userMessage.message_id}),
         signal: controller.signal,
       });
       const reader = response.body.getReader();
@@ -5411,7 +5438,7 @@ async function renderConsultation(container, param) {
       if (!doneSignal || !reply.trim()) interruption ||= 'connection';
       if (current()) refreshSessions().catch(() => {});
     } catch (requestError) {
-      if (bubble) interruption ||= controller.signal.aborted ? 'stopped' : 'connection';
+      if (bubble) interruption ||= controller.signal.aborted ? 'stopped' : requestError.status === 409 ? 'superseded' : 'connection';
       else if (current()) error.textContent = controller.signal.aborted ? chatFailureMessage('stopped') : requestError.message;
     } finally {
       if (current()) {
@@ -5435,6 +5462,7 @@ async function renderConsultation(container, param) {
             }
           }
         }
+        if (interruption !== 'superseded') updateChatRetryButton();
         controls();
         resizeInput();
       }

@@ -739,6 +739,26 @@ body.chat-page-active { height: 100dvh; min-height: 0; overflow: hidden; }
 .chat-message-user { width: fit-content; max-width: 85%; margin-left: auto; }
 .chat-message-user .chat-message-label { justify-content: flex-end; }
 .chat-message-user .chat-message-text { padding: 13px 20px; border-radius: 22px 22px 6px 22px; background: var(--color-mist); }
+.chat-retry-button {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin: 2px 0 -10px auto;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--color-muted);
+  cursor: pointer;
+  opacity: .8;
+}
+.chat-retry-button svg { width: 16px; height: 16px; }
+.chat-retry-button:hover, .chat-retry-button:focus-visible {
+  background: var(--color-ice);
+  color: var(--color-azure);
+  opacity: 1;
+}
+.chat-retry-button:focus-visible { outline: 2px solid var(--color-azure); outline-offset: 2px; }
 .chat-message-assistant .chat-message-text { padding: 0; white-space: normal; }
 .chat-thinking { display: inline-block; color: var(--color-muted); font-weight: 500; }
 .chat-message-status { color: var(--color-muted); }
