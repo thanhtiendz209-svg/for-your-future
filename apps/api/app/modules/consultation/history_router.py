@@ -12,6 +12,7 @@ from app.core.models_db import ChatSession, ChatMessage, StudentProfile
 from app.modules.auth.service import get_current_user
 import logging
 from app.agent.service import career_advisory_service
+from app.modules.graphrag.llm_service import fallback_portfolio_text
 from app.modules.graphrag.router import extract_user_profile_data
 
 logger = logging.getLogger("graphrag.history_router")
@@ -152,13 +153,24 @@ async def send(sid: str, req: MessageRequest, user=Depends(get_current_user), db
             reason = 'connection'
 
         answer = ''.join(parts).strip()
+        evidence = [item for item in details if item['type'] == 'portfolio']
+        if reason in ('busy', 'timeout', 'connection', 'length') and evidence:
+            intent = next((item['data'] for item in details if item['type'] == 'intent'), {})
+            lines = fallback_portfolio_text(evidence[-1]['data'], {
+                'student_score': intent.get('student_score'),
+                'student_group_code': intent.get('subject_group'),
+            })
+            if lines:
+                logger.info("Recovered interrupted advisory using verified portfolio: reason=%s", reason)
+                answer = ''.join(lines).strip()
+                completed = True
+                reason = None
         if reason or not completed or not answer:
             logger.warning("Advisory stream interrupted: reason=%s, has_text=%s, completed=%s",
                            reason or 'connection', bool(answer), completed)
             yield event({'type': 'interrupted', 'reason': reason or 'connection'})
             return
 
-        evidence = [item for item in details if item['type'] == 'portfolio']
         try:
             with SessionLocal() as save:
                 # A retry may overlap with the previous request finishing after the client lost its connection.

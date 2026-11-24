@@ -124,6 +124,30 @@ async def test_chat_retry_prefers_native_protocol(monkeypatch):
 
 
 @pytest.mark.asyncio
+async def test_empty_recommendations_report_missing_matches_without_streaming_gemini(monkeypatch):
+    from app.agent import service
+
+    async def graph_result(*args, **kwargs):
+        yield "values", {
+            "intent": "RECOMMEND",
+            "slots": {"student_score": 27.0, "student_group_code": "A00", "preferred_city": "TP.HCM"},
+            "portfolio": {"reach": [], "target": [], "safe": []},
+            "final_text": "READY_FOR_PORTFOLIO_STREAM",
+        }
+
+    def unexpected_gemini(*args, **kwargs):
+        pytest.fail("The answer should report the empty recommendation result directly")
+
+    advisor = CareerAdvisoryService()
+    monkeypatch.setattr(advisor.app, "astream", graph_result)
+    monkeypatch.setattr(service, "stream_gemini_messages", unexpected_gemini)
+    events = [item async for item in advisor.run_advisory_flow("Tôi thi 27 điểm A00 ở HCM nên học ngành và trường nào")]
+    assert [event["type"] for event in events] == ["token", "done"]
+    assert "27 điểm, tổ hợp A00, TP.HCM" in events[0]["token"]
+    assert "#huong-nghiep" in events[0]["token"]
+
+
+@pytest.mark.asyncio
 async def test_lookup_yields_first_text_while_gemini_is_still_generating(monkeypatch):
     allow_finish = asyncio.Event()
     observed = []

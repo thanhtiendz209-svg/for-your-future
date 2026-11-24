@@ -93,6 +93,23 @@ class CareerAdvisoryService:
                         yield {"type": "token", "token": token}
             elif not parts:
                 reply = final_state.get("final_text")
+                if intent == "RECOMMEND" and reply == "READY_FOR_PORTFOLIO_STREAM":
+                    score = slots.get("student_score")
+                    group = slots.get("student_group_code")
+                    city = slots.get("preferred_city")
+                    filters = [
+                        f"{score:g} điểm" if isinstance(score, (int, float)) else None,
+                        f"tổ hợp {group}" if group else None,
+                        city,
+                    ]
+                    criteria = ", ".join(value for value in filters if value)
+                    reply = (
+                        "Dữ liệu tuyển sinh hiện tại chưa xác nhận được trường và ngành phù hợp"
+                        + (f" với {criteria}." if criteria else ".")
+                        + "\n\nBạn có thể xem điểm chuẩn theo khu vực và phương thức trong "
+                        "[Bộ lọc tuyển sinh](https://foryourfuture.vercel.app/#huong-nghiep), "
+                        "rồi đối chiếu tổ hợp và điều kiện trong đề án của từng trường."
+                    )
                 if reply and reply != "READY_FOR_PORTFOLIO_STREAM":
                     parts.append(reply)
                     yield {"type": "token", "token": reply}

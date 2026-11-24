@@ -366,15 +366,14 @@ def build_portfolio_system_prompt(
     return prompt
 
 
-def _fallback_portfolio_text(
+def fallback_portfolio_text(
     portfolio: Any, slots: Optional[Dict[str, Any]] = None
 ) -> List[str]:
-    """Bộ sinh Grounded In-Context cục bộ nếu mất mạng hoàn toàn"""
-    score = 25.0
-    group = "A00"
+    """Format the actual retrieved programs when generated advice is unavailable."""
+    score = group = None
     if slots:
-        score = slots.get("student_score", score)
-        group = slots.get("student_group_code", group)
+        score = slots.get("student_score")
+        group = slots.get("student_group_code")
     elif portfolio and hasattr(portfolio, "extracted_intent") and portfolio.extracted_intent:
         score = portfolio.extracted_intent.student_score
         group = portfolio.extracted_intent.student_group_code
@@ -383,9 +382,13 @@ def _fallback_portfolio_text(
     target_list = (portfolio.get("target") or portfolio.get("target_programs") or []) if isinstance(portfolio, dict) else (getattr(portfolio, "target_programs", []) or [])
     safe_list = (portfolio.get("safe") or portfolio.get("safe_programs") or []) if isinstance(portfolio, dict) else (getattr(portfolio, "safe_programs", []) or [])
 
+    if not (reach_list or target_list or safe_list):
+        return []
+    details = f" cho {score:g} điểm tổ hợp {group}" if isinstance(score, (int, float)) and group else ""
     lines = [
-        f"Chào bạn! Dựa trên phân tích từ Knowledge Graph và điểm số {score} khối {group}:\n\n",
-        "### 🎯 Phân bổ Chiến lược Nguyện vọng 3 Tầng:\n"
+        "Trợ lý AI đang gián đoạn. Dưới đây là gợi ý tham khảo từ dữ liệu tuyển sinh đã tra cứu"
+        f"{details}.\n\n",
+        "### Gợi ý nguyện vọng\n",
     ]
 
     def _get_name_and_margin(p):
@@ -411,7 +414,7 @@ def _fallback_portfolio_text(
             prog, uni, bench, margin = _get_name_and_margin(p)
             lines.append(f"- **{prog}** - {uni} (Điểm chuẩn: {bench}, an toàn: +{margin:.2f} điểm)\n")
 
-    lines.append("\nChúc bạn đưa ra quyết định sáng suốt và đạt kết quả cao nhất!")
+    lines.append("\nHãy đối chiếu tổ hợp và điều kiện xét tuyển trong đề án chính thức trước khi đăng ký.")
 
     return lines
 
@@ -436,7 +439,10 @@ async def stream_portfolio_tokens(
     except GeminiStreamInterrupted as error:
         if has_text or error.reason not in ("connection", "busy", "timeout"):
             raise
-        for line in _fallback_portfolio_text(portfolio, slots):
+        lines = fallback_portfolio_text(portfolio, slots)
+        if not lines:
+            raise
+        for line in lines:
             yield line
 
 
