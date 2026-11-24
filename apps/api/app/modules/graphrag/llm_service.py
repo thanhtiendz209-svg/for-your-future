@@ -115,7 +115,7 @@ async def stream_gemini_messages(
         "stream": True,
     }
     has_text = False
-    async with httpx.AsyncClient(timeout=httpx.Timeout(25.0, connect=8.0)) as client:
+    async with httpx.AsyncClient(timeout=httpx.Timeout(25.0, connect=8.0, read=35.0)) as client:
         try:
             async for text in _gemini_sse(client, GEMINI_OPENAI_URL, headers, body):
                 has_text = has_text or bool(text.strip())
