@@ -201,6 +201,32 @@ async def test_complete_response_does_not_retry_a_safety_block(monkeypatch):
 
 
 @pytest.mark.asyncio
+async def test_complete_response_tries_a_different_flash_lite_model_when_busy(monkeypatch):
+    paths = []
+
+    def reply(request):
+        paths.append(request.url.path)
+        if len(paths) == 1:
+            return httpx.Response(503)
+        return httpx.Response(200, json={"candidates": [{
+            "finishReason": "STOP",
+            "content": {"parts": [{"text": "Phản hồi đầy đủ từ Flash-Lite."}]},
+        }]})
+
+    client = httpx.AsyncClient(transport=httpx.MockTransport(reply))
+    monkeypatch.setattr(llm_service.httpx, "AsyncClient", lambda **kwargs: client)
+    monkeypatch.setattr(llm_service, "GEMINI_MODEL", "gemini-flash-lite-latest")
+    tokens = llm_service.stream_gemini_messages(
+        [{"role": "user", "content": "Tìm hiểu xét tuyển"}], complete_response=True,
+    )
+    assert [token async for token in tokens] == ["Phản hồi đầy đủ từ Flash-Lite."]
+    assert paths == [
+        "/v1beta/models/gemini-flash-lite-latest:generateContent",
+        "/v1beta/models/gemini-3.1-flash-lite:generateContent",
+    ]
+
+
+@pytest.mark.asyncio
 async def test_empty_recommendations_report_missing_matches_without_streaming_gemini(monkeypatch):
     from app.agent import service
 

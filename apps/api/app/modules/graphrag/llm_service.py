@@ -32,6 +32,7 @@ logger = logging.getLogger("graphrag.llm")
 GEMINI_API_KEY: str = settings.GEMINI_API_KEY
 GEMINI_MODEL: str = settings.GEMINI_MODEL
 GEMINI_OPENAI_URL: str = settings.GEMINI_OPENAI_BASE_URL.rstrip("/") + "/chat/completions"
+GEMINI_BACKUP_MODEL = "gemini-3.1-flash-lite"
 
 BLOCKED_FINISH_REASONS = {"content_filter", "SAFETY", "RECITATION", "BLOCKLIST", "PROHIBITED_CONTENT", "SPII"}
 RETRYABLE_GENERATION_ERRORS = {"connection", "busy", "timeout", "length"}
@@ -147,12 +148,14 @@ async def _read_complete_native_answer(client, url, headers, body) -> str:
 
 async def _complete_gemini_response(client, compatibility_body, native_body) -> str:
     # The site already displays a whole answer. Keep partial attempts internal.
+    backup_model = None
     for native, seconds in ((True, 24), (False, 18)):
-        protocol = "native JSON" if native else "compatibility SSE"
+        model = GEMINI_MODEL if native else backup_model
+        protocol = f"native JSON ({model})" if model else "compatibility SSE"
         try:
             async with asyncio.timeout(seconds):
-                if native:
-                    url = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent"
+                if model:
+                    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
                     return await _read_complete_native_answer(client, url, {"x-goog-api-key": GEMINI_API_KEY}, native_body)
                 headers = {"Authorization": f"Bearer {GEMINI_API_KEY}"}
                 async with aclosing(_gemini_sse(client, GEMINI_OPENAI_URL, headers, compatibility_body)) as stream:
@@ -167,7 +170,10 @@ async def _complete_gemini_response(client, compatibility_body, native_body) -> 
         if not native or reason not in RETRYABLE_GENERATION_ERRORS:
             raise GeminiStreamInterrupted(reason)
         if reason == "busy":
-            await asyncio.sleep(0.8)
+            if GEMINI_MODEL != GEMINI_BACKUP_MODEL:
+                backup_model = GEMINI_BACKUP_MODEL
+            else:
+                await asyncio.sleep(0.8)
 
 
 async def stream_gemini_messages(
