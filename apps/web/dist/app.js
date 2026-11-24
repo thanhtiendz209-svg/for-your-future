@@ -236,7 +236,8 @@ async function renderRoute() {
   const param = parts[1] || null;
 
   const needsSchoolFit = base === 'tra-cuu-nganh' ||
-    base === 'huong-nghiep' || (base === 'truong-dai-hoc' && !param?.startsWith('uni-'));
+    base === 'huong-nghiep' || (base === 'ho-so' && state.activeProfileTab === 'personal') ||
+    (base === 'truong-dai-hoc' && !param?.startsWith('uni-'));
   const profileRequest = needsSchoolFit ? loadSchoolFitProfile() : null;
   const requiredFiles = routeDataFiles(base, param);
   if (requiredFiles.length) {
@@ -4158,6 +4159,7 @@ async function renderSchoolDetailPage(container, schoolId, encodedProgramId) {
 // ==========================================================================
 function renderProfile(container) {
   const p = state.studentProfile;
+  const province = state.authToken ? activeSchoolFitSession()?.profile?.background?.hometown_province : p.province;
   const tab = state.activeProfileTab || 'tests';
   const hasAnyTest = Boolean(state.results.mbti || state.results.riasec || state.results.bigfive || state.results.cognitive);
 
@@ -4304,10 +4306,7 @@ function renderProfile(container) {
               <label class="block text-xs font-semibold text-muted mb-1">Trường THPT</label>
               <input type="text" id="prof-input-school" value="${p.schoolName || ''}" class="w-full px-3.5 py-2.5 rounded-[12px] border border-line bg-mist text-sm text-ink focus:outline-none focus:border-azure">
             </div>
-            <div>
-              <label class="block text-xs font-semibold text-muted mb-1">Tỉnh / Thành phố quê quán</label>
-              <input type="text" id="prof-input-province" value="${p.province || 'Long An'}" class="w-full px-3.5 py-2.5 rounded-[12px] border border-line bg-mist text-sm text-ink focus:outline-none focus:border-azure">
-            </div>
+            ${provincePickerMarkup('prof-input-province', province)}
             <div>
               <label class="block text-xs font-semibold text-muted mb-1">Khu vực ưu tiên (Quy chế tuyển sinh 2025)</label>
               <select id="prof-input-zone" class="w-full px-3.5 py-2.5 rounded-[12px] border border-line bg-mist text-sm text-ink focus:outline-none focus:border-azure">
@@ -4437,6 +4436,7 @@ function renderProfile(container) {
     </div>
   `;
   refreshIcons();
+  attachProvincePicker(container);
   attachProfileEvents();
 }
 
@@ -4453,27 +4453,55 @@ function attachProfileEvents() {
   });
 
   const btnSave = document.getElementById('btn-save-profile');
-  if (btnSave) {
-    btnSave.addEventListener('click', () => {
-      saveProfileFromInputs();
-      showToast('Đã lưu thông tin hồ sơ thành công!', 'success');
-    });
-  }
-
   const btnPush = document.getElementById('btn-push-to-ai');
-  if (btnPush) {
-    btnPush.addEventListener('click', () => {
-      saveProfileFromInputs();
-      const promptText = 'Hãy tư vấn trường và ngành phù hợp dựa trên hồ sơ và kết quả RIASEC đã lưu của tôi.';
-      window.location.hash = `#tu-van/${encodeURIComponent(promptText)}`;
-    });
+  let saving = false;
+  async function saveAndContinue(openChat) {
+    if (saving || !btnSave.isConnected) return;
+    const input = document.getElementById('prof-input-province');
+    const editingProvince = state.activeProfileTab === 'personal';
+    const province = editingProvince && (input.value.trim() || input.defaultValue) ? validateProfileProvince(input) : undefined;
+    if (province === null) return;
+    const token = state.authToken;
+    const owner = state.currentUser?.user_id;
+    saving = true;
+    btnSave.disabled = btnPush.disabled = true;
+    try {
+      if (province && token && owner && state.currentUser.role !== 'admin' &&
+          province !== activeSchoolFitSession()?.profile?.background?.hometown_province) {
+        const response = await fetch('/api/v1/students/background', {
+          method:'PUT',
+          headers:{Authorization:`Bearer ${token}`, 'Content-Type':'application/json'},
+          body:JSON.stringify({hometown_province:province}),
+        });
+        if (!response.ok) throw new Error('Chưa lưu được tỉnh/thành. Vui lòng thử lại.');
+        const profile = await response.json();
+        const session = activeSchoolFitSession();
+        if (session?.owner === owner && session.token === token) {
+          session.profile = profile;
+          session.expires = Date.now() + 60000;
+        }
+      }
+      if (!btnSave.isConnected || token !== state.authToken || owner !== state.currentUser?.user_id) return;
+      if (province) input.defaultValue = province;
+      saveProfileFromInputs(province);
+      if (openChat) {
+        const promptText = 'Hãy tư vấn trường và ngành phù hợp dựa trên hồ sơ và kết quả RIASEC đã lưu của tôi.';
+        window.location.hash = `#tu-van/${encodeURIComponent(promptText)}`;
+      } else showToast('Đã lưu thông tin hồ sơ thành công!', 'success');
+    } catch (_) {
+      if (btnSave.isConnected) showToast('Chưa lưu được tỉnh/thành. Vui lòng thử lại.', 'error');
+    } finally {
+      saving = false;
+      btnSave.disabled = btnPush.disabled = false;
+    }
   }
+  btnSave.addEventListener('click', () => saveAndContinue(false));
+  btnPush.addEventListener('click', () => saveAndContinue(true));
 }
 
-function saveProfileFromInputs() {
+function saveProfileFromInputs(province) {
   const name = document.getElementById('prof-input-name')?.value;
   const school = document.getElementById('prof-input-school')?.value;
-  const province = document.getElementById('prof-input-province')?.value;
   const zone = document.getElementById('prof-input-zone')?.value;
   const gpa = parseFloat(document.getElementById('prof-input-gpa')?.value || '8.4');
   const conduct = document.getElementById('prof-input-conduct')?.value;
@@ -5438,6 +5466,128 @@ window.addEventListener('DOMContentLoaded', async () => {
   renderRoute();
 });
 
+// Nghị quyết 202/2025/QH15 và 175/2024/QH15: tên hiện nay và tên cũ đã đổi.
+const PROFILE_PROVINCES = [
+  ['An Giang', 'Kiên Giang'], ['Bắc Ninh', 'Bắc Giang'], ['Cà Mau', 'Bạc Liêu'],
+  ['Cần Thơ', 'Hậu Giang', 'Sóc Trăng'], ['Cao Bằng'], ['Đà Nẵng', 'Quảng Nam'],
+  ['Đắk Lắk', 'Phú Yên'], ['Điện Biên'], ['Đồng Nai', 'Bình Phước'], ['Đồng Tháp', 'Tiền Giang'],
+  ['Gia Lai', 'Bình Định'], ['Hà Nội'], ['Hà Tĩnh'], ['Hải Phòng', 'Hải Dương'],
+  ['Huế', 'Thừa Thiên Huế'], ['Hưng Yên', 'Thái Bình'], ['Khánh Hòa', 'Ninh Thuận'],
+  ['Lai Châu'], ['Lâm Đồng', 'Bình Thuận', 'Đắk Nông'], ['Lạng Sơn'], ['Lào Cai', 'Yên Bái'],
+  ['Nghệ An'], ['Ninh Bình', 'Hà Nam', 'Nam Định'], ['Phú Thọ', 'Hòa Bình', 'Vĩnh Phúc'],
+  ['Quảng Ngãi', 'Kon Tum'], ['Quảng Ninh'], ['Quảng Trị', 'Quảng Bình'], ['Sơn La'],
+  ['Tây Ninh', 'Long An'], ['Thái Nguyên', 'Bắc Kạn'], ['Thanh Hóa'],
+  ['TP. Hồ Chí Minh', 'Bà Rịa - Vũng Tàu', 'Bình Dương'], ['Tuyên Quang', 'Hà Giang'],
+  ['Vĩnh Long', 'Bến Tre', 'Trà Vinh'],
+].flatMap(([current, ...former]) => [
+  {name: current, label: 'Hiện nay'},
+  ...former.map(name => ({name, label: `Tên cũ · nay thuộc ${current}`})),
+]);
+function profileProvinceKey(text) {
+  const key = schoolProvinceKey(text).replace(/ /g, '');
+  return /^(thanhphohochiminh|tphochiminh|tphcm)$/.test(key) ? 'hochiminh' : key.replace(/^tinh/, '');
+}
+function profileProvinceMatch(value) {
+  const key = profileProvinceKey(value);
+  return PROFILE_PROVINCES.find(item => profileProvinceKey(item.name) === key);
+}
+function provincePickerMarkup(id, saved, required = false) {
+  const value = profileProvinceMatch(saved)?.name ?? saved ?? '';
+  return `<div class="province-picker" data-province-picker>
+    <label for="${id}" class="block text-sm font-medium text-navy">Tỉnh / Thành phố quê quán${required ? ' *' : ''}</label>
+    <input id="${id}" name="hometown_province" type="text" role="combobox" aria-autocomplete="list"
+      aria-controls="${id}-options" aria-expanded="false" autocomplete="off" maxlength="100"
+      value="${universityEscape(value)}" placeholder="Gõ để tìm hoặc chọn tỉnh/thành" ${required ? 'required' : ''}>
+    <div id="${id}-options" class="province-options" role="listbox" aria-label="Tỉnh thành" hidden></div>
+    <p class="province-picker-hint" role="status">Ví dụ: daklak hoặc longan</p>
+  </div>`;
+}
+function attachProvincePicker(root) {
+  const picker = root.querySelector('[data-province-picker]');
+  if (!picker) return;
+  const input = picker.querySelector('input');
+  const list = picker.querySelector('[role="listbox"]');
+  const hint = picker.querySelector('[role="status"]');
+  const defaultHint = hint.textContent;
+  let matches = [];
+  let active = -1;
+  function highlight(index) {
+    if (active >= 0) list.children[active]?.setAttribute('aria-selected', 'false');
+    active = index;
+    const option = list.children[active];
+    if (option) {
+      option.setAttribute('aria-selected', 'true');
+      input.setAttribute('aria-activedescendant', option.id);
+      option.scrollIntoView({block:'nearest'});
+    } else input.removeAttribute('aria-activedescendant');
+  }
+  function close() {
+    highlight(-1);
+    list.hidden = true;
+    input.setAttribute('aria-expanded', 'false');
+    const match = profileProvinceMatch(input.value);
+    hint.textContent = match && match.label !== 'Hiện nay' ? match.label : defaultHint;
+  }
+  function render(value) {
+    const key = profileProvinceKey(value);
+    const exact = profileProvinceMatch(value);
+    matches = PROFILE_PROVINCES.filter(item => profileProvinceKey(item.name).includes(key))
+      .sort((a,b) => Number(b === exact) - Number(a === exact) || a.name.localeCompare(b.name, 'vi'));
+    highlight(-1);
+    list.innerHTML = matches.map((item, index) => `<div role="option" id="${input.id}-option-${index}" aria-selected="false" data-index="${index}">
+      <strong>${item.name}</strong><small>${item.label}</small></div>`).join('');
+    list.scrollTop = 0;
+    list.hidden = !matches.length;
+    input.setAttribute('aria-expanded', String(!list.hidden));
+    hint.textContent = matches.length ? defaultHint : 'Không tìm thấy tỉnh/thành. Hãy thử tên khác.';
+  }
+  function select(item) {
+    input.value = item.name;
+    input.setCustomValidity('');
+    close();
+  }
+  input.addEventListener('focus', () => render(profileProvinceMatch(input.value) ? '' : input.value));
+  input.addEventListener('click', () => { if (list.hidden) render(profileProvinceMatch(input.value) ? '' : input.value); });
+  input.addEventListener('input', () => { input.setCustomValidity(''); render(input.value); });
+  input.addEventListener('blur', close);
+  input.addEventListener('keydown', event => {
+    if (event.isComposing) return;
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      event.preventDefault();
+      if (list.hidden) render(profileProvinceMatch(input.value) ? '' : input.value);
+      if (!matches.length) return;
+      const next = active + (event.key === 'ArrowDown' ? 1 : -1);
+      highlight(next < 0 ? matches.length - 1 : next % matches.length);
+    } else if (event.key === 'Enter' && !list.hidden) {
+      const choice = matches[active] || profileProvinceMatch(input.value) || (matches.length === 1 ? matches[0] : null);
+      if (!choice) return;
+      event.preventDefault();
+      select(choice);
+    } else if (event.key === 'Escape' && !list.hidden) {
+      event.preventDefault();
+      close();
+    }
+  });
+  list.addEventListener('mousedown', event => event.preventDefault());
+  list.addEventListener('click', event => {
+    const option = event.target.closest('[role="option"]');
+    if (option) select(matches[Number(option.dataset.index)]);
+  });
+  close();
+}
+function validateProfileProvince(input) {
+  const text = input.value.trim();
+  const value = profileProvinceMatch(text)?.name ?? (text && text === input.defaultValue.trim() ? text : '');
+  if (value) {
+    input.setCustomValidity('');
+    input.value = value;
+    return value;
+  }
+  input.setCustomValidity('Vui lòng chọn tỉnh/thành trong danh sách.');
+  input.reportValidity();
+  return null;
+}
+
 // Guided student intake after login. Values are loaded from the authenticated account.
 async function renderIntake(container) {
   if (!state.authToken || !state.currentUser) { window.location.hash = '#dang-nhap'; return; }
@@ -5507,7 +5657,7 @@ async function renderIntake(container) {
   function draw(direction = 0) {
     const b = profile.background || {}, a = profile.academic || {}, h = profile.health || {};
     let fields;
-    if (step === 0) fields = field('last_name','Họ và tên đệm *',profile.last_name,'text','required maxlength="100"') + field('first_name','Tên *',profile.first_name,'text','required maxlength="100"') + field('current_school','Trường THPT *',profile.current_school,'text','required maxlength="255"') + field('hometown_province','Tỉnh / Thành phố quê quán *',b.hometown_province,'text','required maxlength="100"') + `<label class="block text-sm font-medium text-navy">Khu vực ưu tiên<select name="priority_zone" class="mt-2 w-full px-4 py-3 rounded-[14px] border border-line bg-mist">${['KV1','KV2-NT','KV2','KV3'].map(z=>`<option ${b.priority_zone===z?'selected':''}>${z}</option>`).join('')}</select></label>`;
+    if (step === 0) fields = field('last_name','Họ và tên đệm *',profile.last_name,'text','required maxlength="100"') + field('first_name','Tên *',profile.first_name,'text','required maxlength="100"') + field('current_school','Trường THPT *',profile.current_school,'text','required maxlength="255"') + provincePickerMarkup('intake-province', b.hometown_province, true) + `<label class="block text-sm font-medium text-navy">Khu vực ưu tiên<select name="priority_zone" class="mt-2 w-full px-4 py-3 rounded-[14px] border border-line bg-mist">${['KV1','KV2-NT','KV2','KV3'].map(z=>`<option ${b.priority_zone===z?'selected':''}>${z}</option>`).join('')}</select></label>`;
     if (step === 1) fields = field('gpa_5_semesters','Điểm trung bình học bạ 5 học kỳ *',a.gpa_5_semesters,'number','required min="0" max="10" step="any"') + `<label class="block text-sm font-medium text-navy">Hạnh kiểm lớp 12<select name="conduct_grade_12" class="mt-2 w-full px-4 py-3 rounded-[14px] border border-line bg-mist">${['Tốt','Khá','Trung bình'].map(v=>`<option ${a.conduct_grade_12===v?'selected':''}>${v}</option>`).join('')}</select></label>` + ['Toán','Vật lý','Hóa học','Tiếng Anh','Ngữ văn','Sinh học','Lịch sử','Địa lý'].map((v,i)=>field(`score_${i}`,`Điểm thi ${v}`,a.subject_scores?.[v],'number','min="0" max="10" step="any"')).join('') + field('ielts_score','IELTS (nếu có)',a.ielts_score,'number','min="0" max="9" step="0.5"') + field('dgnl_hcm_score','ĐGNL ĐHQG TP.HCM (nếu có)',a.dgnl_hcm_score,'number','min="0" max="1200" step="1"');
     if (step === 2) fields = field('max_annual_tuition','Ngân sách học phí tối đa (đồng/năm)',b.max_annual_tuition,'number','min="0" step="1"') + field('height_cm','Chiều cao (cm)',h.height_cm,'number','min="100" max="250" step="any"') + field('weight_kg','Cân nặng (kg)',h.weight_kg,'number','min="30" max="200" step="any"') + field('eye_degree_left','Độ cận mắt trái (Diop)',h.eye_degree_left,'number','min="0" max="20" step="any"') + field('eye_degree_right','Độ cận mắt phải (Diop)',h.eye_degree_right,'number','min="0" max="20" step="any"');
     markers.forEach((marker, index) => {
@@ -5537,6 +5687,7 @@ async function renderIntake(container) {
       if (input) input.value = value;
     }
 
+    attachProvincePicker(form);
     const previous = activeForm;
     activeForm = form;
     const animate = previous && direction && motion.matches && typeof form.animate === 'function';
@@ -5589,9 +5740,13 @@ async function renderIntake(container) {
       event.preventDefault();
       if (!canNavigate()) return;
       const v = values();
-      if (step === 0 && ['first_name', 'last_name', 'current_school', 'hometown_province'].some(key => !v[key])) {
-        errorMessage.textContent = 'Vui lòng điền đầy đủ thông tin bắt buộc.';
-        return;
+      if (step === 0) {
+        if (['first_name', 'last_name', 'current_school'].some(key => !v[key])) {
+          errorMessage.textContent = 'Vui lòng điền đầy đủ thông tin bắt buộc.';
+          return;
+        }
+        v.hometown_province = validateProfileProvince(form.elements.namedItem('hometown_province'));
+        if (!v.hometown_province) return;
       }
       saving = true;
       errorMessage.textContent = '';
