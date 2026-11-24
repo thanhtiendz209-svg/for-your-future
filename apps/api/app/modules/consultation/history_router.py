@@ -1,6 +1,7 @@
 """Account-owned conversations, reusing the existing grounded recommendation stream."""
 import json
 from contextlib import aclosing
+from uuid import UUID, uuid4
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
@@ -19,11 +20,42 @@ router=APIRouter(prefix='/chat/sessions',tags=['Chat history'])
 class MessageRequest(BaseModel):
     prompt: str=Field(...,min_length=1,max_length=6000)
     target_year: int=Field(2026,ge=2024,le=2030)
+    message_id: UUID | None = None
 
-def owned(db,sid,user):
-    thread=db.query(ChatSession).filter(ChatSession.session_id==sid,or_(ChatSession.owner_user_id==user.user_id,and_(ChatSession.owner_user_id.is_(None),ChatSession.student_id==user.user_id))).first()
+def owned(db, sid, user_id, *, lock=False):
+    query = db.query(ChatSession).filter(
+        ChatSession.session_id == sid,
+        or_(ChatSession.owner_user_id == user_id,
+            and_(ChatSession.owner_user_id.is_(None), ChatSession.student_id == user_id)),
+    )
+    thread = (query.with_for_update() if lock else query).first()
     if not thread:raise HTTPException(404,'Không tìm thấy cuộc trò chuyện.')
     return thread
+
+def recent_messages(db, sid, limit=12):
+    return (db.query(ChatMessage).filter(ChatMessage.session_id == sid)
+            .order_by(ChatMessage.created_at.desc(), ChatMessage.message_id.desc())
+            .limit(limit).all()[::-1])
+
+
+def latest_reply(history, question_id):
+    if history and history[-1].message_id == question_id:
+        return None
+    if (len(history) >= 2 and history[-2].message_id == question_id
+            and history[-1].role == 'assistant'):
+        return history[-1]
+    raise HTTPException(409, 'Cuộc trò chuyện đã có câu hỏi mới. Hãy mở lại lịch sử để đồng bộ.')
+
+
+def event(data):
+    return f'data: {json.dumps(data, ensure_ascii=False)}\n\n'
+
+
+def completed_events(answer, details):
+    for item in details:
+        yield event(item)
+    yield event({'type': 'token', 'token': answer})
+    yield 'data: [DONE]\n\n'
 
 def session_item(t):
     return {'session_id':t.session_id,'title':t.title,'started_at':t.started_at}
@@ -41,39 +73,53 @@ def create(user=Depends(get_current_user),db:Session=Depends(get_db)):
 
 @router.get('/{sid}/messages')
 def messages(sid:str,user=Depends(get_current_user),db:Session=Depends(get_db)):
-    owned(db,sid,user)
+    owned(db,sid,user.user_id)
     return [{'message_id':m.message_id,'role':m.role,'content':m.content,'created_at':m.created_at,'evidence':m.evidence or []} for m in db.query(ChatMessage).filter(ChatMessage.session_id==sid).order_by(ChatMessage.created_at,ChatMessage.message_id)]
 
 @router.post('/{sid}/messages/stream')
 async def send(sid: str, req: MessageRequest, user=Depends(get_current_user), db: Session=Depends(get_db)):
-    thread = owned(db, sid, user)
     prompt = req.prompt.strip()
     if not prompt:
         raise HTTPException(422, 'Vui lòng nhập tin nhắn.')
-    history = (
-        db.query(ChatMessage).filter(ChatMessage.session_id == sid)
-        .order_by(ChatMessage.created_at.desc(), ChatMessage.message_id.desc()).limit(12).all()[::-1]
-    )
+    user_id = user.user_id
+    question_id = str(req.message_id or uuid4())
+    thread = owned(db, sid, user_id, lock=True)
+    existing = db.get(ChatMessage, question_id) if req.message_id else None
+    history = recent_messages(db, sid, limit=13 if existing else 12)
+    cached = None
+    if existing:
+        if existing.session_id != sid or existing.role != 'user' or existing.content != prompt:
+            raise HTTPException(409, 'Không thể thử lại câu hỏi này.')
+        answer = latest_reply(history, question_id)
+        if answer:
+            cached = (answer.content, answer.evidence or [])
+        else:
+            # The current question is appended explicitly when calling the agent.
+            history = history[:-1]
+    else:
+        if not history:
+            thread.title = prompt[:80]
+        db.add(ChatMessage(message_id=question_id, session_id=sid, role='user', content=prompt))
+
     history_data = [{'role': message.role, 'content': message.content[:5000]} for message in history if message.content]
     is_greeting = prompt.lower().strip('!?. ') in ('xin chào', 'chào', 'hello', 'hi')
     # Request sessions and their ORM objects are closed before the response streams.
-    profile_data = None if is_greeting else extract_user_profile_data(db, user)
-    if not history:
-        thread.title = prompt[:80]
-    db.add(ChatMessage(session_id=sid, role='user', content=prompt))
+    profile_data = None if is_greeting or cached else extract_user_profile_data(db, user)
     db.commit()
 
     async def events():
+        yield ': ready\n\n'
+        if cached:
+            for frame in completed_events(*cached):
+                yield frame
+            return
+
         parts = []
         details = []
         completed = False
         reason = None
 
-        def event(data):
-            return f'data: {json.dumps(data, ensure_ascii=False)}\n\n'
-
         try:
-            yield ': ready\n\n'
             if is_greeting:
                 parts.append('Chào bạn! Tôi có thể giúp bạn tìm ngành phù hợp, tra cứu trường và học phí, hoặc cân nhắc nguyện vọng. Bạn đang quan tâm đến ngành hay trường nào?')
                 completed = True
@@ -105,23 +151,32 @@ async def send(sid: str, req: MessageRequest, user=Depends(get_current_user), db
 
         answer = ''.join(parts).strip()
         if reason or not completed or not answer:
+            logger.warning("Advisory stream interrupted: reason=%s, has_text=%s, completed=%s",
+                           reason or 'connection', bool(answer), completed)
             yield event({'type': 'interrupted', 'reason': reason or 'connection'})
             return
 
         evidence = [item for item in details if item['type'] == 'portfolio']
         try:
             with SessionLocal() as save:
-                save.add(ChatMessage(session_id=sid, role='assistant', content=answer, evidence=evidence))
+                # A retry may overlap with the previous request finishing after the client lost its connection.
+                owned(save, sid, user_id, lock=True)
+                stored = latest_reply(recent_messages(save, sid, limit=2), question_id)
+                if stored:
+                    answer, details = stored.content, stored.evidence or []
+                else:
+                    save.add(ChatMessage(session_id=sid, role='assistant', content=answer, evidence=evidence))
                 save.commit()
+        except HTTPException:
+            yield event({'type': 'interrupted', 'reason': 'superseded'})
+            return
         except Exception:
             logger.exception("Could not save completed advisory reply")
             yield event({'type': 'interrupted', 'reason': 'connection'})
             return
 
-        for item in details:
-            yield event(item)
-        yield event({'type': 'token', 'token': answer})
-        yield 'data: [DONE]\n\n'
+        for frame in completed_events(answer, details):
+            yield frame
 
     return StreamingResponse(
         events(), media_type='text/event-stream',

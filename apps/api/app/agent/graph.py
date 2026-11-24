@@ -126,7 +126,7 @@ async def _write_gemini_answer(
             parts.append(token)
             writer({"type": "token", "token": token})
     except GeminiStreamInterrupted as error:
-        if not fallback or error.reason not in ("connection", "busy") or "".join(parts).strip():
+        if not fallback or error.reason not in ("connection", "busy", "timeout") or "".join(parts).strip():
             raise
         writer({"type": "token", "token": fallback})
         return fallback

@@ -86,6 +86,23 @@ async def test_native_fallback_streams_before_any_text(monkeypatch):
 
 
 @pytest.mark.asyncio
+async def test_timeout_uses_at_most_one_backup_stream_and_reports_a_second_timeout(monkeypatch):
+    urls = []
+
+    def reply(request):
+        urls.append(request.url.path)
+        raise httpx.ReadTimeout("simulated timeout", request=request)
+
+    client = httpx.AsyncClient(transport=httpx.MockTransport(reply))
+    monkeypatch.setattr(llm_service.httpx, "AsyncClient", lambda **kwargs: client)
+    with pytest.raises(llm_service.GeminiStreamInterrupted, match="timeout"):
+        async for _ in llm_service.stream_gemini_messages([{"role": "user", "content": "Tra cứu học phí"}]):
+            pytest.fail("Timeout returned incomplete text")
+    assert len(urls) == 2
+    assert urls[-1].endswith(":streamGenerateContent")
+
+
+@pytest.mark.asyncio
 async def test_lookup_yields_first_text_while_gemini_is_still_generating(monkeypatch):
     allow_finish = asyncio.Event()
     observed = []

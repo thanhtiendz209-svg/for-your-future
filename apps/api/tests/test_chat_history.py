@@ -1,4 +1,5 @@
 import unittest,json
+from uuid import uuid4
 from unittest.mock import patch
 from types import SimpleNamespace
 from sqlalchemy import create_engine
@@ -101,6 +102,49 @@ class ChatTests(unittest.TestCase):
   self.assertNotIn('[DONE]', response.text)
   rows = self.client.get(path).json()
   self.assertEqual([(message['role'], message['content']) for message in rows], [('user', prompt)])
+
+ def test_saved_question_can_be_retried_and_completed_reply_is_replayed(self):
+  path = f'/api/v1/chat/sessions/{self.create()}/messages'
+  prompt = 'Phân tích ngành Tài chính - Ngân hàng tại ULAW'
+  calls = []
+
+  async def generate(**kwargs):
+   calls.append(kwargs)
+   if len(calls) == 1:
+    yield {'type': 'token', 'token': 'Nội dung chưa hoàn tất'}
+    yield {'type': 'interrupted', 'reason': 'timeout'}
+   else:
+    yield {'type': 'token', 'token': 'Câu trả lời hoàn chỉnh'}
+    yield {'type': 'done'}
+
+  with patch('app.modules.consultation.history_router.career_advisory_service.run_advisory_flow', new=generate):
+   first = self.client.post(path + '/stream', json={'prompt': prompt})
+   self.assertIn('"reason": "timeout"', first.text)
+   self.assertNotIn('Nội dung chưa hoàn tất', first.text)
+   message_id = self.client.get(path).json()[0]['message_id']
+   body = {'prompt': prompt, 'message_id': message_id}
+   retried = self.client.post(path + '/stream', json=body)
+   replayed = self.client.post(path + '/stream', json=body)
+
+  self.assertEqual(len(calls), 2)
+  self.assertEqual(calls[-1]['history'], [{'role': 'user', 'content': prompt}])
+  for response in (retried, replayed):
+   self.assertEqual(response.status_code, 200)
+   self.assertIn('[DONE]', response.text)
+   self.assertIn('Câu trả lời hoàn chỉnh', response.text)
+  rows = self.client.get(path).json()
+  self.assertEqual([(row['role'], row['content']) for row in rows],
+                   [('user', prompt), ('assistant', 'Câu trả lời hoàn chỉnh')])
+
+ def test_message_id_replay_cannot_change_a_question_or_move_it_between_sessions(self):
+  path = f'/api/v1/chat/sessions/{self.create()}/messages/stream'
+  body = {'prompt': 'Xin chào', 'message_id': str(uuid4())}
+  self.assertIn('[DONE]', self.client.post(path, json=body).text)
+  self.assertEqual(self.client.post(path, json={**body, 'prompt': 'Hello'}).status_code, 409)
+  other_path = f'/api/v1/chat/sessions/{self.create()}/messages/stream'
+  self.assertEqual(self.client.post(other_path, json=body).status_code, 409)
+  self.assertIn('[DONE]', self.client.post(path, json={'prompt': 'Hello'}).text)
+  self.assertEqual(self.client.post(path, json=body).status_code, 409)
 
  def test_followup_overrides_city_and_keeps_prior_score(self):
   from app.modules.graphrag.profile_context import build_profile_intent
