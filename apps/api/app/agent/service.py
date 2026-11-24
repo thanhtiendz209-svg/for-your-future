@@ -39,6 +39,8 @@ class CareerAdvisoryService:
         session_id: str = "default_session",
         history: Optional[List[Dict[str, str]]] = None,
         profile_data: Optional[Dict[str, Any]] = None,
+        *,
+        prefer_native: bool = False,
     ) -> AsyncGenerator[Dict[str, Any], None]:
         """Forward text during graph execution and report incomplete generations."""
         graph_config = {"configurable": {"thread_id": session_id}}
@@ -48,6 +50,7 @@ class CareerAdvisoryService:
             "latest_user_prompt": prompt,
             "messages": history or [],
             "profile_data": profile_data,
+            "prefer_native": prefer_native,
         }
         logger.info("[CareerAdvisoryService] Running flow for session_id=%s", session_id)
         parts = []
@@ -83,7 +86,7 @@ class CareerAdvisoryService:
                 }}
                 yield {"type": "portfolio", "data": portfolio}
                 target_portfolio = final_state.get("portfolio_obj") or portfolio
-                tokens = stream_portfolio_tokens(target_portfolio, prompt, slots=slots)
+                tokens = stream_portfolio_tokens(target_portfolio, prompt, slots=slots, prefer_native=prefer_native)
                 async with aclosing(tokens):
                     async for token in tokens:
                         parts.append(token)
@@ -101,7 +104,7 @@ class CareerAdvisoryService:
                         )},
                         {"role": "user", "content": f"Câu hỏi của học sinh: {prompt}"},
                     ]
-                    tokens = stream_gemini_messages(messages, temperature=0.35, max_tokens=1000)
+                    tokens = stream_gemini_messages(messages, temperature=0.35, max_tokens=1000, prefer_native=prefer_native)
                     async with aclosing(tokens):
                         async for token in tokens:
                             parts.append(token)

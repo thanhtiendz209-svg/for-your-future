@@ -127,6 +127,8 @@ class ChatTests(unittest.TestCase):
    replayed = self.client.post(path + '/stream', json=body)
 
   self.assertEqual(len(calls), 2)
+  self.assertFalse(calls[0]['prefer_native'])
+  self.assertTrue(calls[-1]['prefer_native'])
   self.assertEqual(calls[-1]['history'], [{'role': 'user', 'content': prompt}])
   for response in (retried, replayed):
    self.assertEqual(response.status_code, 200)

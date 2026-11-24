@@ -85,6 +85,7 @@ async def send(sid: str, req: MessageRequest, user=Depends(get_current_user), db
     question_id = str(req.message_id or uuid4())
     thread = owned(db, sid, user_id, lock=True)
     existing = db.get(ChatMessage, question_id) if req.message_id else None
+    prefer_native = existing is not None
     history = recent_messages(db, sid, limit=13 if existing else 12)
     cached = None
     if existing:
@@ -129,6 +130,7 @@ async def send(sid: str, req: MessageRequest, user=Depends(get_current_user), db
                     session_id=f'sess_{sid}',
                     history=history_data + [{'role': 'user', 'content': prompt}],
                     profile_data=profile_data,
+                    prefer_native=prefer_native,
                 )
                 async with aclosing(flow):
                     async for item in flow:

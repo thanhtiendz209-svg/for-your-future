@@ -118,49 +118,55 @@ async def _gemini_sse(client, url, headers, body, *, native=False) -> AsyncGener
 async def stream_gemini_messages(
     messages: List[Dict[str, str]],
     temperature: float = 0.3,
-    max_tokens: int = 1500
+    max_tokens: int = 1500,
+    *,
+    prefer_native: bool = False,
 ) -> AsyncGenerator[str, None]:
-    """Yield Gemini text as it arrives, switching APIs only before visible text."""
-    headers = {"Authorization": f"Bearer {GEMINI_API_KEY}"}
-    body = {
+    """Switch protocols at most once, before any visible text has been sent."""
+    compatibility_body = {
         "model": GEMINI_MODEL,
         "messages": messages,
         "temperature": temperature,
         "max_tokens": max_tokens,
         "stream": True,
     }
-    has_text = False
-    async with httpx.AsyncClient(timeout=httpx.Timeout(25.0, connect=8.0)) as client:
-        try:
-            async for text in _gemini_sse(client, GEMINI_OPENAI_URL, headers, body):
-                has_text = has_text or bool(text.strip())
-                yield text
-            return
-        except GeminiStreamInterrupted as error:
-            if has_text or error.reason not in ("connection", "busy", "timeout"):
-                raise
-            logger.info("Retrying Gemini via native streaming: reason=%s", error.reason)
-            if error.reason == "busy":
-                await asyncio.sleep(0.8)
+    native_url = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:streamGenerateContent?alt=sse"
+    native_body = {
+        "contents": [
+            {
+                "role": "model" if message["role"] == "assistant" else "user",
+                "parts": [{"text": message["content"]}],
+            }
+            for message in messages if message["role"] != "system"
+        ],
+        "generationConfig": {"temperature": temperature, "maxOutputTokens": max_tokens},
+    }
+    system = "\n".join(message["content"] for message in messages if message["role"] == "system")
+    if system:
+        native_body["systemInstruction"] = {"parts": [{"text": system}]}
+    attempts = [
+        (GEMINI_OPENAI_URL, {"Authorization": f"Bearer {GEMINI_API_KEY}"}, compatibility_body, False),
+        (native_url, {"x-goog-api-key": GEMINI_API_KEY}, native_body, True),
+    ]
+    if prefer_native:
+        attempts.reverse()
+        logger.info("Starting chat retry via native Gemini streaming")
 
-        native_url = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:streamGenerateContent?alt=sse"
-        native_body = {
-            "contents": [
-                {
-                    "role": "model" if message["role"] == "assistant" else "user",
-                    "parts": [{"text": message["content"]}],
-                }
-                for message in messages if message["role"] != "system"
-            ],
-            "generationConfig": {"temperature": temperature, "maxOutputTokens": max_tokens},
-        }
-        system = "\n".join(message["content"] for message in messages if message["role"] == "system")
-        if system:
-            native_body["systemInstruction"] = {"parts": [{"text": system}]}
-        async for text in _gemini_sse(
-            client, native_url, {"x-goog-api-key": GEMINI_API_KEY}, native_body, native=True
-        ):
-            yield text
+    async with httpx.AsyncClient(timeout=httpx.Timeout(25.0, connect=8.0)) as client:
+        for index, (url, headers, body, native) in enumerate(attempts):
+            has_text = False
+            try:
+                async for text in _gemini_sse(client, url, headers, body, native=native):
+                    has_text = has_text or bool(text.strip())
+                    yield text
+                return
+            except GeminiStreamInterrupted as error:
+                if index or has_text or error.reason not in ("connection", "busy", "timeout"):
+                    raise
+                logger.info("Retrying Gemini via %s streaming: reason=%s",
+                            "compatibility" if native else "native", error.reason)
+                if error.reason == "busy":
+                    await asyncio.sleep(0.8)
 
 
 async def call_gemini_native(prompt_text: str, max_tokens: int = 800) -> str:
@@ -414,6 +420,8 @@ async def stream_portfolio_tokens(
     portfolio: Any,
     user_prompt: str,
     slots: Optional[Dict[str, Any]] = None,
+    *,
+    prefer_native: bool = False,
 ) -> AsyncGenerator[str, None]:
     prompt = build_portfolio_system_prompt(portfolio, user_prompt, slots=slots)
     messages = [
@@ -422,7 +430,7 @@ async def stream_portfolio_tokens(
     ]
     has_text = False
     try:
-        async for token in stream_gemini_messages(messages, temperature=0.3):
+        async for token in stream_gemini_messages(messages, temperature=0.3, prefer_native=prefer_native):
             has_text = has_text or bool(token.strip())
             yield token
     except GeminiStreamInterrupted as error:

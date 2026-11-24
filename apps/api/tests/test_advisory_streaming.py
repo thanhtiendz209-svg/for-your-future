@@ -103,6 +103,27 @@ async def test_timeout_uses_at_most_one_backup_stream_and_reports_a_second_timeo
 
 
 @pytest.mark.asyncio
+async def test_chat_retry_prefers_native_protocol(monkeypatch):
+    paths = []
+
+    def reply(request):
+        paths.append(request.url.path)
+        return httpx.Response(200, stream=GeminiChunks(
+            sse({"candidates": [{"content": {"parts": [{"text": "Phản hồi đầy đủ"}]}, "finishReason": "STOP"}]}),
+        ))
+
+    client = httpx.AsyncClient(transport=httpx.MockTransport(reply))
+    monkeypatch.setattr(llm_service.httpx, "AsyncClient", lambda **kwargs: client)
+    tokens = [
+        token async for token in llm_service.stream_gemini_messages(
+            [{"role": "user", "content": "Thử lại câu hỏi cũ"}], prefer_native=True,
+        )
+    ]
+    assert tokens == ["Phản hồi đầy đủ"]
+    assert len(paths) == 1 and paths[0].endswith(":streamGenerateContent")
+
+
+@pytest.mark.asyncio
 async def test_lookup_yields_first_text_while_gemini_is_still_generating(monkeypatch):
     allow_finish = asyncio.Event()
     observed = []
@@ -116,8 +137,9 @@ async def test_lookup_yields_first_text_while_gemini_is_still_generating(monkeyp
     async def query(cypher, params):
         return [{"name": "Trường thử", "avg_tuition": 24680000}]
 
-    async def generate(messages, **kwargs):
+    async def generate(messages, *, prefer_native, **kwargs):
         observed.extend(messages)
+        assert prefer_native
         yield "Thông tin "
         await allow_finish.wait()
         yield "học phí."
@@ -127,7 +149,7 @@ async def test_lookup_yields_first_text_while_gemini_is_still_generating(monkeyp
     monkeypatch.setattr(graph, "execute_query_async", query)
     monkeypatch.setattr(graph, "stream_gemini_messages", generate)
     events = CareerAdvisoryService().run_advisory_flow(
-        "Học phí Trường thử?", session_id="streaming-lookup-test",
+        "Học phí Trường thử?", session_id="streaming-lookup-test", prefer_native=True,
     )
     async with aclosing(events):
         assert await asyncio.wait_for(anext(events), 3) == {"type": "token", "token": "Thông tin "}

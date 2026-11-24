@@ -117,11 +117,12 @@ async def _write_gemini_answer(
     temperature: float,
     max_tokens: int,
     fallback: str = "",
+    prefer_native: bool = False,
 ) -> str:
     parts = []
     try:
         async for token in stream_gemini_messages(
-            messages, temperature=temperature, max_tokens=max_tokens
+            messages, temperature=temperature, max_tokens=max_tokens, prefer_native=prefer_native
         ):
             parts.append(token)
             writer({"type": "token", "token": token})
@@ -166,6 +167,7 @@ async def node_ask_clarification(state: AgentState, writer: StreamWriter) -> Dic
     clarify_text = await _write_gemini_answer(
         writer, [{"role": "user", "content": prompt}],
         temperature=0.4, max_tokens=350, fallback=fallback,
+        prefer_native=state.get("prefer_native", False),
     )
 
     return {
@@ -310,6 +312,7 @@ async def node_chitchat(state: AgentState, writer: StreamWriter) -> Dict[str, An
     reply = await _write_gemini_answer(
         writer, messages, temperature=0.5, max_tokens=200,
         fallback="Chào bạn! Mình có thể giúp bạn tìm ngành, tra cứu trường và chuẩn bị nguyện vọng. Bạn muốn tìm hiểu điều gì?",
+        prefer_native=state.get("prefer_native", False),
     )
     return {"final_text": reply}
 
@@ -502,6 +505,7 @@ async def node_lookup_info(state: AgentState, writer: StreamWriter) -> Dict[str,
         writer,
         [{"role": "system", "content": sys_prompt}, {"role": "user", "content": user_content}],
         temperature=0.35, max_tokens=1500,
+        prefer_native=state.get("prefer_native", False),
     )
     return {"final_text": reply, "clarification_question": None}
 
