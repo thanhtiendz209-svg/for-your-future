@@ -12,6 +12,7 @@ class AgentState(TypedDict, total=False):
     latest_user_prompt: str
     intent: str  # RECOMMEND, COMPARE, LOOKUP, CHITCHAT, OUT_OF_SCOPE
     profile_data: Optional[Dict[str, Any]]  # Full profile from PostgreSQL
+    prefer_native: bool
     slots: Dict[str, Any]  # Persistent slot dictionary
     missing_slots: List[str]  # Missing required slots
     clarification_question: Optional[str]
